@@ -1,3 +1,8 @@
 module.exports = {
-  darkMode: "class"
+  darkMode: "class",
+  extend: {
+    height: {
+      screen: ['100vh', '100dvh'], // fallback for older browsers
+    },
+  },
 };

@@ -5,6 +5,8 @@ import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
+import { SplashPage } from '@/pages/SplashPage';
+import { TermsAndConditionsPage } from '@/pages/TermsAndConditionsPage';
 
 interface Route {
   path: string;
@@ -14,7 +16,9 @@ interface Route {
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
+  { path: '/', Component: SplashPage },
+  { path: '/read-terms-conditions', Component: TermsAndConditionsPage, title: 'Terms and Conditions' },
+  { path: '/demo-index', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },

@@ -1,9 +1,9 @@
 {
-  "name": "mycochi",
+  "name": "my-cochi-dating",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.1",
   "type": "module",
-  "homepage": "https://telegram-mini-apps.github.io/mycochi",
+  "homepage": "https://shlomosh.github.io/cochi",
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",
@@ -15,6 +15,7 @@
     "predeploy": "npm run build"
   },
   "dependencies": {
+    "@radix-ui/react-scroll-area": "^1.2.8",
     "@radix-ui/react-slot": "^1.2.2",
     "@tailwindcss/vite": "^4.1.7",
     "@telegram-apps/sdk-react": "^3.1.7",

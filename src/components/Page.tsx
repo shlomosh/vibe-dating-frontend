@@ -1,14 +1,20 @@
 import { useNavigate } from 'react-router-dom';
-import { hideBackButton, onBackButtonClick, showBackButton } from '@telegram-apps/sdk-react';
 import { type PropsWithChildren, useEffect } from 'react';
+import { hideBackButton, onBackButtonClick, showBackButton, expandViewport, requestFullscreen } from '@telegram-apps/sdk-react';
 
-export function Page({ children, back = true }: PropsWithChildren<{
+export function Page({ children, back = true, className = '' }: PropsWithChildren<{
   /**
    * True if it is allowed to go back from this page.
    */
   back?: boolean
+  className?: string
 }>) {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    expandViewport();
+    requestFullscreen();
+  }, []);
 
   useEffect(() => {
     if (back) {
@@ -20,5 +26,13 @@ export function Page({ children, back = true }: PropsWithChildren<{
     hideBackButton();
   }, [back]);
 
-  return <>{children}</>;
+  return (
+    <div 
+      className={`h-dvh max-w-md mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${className}`}
+    >
+      <>
+        {children}
+      </>
+    </div>
+  );
 }
