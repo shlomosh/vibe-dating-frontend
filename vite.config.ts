@@ -7,7 +7,7 @@ import mkcert from 'vite-plugin-mkcert';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
+  base: '/cochi/',
   css: {
     preprocessorOptions: {
       scss: {
@@ -25,10 +25,10 @@ export default defineConfig({
     // Creates a custom SSL certificate valid for the local machine.
     // Using this plugin requires admin rights on the first dev-mode launch.
     // https://www.npmjs.com/package/vite-plugin-mkcert
-    process.env.HTTPS && mkcert(),
+    process.env.HTTPS ? mkcert() : null,
     // tailwindcss
     tailwindcss()
-  ],
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -36,6 +36,14 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+      },
+    },
   },
   publicDir: './public',
   server: {
@@ -43,4 +51,3 @@ export default defineConfig({
     host: true,
   },
 });
-
