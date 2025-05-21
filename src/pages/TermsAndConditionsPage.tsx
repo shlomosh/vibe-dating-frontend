@@ -6,14 +6,13 @@ import { Content } from '@/components/Content';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X } from "lucide-react";
 
-import { termsAndConditionsText } from '@/locale/en-US';
+import { termsAndConditionsPage } from '@/locale/en-US';
 
 export const TermsAndConditionsPage: FC = () => {
     const navigate = useNavigate();
 
-    const handleCloseClick = () => {
+    const handleAcceptClick = () => {
         navigate('/');
     }
 
@@ -27,34 +26,34 @@ export const TermsAndConditionsPage: FC = () => {
                             <div className="h-full w-full [background:linear-gradient(180deg,rgba(0,0,0,0.67)_0%,rgba(0,0,0,0.65)_100%)]" />
                         </div>
                     </div>
-                    {/* Content container - flex column to position items at bottom */}
-                    <Content className="" itemsAlign="left">
-                        <div className="flex justify-between items-start mb-4 pl-6 pr-6 pt-12">
-                            <h1 className="text-xl font-bold text-white">{termsAndConditionsText.title}</h1>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6 text-white hover:bg-white/10 border border-white"
-                                onClick={handleCloseClick}
-                            >
-                                <X className="h-6 w-6" />
-                            </Button>
+                    {/* Content container */}
+                    <Content>
+                        <div className="text-center">
+                            <div className="text-[1.2em] font-bold text-primary">{termsAndConditionsPage.titleText}</div>
                         </div>
-                        <ScrollArea className="h-[calc(100%-3rem)] pl-6 pr-6 pb-12">
-                            <Card className="bg-transparent border-none shadow-none font-['Questrial-Regular',Helvetica] text-base">
-                                <CardContent className="p-0 text-white">
-                                    {termsAndConditionsText.sections.map((section, index) => (
-                                    <div key={index} className="mb-4">
-                                        <h2 className="text-[11px] font-bold mb-2">
+                        <ScrollArea className="h-[calc(100%-3rem)] p-[0.4em]">
+                            <Card className="bg-transparent border-none shadow-none p-[0.8em]">
+                                <CardContent className="p-0">
+                                    {termsAndConditionsPage.sectionsText.map((section, index) => (
+                                    <div key={index} className="mb-6">
+                                        <h2 className="text-[1.0em] font-bold mb-2">
                                             {section.title}
                                         </h2>
-                                        <p className="text-[11px] whitespace-pre-line ml-2">
+                                        <p className="text-[0.8em] text-justify">
                                             {section.content}
                                         </p>
                                     </div>
                                     ))}
                                 </CardContent>
                             </Card>
+                            <div className="text-center mb-8">
+                            <Button
+                                className="bg-primary text-white hover:bg-primary/80 w-[min(30%,12em)]"
+                                onClick={handleAcceptClick}
+                            >
+                                {termsAndConditionsPage.acceptButton}
+                            </Button>
+                            </div>
                         </ScrollArea>
                     </Content>
                 </div>

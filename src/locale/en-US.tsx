@@ -1,50 +1,245 @@
-export const splashText = {
-    readTermsAndConditions: "Read Terms & Conditions",
-    acceptTermsAndLogin: "Accept Terms & Login",
+import { 
+  AgeType,
+  TravelDistanceType, 
+  PositionType, 
+  BodyType, 
+  SexualityType,
+  HostingType,
+  MeetingTimeType,
+  EquipmentType,
+  HealthPracticesType,
+  HivStatusType,
+  ChatStatusType,
+} from '../types/profile';
+
+export const global = {
+    appName: 'Vibe',
 }
 
-export const termsAndConditionsText = {
-    title: "Terms and Conditions",
-    sections: [
-      {
-        title: "1. Introduction",
-        content:
-          "Welcome to Cochi! By using our app, you agree to abide by these Terms and Conditions. If you do not agree, please refrain from using the service.",
-      },
-      {
-        title: "2. Eligibility",
-        content:
-          "You must be at least 18 years old to use Cochi.\nBy signing up, you confirm that all information you provide is accurate.",
-      },
-      {
-        title: "3. Respect Yourself and Respect Others",
-        content:
-          "At Cochi, we believe in fostering a safe and respectful environment. Users must adhere to the following principles:\n• Respect others – Treat all users with kindness and dignity. Hate speech, harassment, or discrimination will not be tolerated.\n• Respect yourself – Engage in positive interactions and practice self-care while using the platform.\n• Consent is key – Always ensure all conversations and interactions are consensual.\n• Reporting violations – If you experience or witness inappropriate behavior, please report it through the app's reporting system.",
-      },
-      {
-        title: "4. User Conduct",
-        content:
-          "Users must not:\n• Use Cochi for illegal activities.\n• Share or distribute harmful, explicit, or deceptive content.\n• Impersonate another person or create fake profiles.",
-      },
-      {
-        title: "5. Privacy & Data Protection",
-        content:
-          "Your personal data will be handled according to our privacy policy.\nWe take reasonable security measures to protect your information, but we cannot guarantee absolute security.",
-      },
-      {
-        title: "6. Liability & Disclaimers",
-        content:
-          "Cochi provides a platform for connection but is not responsible for user interactions outside the app.\nUsers assume full responsibility for their communication and meet-ups.",
-      },
-      {
-        title: "7. Termination of Account",
-        content:
-          "Cochi reserves the right to suspend or terminate accounts that violate our terms.",
-      },
-      {
-        title: "8. Changes to Terms",
-        content:
-          "We may update these terms from time to time. Continued use of Cochi after updates implies acceptance of changes.",
-      },
-    ],
-  };
+export const splashText = {
+    readTermsAndConditions: (<>Read Terms & Conditions</>),
+    acceptTermsAndLogin: (<>Accept Terms & Login</>),
+}
+
+export const termsAndConditionsPage = {
+  acceptButton: (<>Accept</>),
+  titleText: (<>Terms and Conditions</>),
+  sectionsText: [
+    {
+      title: (<>1. Introduction</>),
+      content: (<>
+          <p>Welcome to {global.appName} ! By using our app, you agree to abide by these Terms and Conditions.
+          If you do not agree, please refrain from using the service.</p>
+        </>)
+    },
+    {
+      title: (<>2. Eligibility</>),
+      content: (<>
+        <p>You must be at least 18 years old to use {global.appName}.
+        By signing up, you confirm that all information you provide is accurate.</p>
+      </>)
+    },
+    {
+      title: (<>3. Respect Yourself and Respect Others</>),
+      content: (<>
+          <p>At {global.appName}, we believe in fostering a safe and respectful environment. Users must adhere to the following principles:</p>
+          <p>
+            <p className="ps-[1em] pt-1">• Respect others and treat all users with kindness and dignity. Hate speech, harassment, or discrimination will not be tolerated.</p>
+            <p className="ps-[1em] pt-1">• Respect yourself and engage in positive interactions and practice self-care while using the platform.</p>
+            <p className="ps-[1em] pt-1">• Always ensure all conversations and interactions are consensual.</p>
+            <p className="ps-[1em] pt-1">• Reporting violations, if you experience or witness inappropriate behavior, please report it through the app's reporting system.</p>
+          </p>
+        </>)
+    },
+    {
+      title: (<>4. User Conduct</>),
+      content: (<>
+        <p>Users must not:</p>
+        <p>
+          <p className="ps-[1em] pt-1">• Use {global.appName} for illegal activities.</p>
+          <p className="ps-[1em] pt-1">• Share or distribute harmful, explicit, or deceptive content.</p>
+          <p className="ps-[1em] pt-1">• Impersonate another person or create fake profiles.</p>
+        </p>
+      </>)
+    },
+    {
+      title: (<>5. Privacy & Data Protection</>),
+      content: (<>
+        <p>Your personal data will be handled according to our privacy policy.</p>
+        <p>We take reasonable security measures to protect your information, but we cannot guarantee absolute security.</p>
+      </>)
+    },
+    {
+      title: (<>6. Liability & Disclaimers</>),
+      content: (<>
+        <p>{global.appName} provides a platform for connection but is not responsible for user interactions outside the app.</p>
+        <p>Users assume full responsibility for their communication and meet-ups.</p>
+      </>)
+    },
+    {
+      title: (<>7. Termination of Account</>),
+      content: (<>
+        <p>{global.appName} reserves the right to suspend or terminate accounts that violate our terms.</p>
+      </>)
+    },
+    {
+      title: (<>8. Changes to Terms</>),
+      content: (<>
+        <p>We may update these terms from time to time. Continued use of {global.appName} after updates implies acceptance of changes.</p>
+      </>)
+    },
+  ],
+};
+
+export const profilePage = {
+  selectButton: (<>Select</>),
+
+  nickName: {
+      label: 'Nick Name',
+  },
+  aboutMe: {
+      label: 'About Me / #HashTags',
+  },
+  sexuality: {
+      label: 'Sexuality',
+      options: {
+        gay: 'Gay',
+        bisexual: 'Bi',
+        curious: 'Curious',
+        trans: 'Trans',
+        fluid: 'Fluid'
+      }
+  } satisfies {
+    label: string,
+    options: Record<SexualityType, string>
+  },
+  age: {
+      label: 'Age',
+      options: {
+        ...Object.fromEntries(
+          Array.from({ length: 79 - 18 + 1 }, (_, i) => [
+            `${18 + i}`, `${18 + i}`
+          ])
+        ),
+        '80+': '80+'
+      }
+  } satisfies {
+    label: string,
+    options: Record<AgeType, string>
+  },
+  hosting: {
+      label: 'Hosting Status',
+      options: {
+        hostAndTravel: 'Host & Travel',
+        hostOnly: 'Host Only',
+        travelOnly: 'Travel Only'
+      }
+  } satisfies {
+    label: string,
+    options: Record<HostingType, string>
+  },
+  travelDistance: {
+      label: 'Travel Distance',
+      options: {
+        block: '1 Km',
+        neighbourhood: '2 Km',
+        city: '5 Km',
+        metropolitan: '10 Km',
+        state: '20+ Km'
+      }
+  } satisfies {
+    label: string,
+    options: Record<TravelDistanceType, string>
+  },
+  position: {
+      label: 'Position',
+      options: {
+        bottom: 'Bottom',
+        versBottom: 'Vers Bottom',
+        vers: 'Vers',
+        versTop: 'Vers Top',
+        top: 'Top',
+        side: 'Side',
+        blower: 'Blower',
+        blowie: 'Blowie'
+      }
+  } satisfies {
+    label: string,
+    options: Record<PositionType, string>
+  },
+  body: {
+      label: 'Body Type',
+      options: {
+        petite: 'Petite',
+        slim: 'Slim',
+        average: 'Average',
+        fit: 'Fit',
+        muscular: 'Muscular',
+        stocky: 'Stocky',
+        chubby: 'Chubby',
+        large: 'Large'
+      }
+  } satisfies {
+    label: string,
+    options: Record<BodyType, string>
+  },
+  equipment: {
+      label: 'Equipment 🍆',
+      options: {
+        small: 'Small',
+        average: 'Average',
+        large: 'Large',
+        extraLarge: 'Extra Large',
+        gigantic: 'Gigantic'
+      }
+  } satisfies {
+    label: string,
+    options: Record<EquipmentType, string>
+  },
+  healthPractices: {
+      label: 'Health Practices',
+      options: {
+        condoms: 'Condoms',
+        bb: 'BB (PrEP)',
+        condomsOrBb: 'Condoms or BB (PrEP)',
+        noPenetrations: 'No Penetrations'
+      }
+  } satisfies {
+    label: string,
+    options: Record<HealthPracticesType, string>
+  },
+  hivStatus: {
+    label: 'HIV Status',
+    options: {
+      negative: 'Negative',
+      negativeOnPrep: 'Netative, on PrEP',
+      positive: 'Positive',
+      positiveUndetectable: 'Positive, Undetectable'
+    }
+  } satisfies {
+    label: string,
+    options: Record<HivStatusType, string>
+  },
+  meetingTime: {
+      label: 'Meeting Time',
+      options: {
+        now: 'Now',
+        today: 'Today',
+        whenever: 'Whenever'
+      }
+  } satisfies {
+    label: string,
+    options: Record<MeetingTimeType, string>
+  },
+  chatStatus: {
+    label: 'Chat Status',
+    options: {
+      online: 'Online',
+      busy: 'Busy',
+      offline: 'Offline',
+    }
+  } satisfies {
+    label: string,
+    options: Record<ChatStatusType, string>
+  },
+};

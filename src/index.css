@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import "swiper/css";
+@import "swiper/css/effect-cards";
+@import "swiper/css/navigation";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -122,6 +126,12 @@
   --shadow-xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.12), 0px 8px 10px -1px hsl(240 30% 25% / 0.12);
   --shadow-2xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.30);
   --tracking-normal: 0em;
+
+  /* Swiper navigation */
+  --swiper-navigation-size: 1em;
+  --swiper-navigation-top-offset: 50%;
+  --swiper-navigation-sides-offset: -3em;
+  --swiper-navigation-color: oklch(0.54 0.05 284.74);
 }
 
 .dark {
@@ -177,6 +187,8 @@
   --shadow-lg: 0px 4px 10px 0px hsl(240 30% 25% / 0.12), 0px 4px 6px -1px hsl(240 30% 25% / 0.12);
   --shadow-xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.12), 0px 8px 10px -1px hsl(240 30% 25% / 0.12);
   --shadow-2xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.30);
+
+  --swiper-navigation-color: oklch(0.72 0.05 285.17);
 }
 
 @layer base {

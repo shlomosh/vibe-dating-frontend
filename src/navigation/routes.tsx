@@ -7,6 +7,7 @@ import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
 import { SplashPage } from '@/pages/SplashPage';
 import { TermsAndConditionsPage } from '@/pages/TermsAndConditionsPage';
+import { ProfileSelectPage } from '@/pages/ProfileSelect';
 
 interface Route {
   path: string;
@@ -18,6 +19,7 @@ interface Route {
 export const routes: Route[] = [
   { path: '/', Component: SplashPage },
   { path: '/read-terms-conditions', Component: TermsAndConditionsPage, title: 'Terms and Conditions' },
+  { path: '/profile-select', Component: ProfileSelectPage, title: 'Profile Select' },
   { path: '/demo-index', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
