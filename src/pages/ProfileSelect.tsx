@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
@@ -9,15 +8,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 import { profilePage } from '@/locale/en-US';
+import { ProfileState, defaultProfileState } from '@/types/profile';
 
 import { Navigation, EffectCards } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { generateRandomProfileName } from '@/utils/generator';
+import { initData as tgInitData } from '@telegram-apps/sdk-react';
 
-
-const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?: string, disabled?: boolean }> = ({ selectCfg, className = "", disabled = false }) => {
+const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?: string, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", disabled = false, value, onValueChange }) => {
     return (
         <div className={className}>
-            <Select disabled={disabled}>
+            <Select disabled={disabled} value={value} onValueChange={onValueChange}>
                 <SelectTrigger className="w-full">
                     <SelectValue className="text-sm" placeholder={selectCfg.label} />
                 </SelectTrigger>
@@ -95,6 +96,25 @@ const UserAvatarCarousel = () => {
 }
 
 export const ProfileSelectPage: FC = () => {
+    const [profile, setProfile] = useState<ProfileState>(defaultProfileState);
+    const tgUser = tgInitData.user();
+
+    useEffect(() => {
+        const seed: number = tgUser?.id || -1;
+        console.log({tgInitData, tgUser});
+        setProfile((profile) => ({
+            ...profile,
+            nickName: generateRandomProfileName(seed)
+        }));
+    }, []);
+
+    const handleProfileChange = (field: keyof ProfileState, value: string) => {
+        setProfile(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
     return (
         <Page back={true}>
             <Content className="justify-start">
@@ -102,18 +122,68 @@ export const ProfileSelectPage: FC = () => {
                     <div className="col-span-6 flex justify-center mb-5">
                         <UserAvatarCarousel />
                     </div>
-                    <Input className="col-span-6 text-sm" type="text" placeholder={profilePage.nickName.label}/>
-                    <Textarea className="col-span-6 text-sm" placeholder={profilePage.aboutMe.label} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.age} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.position} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.body} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.equipment} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.healthPractices} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.hivStatus} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.hosting} />
-                    <ProfileSelect className="col-span-3" selectCfg={profilePage.travelDistance} disabled={true}/>
-                    {/* <ProfileSelect className="col-span-2" selectCfg={profilePage.meetingTime} />
-                    <ProfileSelect className="col-span-2" selectCfg={profilePage.chatStatus} /> */}
+                    <Input 
+                        className="col-span-6 text-sm" 
+                        type="text" 
+                        placeholder={profilePage.nickName.label}
+                        value={profile.nickName}
+                        onChange={(e) => handleProfileChange('nickName', e.target.value)}
+                    />
+                    <Textarea 
+                        className="col-span-6 text-sm" 
+                        placeholder={profilePage.aboutMe.label}
+                        value={profile.aboutMe}
+                        onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.age}
+                        value={profile.age}
+                        onValueChange={(value) => handleProfileChange('age', value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.position}
+                        value={profile.position}
+                        onValueChange={(value) => handleProfileChange('position', value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.body}
+                        value={profile.body}
+                        onValueChange={(value) => handleProfileChange('body', value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.equipment}
+                        value={profile.equipment}
+                        onValueChange={(value) => handleProfileChange('equipment', value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.healthPractices}
+                        value={profile.healthPractices}
+                        onValueChange={(value) => handleProfileChange('healthPractices', value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.hivStatus}
+                        value={profile.hivStatus}
+                        onValueChange={(value) => handleProfileChange('hivStatus', value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.hosting}
+                        value={profile.hosting}
+                        onValueChange={(value) => handleProfileChange('hosting', value)}
+                    />
+                    <ProfileSelect 
+                        className="col-span-3" 
+                        selectCfg={profilePage.travelDistance}
+                        disabled={true}
+                        value={profile.travelDistance}
+                        onValueChange={(value) => handleProfileChange('travelDistance', value)}
+                    />
                 </div>
             </Content>
         </Page>

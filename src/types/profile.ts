@@ -1,4 +1,3 @@
-
 export type AgeType = string;
 
 export const PositionTypeOptions = [
@@ -98,3 +97,29 @@ const ChatStatusTypeOptions = [
 ] as const;
 
 export type ChatStatusType = typeof ChatStatusTypeOptions[number];
+
+export interface ProfileState {
+    nickName: string;
+    aboutMe: string;
+    age: AgeType;
+    position: PositionType;
+    body: BodyType;
+    equipment: EquipmentType;
+    healthPractices: HealthPracticesType;
+    hivStatus: HivStatusType;
+    hosting: HostingType;
+    travelDistance: TravelDistanceType;
+}
+
+export const defaultProfileState: ProfileState = {
+    nickName: '',
+    aboutMe: '',
+    age: '30',
+    position: 'vers',
+    body: 'average',
+    equipment: 'average',
+    healthPractices: 'condoms',
+    hivStatus: 'negative',
+    hosting: 'hostAndTravel',
+    travelDistance: 'city'
+};
