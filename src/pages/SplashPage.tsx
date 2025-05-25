@@ -20,7 +20,7 @@ const styles = `
 }
 
 .rotate-v {
-  animation: rotateV 0.5s ease-out 1.5s forwards;
+  animation: rotateV 0.5s ease-out 1.0s forwards;
 }
 `;
 

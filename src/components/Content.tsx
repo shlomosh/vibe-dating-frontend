@@ -13,7 +13,7 @@ export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign
 
     return (
         <div 
-            className={`relative h-full flex flex-col items-${itemsAlign} justify-end ${className}`}
+            className={`relative h-full flex flex-col items-${itemsAlign} justify-end ${className} mt-10`}
             style={{
                 paddingTop: `${safeInsets.top}px`,
                 paddingBottom: `${safeInsets.bottom}px`,

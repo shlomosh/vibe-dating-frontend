@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 
 @import "swiper/css";
-@import "swiper/css/effect-cards";
+@import "swiper/css/effect-fade";
 @import "swiper/css/navigation";
 
 @custom-variant dark (&:is(.dark *));
@@ -128,9 +128,9 @@
   --tracking-normal: 0em;
 
   /* Swiper navigation */
-  --swiper-navigation-size: 1em;
-  --swiper-navigation-top-offset: 50%;
-  --swiper-navigation-sides-offset: -3em;
+  --swiper-navigation-size: 1.5em;
+  --swiper-navigation-top-offset: 90%;
+  --swiper-navigation-sides-offset: 1em;
   --swiper-navigation-color: oklch(0.54 0.05 284.74);
 }
 

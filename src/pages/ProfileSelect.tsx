@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { profilePage } from '@/locale/en-US';
 import { ProfileState, defaultProfileState } from '@/types/profile';
 
-import { Navigation, EffectCards } from 'swiper/modules';
+import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { generateRandomProfileName } from '@/utils/generator';
 import { initData as tgInitData } from '@telegram-apps/sdk-react';
@@ -19,13 +19,14 @@ const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?
     return (
         <div className={className}>
             <Select disabled={disabled} value={value} onValueChange={onValueChange}>
+                <span className="text-sm text-foreground/40 px-1">{selectCfg.label}</span>
                 <SelectTrigger className="w-full">
-                    <SelectValue className="text-sm" placeholder={selectCfg.label} />
+                    <SelectValue className="text-sm" placeholder="--" />
                 </SelectTrigger>
                 <SelectContent className="text-sm">
                     <SelectGroup>
                         <SelectLabel>{selectCfg.label}</SelectLabel>
-                        <SelectItem key={'--'} value={'--'}>--</SelectItem>
+                        <SelectItem className="text-xs italic" key={'--'} value={'--'}>--</SelectItem>
                         {
                             Object.keys(selectCfg.options).map((value) => (
                                 <SelectItem key={value} value={value}>{selectCfg.options[value]}</SelectItem>
@@ -63,20 +64,20 @@ const UserAvatarCarousel = () => {
     }, []);
 
     return (
-        <div className="w-[180px] h-[180px]">
+        <div className="w-[160px] h-[240px] rounded-[5%] overflow-hidden">
             <Swiper
-                effect={'cards'}
+                effect={'fade'}
                 navigation={true}
                 grabCursor={true}
-                modules={[Navigation, EffectCards]}
+                modules={[Navigation, EffectFade]}
                 className="w-full h-full"
             >
                 {images.map((item, index) => (
-                    <SwiperSlide key={index} className="flex rounded-[15%] items-center justify-center">
-                        <div className="flex items-center justify-center text-[22px] font-bold text-white w-full h-full">
+                    <SwiperSlide key={index} className="flex items-center justify-center">
+                        <div className="flex w-full h-full">
                             <img 
                                 src={item} 
-                                alt={`Profile avatar ${index + 1}`} 
+                                alt={`Profile Image ${index + 1}`} 
                                 className="w-full h-full object-cover"
                                 loading="lazy"
                                 style={{
@@ -101,7 +102,6 @@ export const ProfileSelectPage: FC = () => {
 
     useEffect(() => {
         const seed: number = tgUser?.id || -1;
-        console.log({tgInitData, tgUser});
         setProfile((profile) => ({
             ...profile,
             nickName: generateRandomProfileName(seed)
@@ -109,9 +109,10 @@ export const ProfileSelectPage: FC = () => {
     }, []);
 
     const handleProfileChange = (field: keyof ProfileState, value: string) => {
+        console.log({field, value});
         setProfile(prev => ({
             ...prev,
-            [field]: value
+            [field]: value === '--' ? '' : value
         }));
     };
 
@@ -122,19 +123,24 @@ export const ProfileSelectPage: FC = () => {
                     <div className="col-span-6 flex justify-center mb-5">
                         <UserAvatarCarousel />
                     </div>
-                    <Input 
-                        className="col-span-6 text-sm" 
-                        type="text" 
-                        placeholder={profilePage.nickName.label}
-                        value={profile.nickName}
-                        onChange={(e) => handleProfileChange('nickName', e.target.value)}
-                    />
-                    <Textarea 
-                        className="col-span-6 text-sm" 
-                        placeholder={profilePage.aboutMe.label}
-                        value={profile.aboutMe}
-                        onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
-                    />
+                    <div className="col-span-6 text-sm">
+                        <span className="text-foreground/40 px-1">{profilePage.nickName.label}</span>
+                        <Input 
+                            type="text" 
+                            placeholder={profilePage.nickName.label}
+                            value={profile.nickName}
+                            onChange={(e) => handleProfileChange('nickName', e.target.value)}
+                        />
+                    </div>
+                    <div className="col-span-6 text-sm">
+                        <span className="text-sm text-foreground/40 px-1">{profilePage.aboutMe.label}</span>
+                        <Textarea 
+                            className="col-span-6 text-sm" 
+                            placeholder={profilePage.aboutMe.label}
+                            value={profile.aboutMe}
+                            onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
+                        />
+                    </div>
                     <ProfileSelect 
                         className="col-span-3" 
                         selectCfg={profilePage.age}
@@ -180,7 +186,7 @@ export const ProfileSelectPage: FC = () => {
                     <ProfileSelect 
                         className="col-span-3" 
                         selectCfg={profilePage.travelDistance}
-                        disabled={profile.hosting === 'hostOnly'}
+                        disabled={(profile.hosting === 'travelOnly') || (profile.hosting === 'hostAndTravel')}
                         value={profile.travelDistance}
                         onValueChange={(value) => handleProfileChange('travelDistance', value)}
                     />
