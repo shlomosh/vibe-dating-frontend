@@ -180,7 +180,7 @@ export const ProfileSelectPage: FC = () => {
                     <ProfileSelect 
                         className="col-span-3" 
                         selectCfg={profilePage.travelDistance}
-                        disabled={true}
+                        disabled={profile.hosting === 'hostOnly'}
                         value={profile.travelDistance}
                         onValueChange={(value) => handleProfileChange('travelDistance', value)}
                     />
