@@ -13,9 +13,11 @@ import { ProfileState, defaultProfileState } from '@/types/profile';
 import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { generateRandomProfileName } from '@/utils/generator';
-import { initData as tgInitData } from '@telegram-apps/sdk-react';
+import { initData as tgInitData, cloudStorage as tgCloudStorage } from '@telegram-apps/sdk-react';
+import { Button } from '@/components/ui/button';
+import { PlusIcon, TrashIcon } from 'lucide-react';
 
-const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?: string, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", disabled = false, value, onValueChange }) => {
+const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value, onValueChange }) => {
     return (
         <div className={className}>
             <Select disabled={disabled} value={value} onValueChange={onValueChange}>
@@ -26,7 +28,7 @@ const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?
                 <SelectContent className="text-sm">
                     <SelectGroup>
                         <SelectLabel>{selectCfg.label}</SelectLabel>
-                        <SelectItem className="text-xs italic" key={'--'} value={'--'}>--</SelectItem>
+                        {enableClearOption ? (<SelectItem className="text-xs italic" key={'--'} value={'--'}>--</SelectItem>) : null}
                         {
                             Object.keys(selectCfg.options).map((value) => (
                                 <SelectItem key={value} value={value}>{selectCfg.options[value]}</SelectItem>
@@ -97,35 +99,79 @@ const UserAvatarCarousel = () => {
 }
 
 export const ProfileSelectPage: FC = () => {
+    const [activeProfile, setActiveProfile] = useState<string>('default');
     const [profile, setProfile] = useState<ProfileState>(defaultProfileState);
     const tgUser = tgInitData.user();
 
+    const loadStoredProfile = async () => {
+        const storedProfileJson = await tgCloudStorage.getItem('profile/default');
+        return storedProfileJson ? JSON.parse(storedProfileJson) : undefined;
+    };
+
+    const getNickName = (nickName: string) => (
+        (nickName === '') ? generateRandomProfileName(tgUser?.id || -1) : nickName
+    );
+
     useEffect(() => {
-        const seed: number = tgUser?.id || -1;
-        setProfile((profile) => ({
-            ...profile,
-            nickName: generateRandomProfileName(seed)
-        }));
+        const loadProfile = async () => {
+            const storedProfile = await loadStoredProfile();
+            setProfile((profile) => ({
+                ...(storedProfile || profile),
+                nickName: getNickName((storedProfile || profile).nickName)
+            }));
+        };
+
+        loadProfile();
     }, []);
 
     const handleProfileChange = (field: keyof ProfileState, value: string) => {
-        console.log({field, value});
         setProfile(prev => ({
             ...prev,
             [field]: value === '--' ? '' : value
         }));
     };
 
+    const handleActiveProfileChange = (value: string) => {
+        setActiveProfile(value);
+    };
+
     return (
         <Page back={true}>
-            <Content className="justify-start">
+            <Content className="justify-start">           
                 <div className="grid grid-cols-6 gap-2 w-full mt-5">
-                    <div className="col-span-6 flex justify-center mb-5">
+                    <div className="col-span-6 mb-5 flex items-end">
+                        <span className="w-full">
+                            <ProfileSelect 
+                                className="font-bold"
+                                selectCfg={{
+                                    label: 'Active Profile',
+                                    options: {
+                                        1: 'Default',
+                                    }
+                                }}
+                                enableClearOption={false}
+                                value={activeProfile}
+                                onValueChange={(value) => handleActiveProfileChange(value)}
+                            />
+                        </span>
+                        <span className="mr-1 ml-1">
+                            <Button variant="outline" size="icon">
+                                <PlusIcon className="w-4 h-4" />
+                            </Button>
+                        </span>
+                        <span>
+                            <Button variant="outline" size="icon">
+                                <TrashIcon className="w-4 h-4" />
+                            </Button>
+                        </span>
+                    </div>     
+                    <div className="col-span-6 flex justify-center mb-0">
                         <UserAvatarCarousel />
                     </div>
                     <div className="col-span-6 text-sm">
                         <span className="text-foreground/40 px-1">{profilePage.nickName.label}</span>
                         <Input 
+                            className="col-span-6 text-sm"
                             type="text" 
                             placeholder={profilePage.nickName.label}
                             value={profile.nickName}

@@ -15,6 +15,7 @@ export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign
         <div 
             className={`relative h-full flex flex-col items-${itemsAlign} justify-end ${className} mt-10`}
             style={{
+                marginTop: `30px`,
                 paddingTop: `${safeInsets.top}px`,
                 paddingBottom: `${safeInsets.bottom}px`,
                 paddingLeft: `${safeInsets.left}px`,
