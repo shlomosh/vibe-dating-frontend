@@ -1,21 +1,26 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
+import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+  
 import { profilePage } from '@/locale/en-US';
-import { ProfileState, defaultProfileState } from '@/types/profile';
+import { ProfileId, ProfileRecord, ProfileDB, defaultProfile } from '@/types/profile';
 
 import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { generateRandomProfileName } from '@/utils/generator';
-import { initData as tgInitData, cloudStorage as tgCloudStorage } from '@telegram-apps/sdk-react';
-import { Button } from '@/components/ui/button';
-import { PlusIcon, TrashIcon } from 'lucide-react';
+
+import { PlusIcon, TrashIcon, MinusIcon } from 'lucide-react';
+import { initData as tgInitData } from '@telegram-apps/sdk-react';
+import { CloudStorage as profileStorage } from '@/utils/cloud-storage';
+
 
 const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value, onValueChange }) => {
     return (
@@ -66,7 +71,7 @@ const UserAvatarCarousel = () => {
     }, []);
 
     return (
-        <div className="w-[160px] h-[240px] rounded-[5%] overflow-hidden">
+        <div className="w-full aspect-[160/240] rounded-[5%] overflow-hidden">
             <Swiper
                 effect={'fade'}
                 navigation={true}
@@ -99,62 +104,64 @@ const UserAvatarCarousel = () => {
 }
 
 export const ProfileSelectPage: FC = () => {
-    const [activeProfile, setActiveProfile] = useState<string>('default');
-    const [profile, setProfile] = useState<ProfileState>(defaultProfileState);
+    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
     const tgUser = tgInitData.user();
 
-    const loadStoredProfile = async () => {
-        const storedProfileJson = await tgCloudStorage.getItem('profile/default');
-        return storedProfileJson ? JSON.parse(storedProfileJson) : undefined;
-    };
-
-    const getNickName = (nickName: string) => (
-        (nickName === '') ? generateRandomProfileName(tgUser?.id || -1) : nickName
-    );
+    const [profileId, setProfileId] = useState<string | undefined>('Anonymous');
+    const [profileIdList, setProfileIdList] = useState<Array<string>>(['Anonymous']);
+    const [profileRecord, setProfileRecord] = useState<ProfileRecord>({
+        ... defaultProfile,
+        nickName: generateRandomProfileName(tgUser?.id || -1)
+    });
 
     useEffect(() => {
         const loadProfile = async () => {
-            const storedProfile = await loadStoredProfile();
-            setProfile((profile) => ({
-                ...(storedProfile || profile),
-                nickName: getNickName((storedProfile || profile).nickName)
-            }));
+            const profileDB: ProfileDB | null = await profileStorage.getItem('vibe/settings/profile-db');
+            if (profileDB) {
+                setProfileRecord(profileDB.db[profileDB.id]);
+                setProfileIdList(Object.keys(profileDB.db));
+                setProfileId(profileDB.id);
+            }
         };
 
         loadProfile();
     }, []);
 
-    const handleProfileChange = (field: keyof ProfileState, value: string) => {
-        setProfile(prev => ({
-            ...prev,
-            [field]: value === '--' ? '' : value
-        }));
+    const handleProfileChange = (field: keyof ProfileRecord, value: string) => {
+        if (field === 'hosting' && value === 'hostOnly') {
+            setProfileRecord((prev) => ({...prev, [field]: value, travelDistance: 'none'}));
+        } else {
+            setProfileRecord((prev) => ({...prev, [field]: value}));
+        }
     };
 
-    const handleActiveProfileChange = (value: string) => {
-        setActiveProfile(value);
+    const handleActiveProfileChange = (value: ProfileId) => {
+        setProfileId(value);
     };
+
+    const handleContinueClick = () => {
+        navigate('demo-index');
+    }
 
     return (
         <Page back={true}>
-            <Content className="justify-start">           
-                <div className="grid grid-cols-6 gap-2 w-full mt-5">
+            <Content>
+                <div className="grid grid-cols-6 gap-2 mb-4">
                     <div className="col-span-6 mb-5 flex items-end">
                         <span className="w-full">
                             <ProfileSelect 
                                 className="font-bold"
                                 selectCfg={{
                                     label: 'Active Profile',
-                                    options: {
-                                        1: 'Default',
-                                    }
+                                    options: profileIdList.reduce((obj, id) => ({ ...obj, [id]: id }), {})
                                 }}
                                 enableClearOption={false}
-                                value={activeProfile}
+                                value={profileId}
                                 onValueChange={(value) => handleActiveProfileChange(value)}
                             />
                         </span>
-                        <span className="mr-1 ml-1">
+                        <span className="mx-1">
                             <Button variant="outline" size="icon">
                                 <PlusIcon className="w-4 h-4" />
                             </Button>
@@ -165,78 +172,94 @@ export const ProfileSelectPage: FC = () => {
                             </Button>
                         </span>
                     </div>     
-                    <div className="col-span-6 flex justify-center mb-0">
+                    <div className="col-span-3 flex flex-col gap-2">
+                        <div className="flex flex-col">
+                            <span className="text-sm text-foreground/40 px-1">{profilePage.nickName.label}</span>
+                            <Input 
+                                className="text-sm"
+                                type="text" 
+                                placeholder={profilePage.nickName.label}
+                                value={profileRecord?.nickName}
+                                onChange={(e) => handleProfileChange('nickName', e.target.value)}
+                            />
+                        </div>
+                        <ProfileSelect 
+                            selectCfg={profilePage.age}
+                            value={profileRecord?.age}
+                            onValueChange={(value) => handleProfileChange('age', value)}
+                        />
+                        <ProfileSelect 
+                            selectCfg={profilePage.position}
+                            value={profileRecord?.position}
+                            onValueChange={(value) => handleProfileChange('position', value)}
+                        />
+                        <ProfileSelect 
+                            selectCfg={profilePage.hosting}
+                            value={profileRecord?.hosting}
+                            onValueChange={(value) => handleProfileChange('hosting', value)}
+                        />
+                        <ProfileSelect 
+                            selectCfg={profilePage.travelDistance}
+                            disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
+                            value={profileRecord?.travelDistance}
+                            onValueChange={(value) => handleProfileChange('travelDistance', value)}
+                        />
+                    </div>
+                    <div className="col-span-3">
+                        <span className="text-sm text-foreground/40 px-1">Album:</span>
                         <UserAvatarCarousel />
                     </div>
-                    <div className="col-span-6 text-sm">
-                        <span className="text-foreground/40 px-1">{profilePage.nickName.label}</span>
-                        <Input 
-                            className="col-span-6 text-sm"
-                            type="text" 
-                            placeholder={profilePage.nickName.label}
-                            value={profile.nickName}
-                            onChange={(e) => handleProfileChange('nickName', e.target.value)}
-                        />
-                    </div>
-                    <div className="col-span-6 text-sm">
-                        <span className="text-sm text-foreground/40 px-1">{profilePage.aboutMe.label}</span>
-                        <Textarea 
-                            className="col-span-6 text-sm" 
-                            placeholder={profilePage.aboutMe.label}
-                            value={profile.aboutMe}
-                            onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
-                        />
-                    </div>
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.age}
-                        value={profile.age}
-                        onValueChange={(value) => handleProfileChange('age', value)}
-                    />
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.position}
-                        value={profile.position}
-                        onValueChange={(value) => handleProfileChange('position', value)}
-                    />
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.body}
-                        value={profile.body}
-                        onValueChange={(value) => handleProfileChange('body', value)}
-                    />
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.equipment}
-                        value={profile.equipment}
-                        onValueChange={(value) => handleProfileChange('equipment', value)}
-                    />
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.healthPractices}
-                        value={profile.healthPractices}
-                        onValueChange={(value) => handleProfileChange('healthPractices', value)}
-                    />
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.hivStatus}
-                        value={profile.hivStatus}
-                        onValueChange={(value) => handleProfileChange('hivStatus', value)}
-                    />
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.hosting}
-                        value={profile.hosting}
-                        onValueChange={(value) => handleProfileChange('hosting', value)}
-                    />
-                    <ProfileSelect 
-                        className="col-span-3" 
-                        selectCfg={profilePage.travelDistance}
-                        disabled={(profile.hosting === 'travelOnly') || (profile.hosting === 'hostAndTravel')}
-                        value={profile.travelDistance}
-                        onValueChange={(value) => handleProfileChange('travelDistance', value)}
-                    />
+                    <Collapsible className="col-span-6" open={isOpen} onOpenChange={setIsOpen}>
+                        <CollapsibleTrigger className="my-2">
+                            <div className="flex items-center gap-2">
+                                {isOpen ? (<>
+                                    <MinusIcon className="w-4 h-4" />
+                                    <span className="text-sm">Extra profile settings...</span>
+                                </>) : (<>
+                                    <PlusIcon className="w-4 h-4" />
+                                    <span className="text-sm">Extra profile settings...</span>
+                                </>)}
+                            </div>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="grid grid-cols-2 gap-2">
+                            <div className="col-span-2">
+                                <span className="text-sm text-foreground/40 px-1">{profilePage.aboutMe.label}</span>
+                                <Textarea 
+                                    className="text-sm" 
+                                    placeholder={profilePage.aboutMe.label}
+                                    value={profileRecord?.aboutMe}
+                                    onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
+                                />
+                            </div>
+                            <ProfileSelect 
+                                selectCfg={profilePage.body}
+                                value={profileRecord?.body}
+                                onValueChange={(value) => handleProfileChange('body', value)}
+                            />
+                            <ProfileSelect 
+                                selectCfg={profilePage.equipment}
+                                value={profileRecord?.equipment}
+                                onValueChange={(value) => handleProfileChange('equipment', value)}
+                            />
+                            <ProfileSelect 
+                                selectCfg={profilePage.healthPractices}
+                                value={profileRecord?.healthPractices}
+                                onValueChange={(value) => handleProfileChange('healthPractices', value)}
+                            />
+                            <ProfileSelect 
+                                selectCfg={profilePage.hivStatus}
+                                value={profileRecord?.hivStatus}
+                                onValueChange={(value) => handleProfileChange('hivStatus', value)}
+                            />
+                        </CollapsibleContent>
+                    </Collapsible>
                 </div>
+                <Button
+                    className="bg-primary text-white hover:bg-primary/80 min-w-[15em] mt-auto mx-auto mb-4"
+                    onClick={handleContinueClick}
+                >
+                    {"Next >"}
+                </Button>
             </Content>
         </Page>
     );

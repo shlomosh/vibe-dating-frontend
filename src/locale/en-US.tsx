@@ -142,10 +142,13 @@ export const profilePage = {
       label: 'Age',
       options: {
         ...Object.fromEntries(
-          Array.from({ length: 79 - 18 + 1 }, (_, i) => [
+          Array.from({ length: 59 - 18 + 1 }, (_, i) => [
             `${18 + i}`, `${18 + i}`
           ])
         ),
+        '60-64': '60-64',
+        '65-69': '65-69',
+        '70-79': '70-79',
         '80+': '80+'
       }
   } satisfies {
@@ -153,7 +156,7 @@ export const profilePage = {
     options: Record<AgeType, string>
   },
   hosting: {
-      label: 'Hosting Status',
+      label: 'Hosting',
       options: {
         hostAndTravel: 'Host & Travel',
         hostOnly: 'Host Only',
@@ -164,8 +167,9 @@ export const profilePage = {
     options: Record<HostingType, string>
   },
   travelDistance: {
-      label: 'Travel Distance',
+      label: 'Travel Range',
       options: {
+        none: '0 Km',
         block: '1 Km',
         neighbourhood: '2 Km',
         city: '5 Km',

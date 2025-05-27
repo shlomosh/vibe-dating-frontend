@@ -45,6 +45,7 @@ export const HostingTypeOptions = [
 export type HostingType = typeof HostingTypeOptions[number];
 
 export const TravelDistanceTypeOptions = [
+  'none',
   'block',
   'neighbourhood',
   'city',
@@ -98,28 +99,35 @@ const ChatStatusTypeOptions = [
 
 export type ChatStatusType = typeof ChatStatusTypeOptions[number];
 
-export interface ProfileState {
+export interface ProfileRecord {
     nickName: string;
     aboutMe: string;
-    age: AgeType;
-    position: PositionType;
-    body: BodyType;
-    equipment: EquipmentType;
-    healthPractices: HealthPracticesType;
-    hivStatus: HivStatusType;
-    hosting: HostingType;
-    travelDistance: TravelDistanceType;
-}
+    age: AgeType | undefined;
+    position: PositionType | undefined;
+    body: BodyType | undefined;
+    equipment: EquipmentType | undefined;
+    healthPractices: HealthPracticesType | undefined;
+    hivStatus: HivStatusType | undefined;
+    hosting: HostingType | undefined;
+    travelDistance: TravelDistanceType | undefined;
+};
 
-export const defaultProfileState: ProfileState = {
-    nickName: '',
-    aboutMe: '',
-    age: '30',
-    position: 'vers',
-    body: 'average',
-    equipment: 'average',
-    healthPractices: 'condoms',
-    hivStatus: 'negative',
-    hosting: 'hostAndTravel',
-    travelDistance: 'city'
+export type ProfileId = string;
+
+export interface ProfileDB {
+  id: ProfileId;
+  db: Record<ProfileId, ProfileRecord>;
+};
+
+export const defaultProfile: ProfileRecord = {
+  nickName: '',
+  aboutMe: '',
+  age: undefined,
+  position: undefined,
+  body: undefined,
+  equipment: undefined,
+  healthPractices: undefined,
+  hivStatus: undefined,
+  hosting: undefined,
+  travelDistance: undefined,
 };
