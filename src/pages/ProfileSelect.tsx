@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Page } from '@/components/Page.tsx';
@@ -26,7 +26,7 @@ const ProfileSelect: FC<{ selectCfg: { label: string, options: any }, className?
     return (
         <div className={className}>
             <Select disabled={disabled} value={value} onValueChange={onValueChange}>
-                <span className="text-sm text-foreground/40 px-1">{selectCfg.label}</span>
+                <span className="text-xs text-foreground/40 px-1">{selectCfg.label}</span>
                 <SelectTrigger className="w-full">
                     <SelectValue className="text-sm" placeholder="--" />
                 </SelectTrigger>
@@ -147,119 +147,130 @@ export const ProfileSelectPage: FC = () => {
     return (
         <Page back={true}>
             <Content>
-                <div className="grid grid-cols-6 gap-2 mb-4">
-                    <div className="col-span-6 mb-5 flex items-end">
-                        <span className="w-full">
-                            <ProfileSelect 
-                                className="font-bold"
-                                selectCfg={{
-                                    label: 'Active Profile',
-                                    options: profileIdList.reduce((obj, id) => ({ ...obj, [id]: id }), {})
-                                }}
-                                enableClearOption={false}
-                                value={profileId}
-                                onValueChange={(value) => handleActiveProfileChange(value)}
-                            />
-                        </span>
-                        <span className="mx-1">
-                            <Button variant="outline" size="icon">
-                                <PlusIcon className="w-4 h-4" />
-                            </Button>
-                        </span>
-                        <span>
-                            <Button variant="outline" size="icon">
-                                <TrashIcon className="w-4 h-4" />
-                            </Button>
-                        </span>
-                    </div>     
-                    <div className="col-span-3 flex flex-col gap-2">
-                        <div className="flex flex-col">
-                            <span className="text-sm text-foreground/40 px-1">{profilePage.nickName.label}</span>
-                            <Input 
-                                className="text-sm"
-                                type="text" 
-                                placeholder={profilePage.nickName.label}
-                                value={profileRecord?.nickName}
-                                onChange={(e) => handleProfileChange('nickName', e.target.value)}
-                            />
-                        </div>
-                        <ProfileSelect 
-                            selectCfg={profilePage.age}
-                            value={profileRecord?.age}
-                            onValueChange={(value) => handleProfileChange('age', value)}
-                        />
-                        <ProfileSelect 
-                            selectCfg={profilePage.position}
-                            value={profileRecord?.position}
-                            onValueChange={(value) => handleProfileChange('position', value)}
-                        />
-                        <ProfileSelect 
-                            selectCfg={profilePage.hosting}
-                            value={profileRecord?.hosting}
-                            onValueChange={(value) => handleProfileChange('hosting', value)}
-                        />
-                        <ProfileSelect 
-                            selectCfg={profilePage.travelDistance}
-                            disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
-                            value={profileRecord?.travelDistance}
-                            onValueChange={(value) => handleProfileChange('travelDistance', value)}
-                        />
-                    </div>
-                    <div className="col-span-3">
-                        <span className="text-sm text-foreground/40 px-1">Album:</span>
-                        <UserAvatarCarousel />
-                    </div>
-                    <Collapsible className="col-span-6" open={isOpen} onOpenChange={setIsOpen}>
-                        <CollapsibleTrigger className="my-2">
-                            <div className="flex items-center gap-2">
-                                {isOpen ? (<>
-                                    <MinusIcon className="w-4 h-4" />
-                                    <span className="text-sm">Extra profile settings...</span>
-                                </>) : (<>
-                                    <PlusIcon className="w-4 h-4" />
-                                    <span className="text-sm">Extra profile settings...</span>
-                                </>)}
-                            </div>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="grid grid-cols-2 gap-2">
-                            <div className="col-span-2">
-                                <span className="text-sm text-foreground/40 px-1">{profilePage.aboutMe.label}</span>
-                                <Textarea 
-                                    className="text-sm" 
-                                    placeholder={profilePage.aboutMe.label}
-                                    value={profileRecord?.aboutMe}
-                                    onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
+                <div className="grid grid-cols-2 grid-rows-[auto_auto_1fr_auto] w-full h-full gap-2">
+                    <div className="col-span-2 ">
+                        <div className="flex items-end min-h-fit">
+                            <div className="grow">
+                                <ProfileSelect 
+                                    className="font-bold"
+                                    selectCfg={{
+                                        label: 'Active Profile',
+                                        options: profileIdList.reduce((obj, id) => ({ ...obj, [id]: id }), {})
+                                    }}
+                                    enableClearOption={false}
+                                    value={profileId}
+                                    onValueChange={(value) => handleActiveProfileChange(value)}
                                 />
                             </div>
-                            <ProfileSelect 
-                                selectCfg={profilePage.body}
-                                value={profileRecord?.body}
-                                onValueChange={(value) => handleProfileChange('body', value)}
-                            />
-                            <ProfileSelect 
-                                selectCfg={profilePage.equipment}
-                                value={profileRecord?.equipment}
-                                onValueChange={(value) => handleProfileChange('equipment', value)}
-                            />
-                            <ProfileSelect 
-                                selectCfg={profilePage.healthPractices}
-                                value={profileRecord?.healthPractices}
-                                onValueChange={(value) => handleProfileChange('healthPractices', value)}
-                            />
-                            <ProfileSelect 
-                                selectCfg={profilePage.hivStatus}
-                                value={profileRecord?.hivStatus}
-                                onValueChange={(value) => handleProfileChange('hivStatus', value)}
-                            />
-                        </CollapsibleContent>
-                    </Collapsible>
+                            <div>
+                                <Button variant="outline" size="icon">
+                                    <PlusIcon className="w-4 h-4" />
+                                </Button>
+                            </div>
+                            <div>
+                                <Button variant="outline" size="icon">
+                                    <TrashIcon className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-1 border-2 border-red-200">
+                        <div className="flex flex-col">
+                            <div className="flex flex-col">
+                                <span className="text-xs text-foreground/40 px-1">{profilePage.nickName.label}</span>
+                                    <Input 
+                                        className="text-sm"
+                                        type="text" 
+                                        placeholder={profilePage.nickName.label}
+                                        value={profileRecord?.nickName}
+                                        onChange={(e) => handleProfileChange('nickName', e.target.value)}
+                                    />
+                                </div>
+                                <ProfileSelect 
+                                    selectCfg={profilePage.age}
+                                    value={profileRecord?.age}
+                                    onValueChange={(value) => handleProfileChange('age', value)}
+                                />
+                                <ProfileSelect 
+                                    selectCfg={profilePage.position}
+                                    value={profileRecord?.position}
+                                    onValueChange={(value) => handleProfileChange('position', value)}
+                                />
+                                <ProfileSelect 
+                                    selectCfg={profilePage.hosting}
+                                    value={profileRecord?.hosting}
+                                    onValueChange={(value) => handleProfileChange('hosting', value)}
+                                />
+                                <ProfileSelect 
+                                    selectCfg={profilePage.travelDistance}
+                                    disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
+                                    value={profileRecord?.travelDistance}
+                                    onValueChange={(value) => handleProfileChange('travelDistance', value)}
+                                />
+                        </div>
+                    </div>
+                    <div className="col-span-1 border-2 border-red-200">
+                        <UserAvatarCarousel />
+                    </div>
+                    <div className="col-span-2 border-2 border-red-200">
+                        <Collapsible className="col-span-6" open={isOpen} onOpenChange={setIsOpen}>
+                            <CollapsibleTrigger className="my-2">
+                                <div className="flex items-center gap-2">
+                                    {isOpen ? (<>
+                                        <MinusIcon className="w-4 h-4" />
+                                        <span className="text-sm">Extra profile settings...</span>
+                                    </>) : (<>
+                                        <PlusIcon className="w-4 h-4" />
+                                        <span className="text-sm">Extra profile settings...</span>
+                                    </>)}
+                                </div>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="grid grid-cols-2 gap-2">
+                                <div className="col-span-2">
+                                    <span className="text-sm text-foreground/40 px-1">{profilePage.aboutMe.label}</span>
+                                    <Textarea 
+                                        className="text-sm" 
+                                        placeholder={profilePage.aboutMe.label}
+                                        value={profileRecord?.aboutMe}
+                                        onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
+                                    />
+                                </div>
+                                <ProfileSelect 
+                                    selectCfg={profilePage.body}
+                                    value={profileRecord?.body}
+                                    onValueChange={(value) => handleProfileChange('body', value)}
+                                />
+                                <ProfileSelect 
+                                    selectCfg={profilePage.equipment}
+                                    value={profileRecord?.equipment}
+                                    onValueChange={(value) => handleProfileChange('equipment', value)}
+                                />
+                                <ProfileSelect 
+                                    selectCfg={profilePage.healthPractices}
+                                    value={profileRecord?.healthPractices}
+                                    onValueChange={(value) => handleProfileChange('healthPractices', value)}
+                                />
+                                <ProfileSelect 
+                                    selectCfg={profilePage.hivStatus}
+                                    value={profileRecord?.hivStatus}
+                                    onValueChange={(value) => handleProfileChange('hivStatus', value)}
+                                />
+                            </CollapsibleContent>
+                        </Collapsible>
+                    </div>
+                    <div className="col-span-2">
+                        <div className="flex flex-col min-h-[3em] text-center justify-center">
+                            <div>
+                                <Button
+                                    className="bg-primary text-white hover:bg-primary/80 min-w-[15em] mt-auto mx-auto"
+                                    onClick={handleContinueClick}
+                                >
+                                    {"Next >"}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <Button
-                    className="bg-primary text-white hover:bg-primary/80 min-w-[15em] mt-auto mx-auto mb-4"
-                    onClick={handleContinueClick}
-                >
-                    {"Next >"}
-                </Button>
             </Content>
         </Page>
     );

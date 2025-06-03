@@ -9,20 +9,22 @@ interface ContentProps {
     extraTopPadding?: number;
 }
 
-export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign = 'center', extraTopPadding = 0 }) => {
+export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign = 'center', extraTopPadding = 38 }) => {
     const safeInsets = useSignal(viewportSafeAreaInsets) ?? { top: 0, bottom: 0, left: 0, right: 0 };
 
     return (
         <div 
-            className={`relative h-full flex flex-col items-${itemsAlign} justify-end ${className} mt-10`}
+            className={`relative h-full flex flex-col items-${itemsAlign} justify-end ${className}`}
             style={{
-                paddingTop: `${3 + extraTopPadding + safeInsets.top}px`,
-                paddingBottom: `${3 + safeInsets.bottom}px`,
+                paddingTop: `${extraTopPadding + safeInsets.top}px`,
+                paddingBottom: `${safeInsets.bottom}px`,
                 paddingLeft: `${3 + safeInsets.left}px`,
                 paddingRight: `${3 + safeInsets.right}px`,
             }}
         >
-            {children}
+            <div className='h-full w-full border-2 border-green-200'>
+                {children}
+            </div>
         </div>
     );
 }; 
