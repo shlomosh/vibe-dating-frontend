@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from '@/components/Link/Link';
 
 import peachImage from '@/assets/peach.png';
-import { splashText } from '@/locale/en-US';
+import { globalDict } from '@/locale/en-US';
 // import { Background } from '@/components/Background';
 
 const styles = `
@@ -38,9 +38,9 @@ export const SplashPage: FC = () => {
             {/* <Background imageUrl="@/assets/login-bg-17.jpg" /> */}
             <Content>
                 <div className="grid grid-cols-1 grid-rows-[1fr_auto_auto] w-full h-full">
-                    <div className="border-2 col-span-1 border-red-200">
+                    <div className="col-span-1">
                     </div>
-                    <div className="border-2 col-span-1 border-red-200">
+                    <div className="col-span-1">
                         <div className="flex w-full justify-center">
                             <span className="text-[4em] hover:text-primary rotate-v">V</span>
                             <span className="text-[4em] hover:text-primary">I</span>
@@ -49,20 +49,20 @@ export const SplashPage: FC = () => {
                             <img src={peachImage} alt="Peach" className="w-[6em] h-[6em] -mt-3" />
                         </div>
                         <div className="text-[1.2em] text-primary text-center pb-[1.5em]">
-                            Find what makes you vibe.
+                            {globalDict.appSlogon}
                         </div>
                         <div className="text-sm text-muted-foreground text-center pb-[1.5em]">
-                            <Link to="/read-terms-conditions">{splashText.readTermsAndConditions}</Link>
+                            <Link to="/read-terms-conditions">{globalDict.readTermsAndConditions}</Link>
                         </div>
                     </div>
-                    <div className="border-2 col-span-1 border-red-200">
+                    <div className="col-span-1">
                         <div className="flex flex-col min-h-[3em] text-center justify-center">
                             <div>
                                 <Button
                                     className="bg-primary text-white hover:bg-primary/80 min-w-[15em] mt-auto mx-auto"
                                     onClick={handleNextClick}
                                 >
-                                    {splashText.acceptTermsAndLogin}
+                                    {globalDict.acceptTermsAndLogin}
                                 </Button>
                             </div>
                         </div>

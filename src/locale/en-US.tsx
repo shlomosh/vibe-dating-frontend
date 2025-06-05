@@ -6,14 +6,42 @@ import {
   SexualityType,
   HostingType,
   MeetingTimeType,
-  EquipmentType,
+  EquipmentSizeType,
+  ButtShapeType,
   HealthPracticesType,
   HivStatusType,
+  PreventionPracticesType,
   ChatStatusType,
 } from '../types/profile';
 
-export const global = {
-    appName: 'Vibe',
+export const globalDict = {
+    // general app info
+    appName: (<>Vibe</>),
+    appSlogon: (<>Find what makes you vibe.</>),
+
+    // general buttons  
+    accept: (<>Accept</>),
+    cancel: (<>Cancel</>),
+    delete: (<>Delete</>),
+    next: (<>Next</>),
+    select: (<>Select</>),
+    create: (<>Create</>),
+
+    // general text
+    loading: (<>Loading...</>),
+
+    // terms and conditions
+    termsAndConditions: (<>Terms and Conditions</>),
+    readTermsAndConditions: (<>Read Terms & Conditions</>),
+    acceptTermsAndLogin: (<>Accept Terms & Login</>),
+
+    // profile
+    deleteProfile: (<>Delete Profile</>),
+    deleteProfileAreYouSureQ: (profileId: string) => (<>{`Delete '${profileId}' profile? This action cannot be undone.`}</>),
+    selectProfile: (<>Select Profile</>),
+    addProfile: (<>Add Profile</>),
+    enterNewProfileName: (<>Enter new profile name (visible only to you)</>),
+    profileName: (<>Profile Name</>),
 }
 
 export const nameGenerator = {
@@ -41,33 +69,26 @@ export const nameGenerator = {
     ] as const
 };
 
-export const splashText = {
-    readTermsAndConditions: (<>Read Terms & Conditions</>),
-    acceptTermsAndLogin: (<>Accept Terms & Login</>),
-}
-
-export const termsAndConditionsPage = {
-  acceptButton: (<>Accept</>),
-  titleText: (<>Terms and Conditions</>),
+export const termsAndConditionsDict = {
   sectionsText: [
     {
       title: (<>1. Introduction</>),
       content: (<>
-          <p>Welcome to {global.appName} ! By using our app, you agree to abide by these Terms and Conditions.
+          <p>Welcome to {globalDict.appName} ! By using our app, you agree to abide by these Terms and Conditions.
           If you do not agree, please refrain from using the service.</p>
         </>)
     },
     {
       title: (<>2. Eligibility</>),
       content: (<>
-        <p>You must be at least 18 years old to use {global.appName}.
+        <p>You must be at least 18 years old to use {globalDict.appName}.
         By signing up, you confirm that all information you provide is accurate.</p>
       </>)
     },
     {
       title: (<>3. Respect Yourself and Respect Others</>),
       content: (<>
-          <p>At {global.appName}, we believe in fostering a safe and respectful environment. Users must adhere to the following principles:</p>
+          <p>At {globalDict.appName}, we believe in fostering a safe and respectful environment. Users must adhere to the following principles:</p>
           <p>
             <p className="ps-[1em] pt-1">• Respect others and treat all users with kindness and dignity. Hate speech, harassment, or discrimination will not be tolerated.</p>
             <p className="ps-[1em] pt-1">• Respect yourself and engage in positive interactions and practice self-care while using the platform.</p>
@@ -81,7 +102,7 @@ export const termsAndConditionsPage = {
       content: (<>
         <p>Users must not:</p>
         <p>
-          <p className="ps-[1em] pt-1">• Use {global.appName} for illegal activities.</p>
+          <p className="ps-[1em] pt-1">• Use {globalDict.appName} for illegal activities.</p>
           <p className="ps-[1em] pt-1">• Share or distribute harmful, explicit, or deceptive content.</p>
           <p className="ps-[1em] pt-1">• Impersonate another person or create fake profiles.</p>
         </p>
@@ -97,28 +118,26 @@ export const termsAndConditionsPage = {
     {
       title: (<>6. Liability & Disclaimers</>),
       content: (<>
-        <p>{global.appName} provides a platform for connection but is not responsible for user interactions outside the app.</p>
+        <p>{globalDict.appName} provides a platform for connection but is not responsible for user interactions outside the app.</p>
         <p>Users assume full responsibility for their communication and meet-ups.</p>
       </>)
     },
     {
       title: (<>7. Termination of Account</>),
       content: (<>
-        <p>{global.appName} reserves the right to suspend or terminate accounts that violate our terms.</p>
+        <p>{globalDict.appName} reserves the right to suspend or terminate accounts that violate our terms.</p>
       </>)
     },
     {
       title: (<>8. Changes to Terms</>),
       content: (<>
-        <p>We may update these terms from time to time. Continued use of {global.appName} after updates implies acceptance of changes.</p>
+        <p>We may update these terms from time to time. Continued use of {globalDict.appName} after updates implies acceptance of changes.</p>
       </>)
     },
   ],
 };
 
-export const profilePage = {
-  selectButton: (<>Select</>),
-
+export const profileDict = {
   nickName: {
       label: 'Nick Name',
   },
@@ -212,7 +231,7 @@ export const profilePage = {
     label: string,
     options: Record<BodyType, string>
   },
-  equipment: {
+  equipmentSize: {
       label: 'Equipment 🍆',
       options: {
         small: 'Small',
@@ -223,14 +242,27 @@ export const profilePage = {
       }
   } satisfies {
     label: string,
-    options: Record<EquipmentType, string>
+    options: Record<EquipmentSizeType, string>
+  },
+  buttShape: {
+      label: 'Butt 🍑',
+      options: {
+        small: 'Small',
+        average: 'Average',
+        bubble: 'Bubble',
+        solid: 'Solid',
+        large: 'Large',
+      }
+  } satisfies {
+    label: string,
+    options: Record<ButtShapeType, string>
   },
   healthPractices: {
-      label: 'Health Practices',
+      label: 'Sex Practices',
       options: {
         condoms: 'Condoms',
-        bb: 'BB (PrEP)',
-        condomsOrBb: 'Condoms or BB (PrEP)',
+        bb: 'BB',
+        condomsOrBb: 'Condoms or BB',
         noPenetrations: 'No Penetrations'
       }
   } satisfies {
@@ -241,13 +273,24 @@ export const profilePage = {
     label: 'HIV Status',
     options: {
       negative: 'Negative',
-      negativeOnPrep: 'Netative, on PrEP',
       positive: 'Positive',
       positiveUndetectable: 'Positive, Undetectable'
     }
   } satisfies {
     label: string,
     options: Record<HivStatusType, string>
+  },
+  preventionPractices: {
+    label: 'STD Prevention',
+    options: {
+      none: 'None',
+      prep: 'PrEP',
+      doxypep: 'DoxyPEP',
+      prepAndDoxypep: 'PrEP & DoxyPEP',
+    }
+  } satisfies {
+    label: string,
+    options: Record<PreventionPracticesType, string>
   },
   meetingTime: {
       label: 'Meeting Time',

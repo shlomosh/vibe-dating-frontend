@@ -1,6 +1,22 @@
 import { FC, ReactNode } from 'react';
 import { useSignal } from '@telegram-apps/sdk-react';
 import { viewportSafeAreaInsets } from '@telegram-apps/sdk';
+import peachImage from '@/assets/peach.png';
+
+interface ContentHeaderProps {
+    text: string | ReactNode;
+}
+
+export const ContentHeader: FC<ContentHeaderProps> = ({ text }) => {
+    return (
+        <div className="text-[1.2em] font-bold text-primary text-left flex items-center gap-2">
+            <span>
+                <img src={peachImage} alt="Peach" className="w-[2em] h-[2em] -mt-1" />
+            </span>
+            <span className="text-[1em] hover:text-primary">{text}</span>
+        </div>
+    );
+};
 
 interface ContentProps {
     children: ReactNode;

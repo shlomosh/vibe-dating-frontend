@@ -1,4 +1,5 @@
-import { cloudStorage } from '@telegram-apps/sdk-react';
+import { cloudStorage, initData } from '@telegram-apps/sdk-react';
+import { LocalStorage } from '@/utils/local-storage';
 
 export class CloudStorage {
   /**
@@ -7,6 +8,10 @@ export class CloudStorage {
    * @returns The stored value or null if not found
    */
   static async getItem<T>(key: string): Promise<T | null> {
+    if (initData?.user()?.id === 1) {
+      return LocalStorage.getItem(key);
+    }
+
     try {
       const item = await cloudStorage.getItem(key);
       return item ? JSON.parse(item) : null;
@@ -22,6 +27,10 @@ export class CloudStorage {
    * @param value - The value to store
    */
   static async setItem<T>(key: string, value: T): Promise<void> {
+    if (initData?.user()?.id === 1) {
+      return LocalStorage.setItem(key, value);
+    }
+
     try {
       const serializedValue = JSON.stringify(value);
       await cloudStorage.setItem(key, serializedValue);
@@ -35,6 +44,10 @@ export class CloudStorage {
    * @param key - The key to remove
    */
   static async deleteItem(key: string): Promise<void> {
+    if (initData?.user()?.id === 1) {
+      return LocalStorage.deleteItem(key);
+    }
+
     try {
       cloudStorage.deleteItem(key);
     } catch (error) {
@@ -47,6 +60,10 @@ export class CloudStorage {
    * @returns Array of all keys in cloudStorage
    */
   static async getKeys(): Promise<string[]> {
+    if (initData?.user()?.id === 1) {
+      return LocalStorage.getKeys();
+    }
+
     try {
       return Object.keys(cloudStorage);
     } catch (error) {
@@ -59,6 +76,10 @@ export class CloudStorage {
    * Clear all items from cloudStorage
    */
   static async clear(): Promise<void> {
+    if (initData?.user()?.id === 1) {
+      return LocalStorage.clear();
+    }
+
     try {
       cloudStorage.clear();
     } catch (error) {

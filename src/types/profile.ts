@@ -55,7 +55,7 @@ export const TravelDistanceTypeOptions = [
 
 export type TravelDistanceType = typeof TravelDistanceTypeOptions[number];
 
-export const EquipmentTypeOptions = [
+export const EquipmentSizeTypeOptions = [
     'small',
     'average',
     'large',
@@ -63,7 +63,17 @@ export const EquipmentTypeOptions = [
     'gigantic'
 ] as const;
 
-export type EquipmentType = typeof EquipmentTypeOptions[number];
+export type EquipmentSizeType = typeof EquipmentSizeTypeOptions[number];
+
+export const ButtShapeTypeOptions = [
+  'small',
+  'average',
+  'bubble',
+  'solid',
+  'large'
+] as const;
+
+export type ButtShapeType = typeof ButtShapeTypeOptions[number];
 
 const HealthPracticesTypeOptions = [
   'condoms',
@@ -76,12 +86,20 @@ export type HealthPracticesType = typeof HealthPracticesTypeOptions[number];
 
 const HivStatusTypeOptions = [
   'negative',
-  'negativeOnPrep',
   'positive',
   'positiveUndetectable'
 ] as const;
 
 export type HivStatusType = typeof HivStatusTypeOptions[number];
+
+const PreventionPracticesTypeOptions = [
+  'none',
+  'prep',
+  'doxypep',
+  'prepAndDoxypep'
+] as const;
+
+export type PreventionPracticesType = typeof PreventionPracticesTypeOptions[number];
 
 const MeetingTimeTypeOptions = [
   'now',
@@ -105,9 +123,11 @@ export interface ProfileRecord {
     age: AgeType | undefined;
     position: PositionType | undefined;
     body: BodyType | undefined;
-    equipment: EquipmentType | undefined;
+    equipmentSize: EquipmentSizeType | undefined;
+    buttShape: ButtShapeType | undefined;
     healthPractices: HealthPracticesType | undefined;
     hivStatus: HivStatusType | undefined;
+    preventionPractices: PreventionPracticesType | undefined;
     hosting: HostingType | undefined;
     travelDistance: TravelDistanceType | undefined;
 };
@@ -115,7 +135,7 @@ export interface ProfileRecord {
 export type ProfileId = string;
 
 export interface ProfileDB {
-  id: ProfileId;
+  id: ProfileId | undefined;
   db: Record<ProfileId, ProfileRecord>;
 };
 
@@ -125,9 +145,11 @@ export const defaultProfile: ProfileRecord = {
   age: undefined,
   position: undefined,
   body: undefined,
-  equipment: undefined,
+  equipmentSize: undefined,
+  buttShape: undefined,
   healthPractices: undefined,
   hivStatus: undefined,
+  preventionPractices: undefined,
   hosting: undefined,
   travelDistance: undefined,
 };
