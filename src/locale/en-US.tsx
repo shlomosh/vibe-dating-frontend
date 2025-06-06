@@ -39,9 +39,12 @@ export const globalDict = {
     deleteProfile: (<>Delete Profile</>),
     deleteProfileAreYouSureQ: (profileId: string) => (<>{`Delete '${profileId}' profile? This action cannot be undone.`}</>),
     selectProfile: (<>Select Profile</>),
-    addProfile: (<>Add Profile</>),
+    addProfile: (<>New Profile</>),
     enterNewProfileName: (<>Enter new profile name (visible only to you)</>),
     profileName: (<>Profile Name</>),
+    extraProfileSettings: (<>Extra profile settings...</>),
+    noImagesOnAlbum: (<>No Images on album</>),
+    clickToEditAlbum: (<>Click to edit album...</>),
 }
 
 export const nameGenerator = {

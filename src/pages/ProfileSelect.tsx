@@ -6,10 +6,10 @@ import { Page } from '@/components/Page.tsx';
 import { Content, ContentHeader } from '@/components/Content';
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
+import { TextEdit } from '@/components/TextEdit';
 
 import { profileDict, globalDict } from '@/locale/en-US';
 import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
@@ -47,6 +47,8 @@ const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className
 
 const ProfileAlbumCarousel = () => {
     const [images, setImages] = useState<string[]>([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
     useEffect(() => {
         const loadImages = async () => {
@@ -55,12 +57,8 @@ const ProfileAlbumCarousel = () => {
                 import('@/assets/sample/01.jpg'),
                 import('@/assets/sample/02.jpg'),
                 import('@/assets/sample/03.jpg'),
-                import('@/assets/sample/04.jpg'),
-                import('@/assets/sample/05.jpg'),
-                import('@/assets/sample/06.jpg'),
-                import('@/assets/sample/07.jpg'),
-                import('@/assets/sample/08.jpg'),
-                import('@/assets/sample/09.jpg'),
+                // import('@/assets/sample/04.jpg'),
+                // import('@/assets/sample/05.jpg'),
             ]);
             
             setImages(imageModules.map(module => module.default));
@@ -69,16 +67,39 @@ const ProfileAlbumCarousel = () => {
         loadImages();
     }, []);
 
-    return (
-        <div className="w-full aspect-[160/240] rounded-[5%] overflow-hidden">
+    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const clickY = e.clientY - rect.top;
+        const clickPercentage = (clickY / rect.height) * 100;
+        
+        if (clickPercentage <= 75) {
+            setIsDialogOpen(true);
+        }
+    };
+
+    const handleDeleteImage = () => {
+        if (images.length > 0) {
+            const newImages = [...images];
+            newImages.splice(currentSlideIndex, 1);
+            setImages(newImages);
+            // Reset current slide index if we're at the end
+            if (currentSlideIndex >= newImages.length) {
+                setCurrentSlideIndex(Math.max(0, newImages.length - 1));
+            }
+        }
+    };
+
+    const CarouselContent = () => (
+        <div className="w-full aspect-[160/240] rounded-[2%] overflow-hidden bg-foreground/10">
             <Swiper
                 effect={'fade'}
                 navigation={true}
                 grabCursor={true}
                 modules={[Navigation, EffectFade]}
                 className="w-full h-full"
+                onSlideChange={(swiper) => setCurrentSlideIndex(swiper.activeIndex)}
             >
-                {images.map((item, index) => (
+                {images.length > 0 ? images.map((item, index) => (
                     <SwiperSlide key={index} className="flex items-center justify-center">
                         <div className="flex w-full h-full">
                             <img 
@@ -96,9 +117,50 @@ const ProfileAlbumCarousel = () => {
                             />
                         </div>
                     </SwiperSlide>
-                ))}
+                )) : (
+                    <SwiperSlide className="flex items-center justify-center">
+                        <div className="flex w-full h-full items-center justify-center text-foreground/50">
+                            {(isDialogOpen) ? (<>{globalDict.noImagesOnAlbum}</>) : (<>{globalDict.clickToEditAlbum}</>)}
+                        </div>
+                    </SwiperSlide>
+                )}
             </Swiper>
         </div>
+    );
+
+    return (
+        <>
+            <div onClick={handleClick} className="cursor-pointer">
+                <CarouselContent />
+            </div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
+                    <div className="w-[85vw] aspect-[160/240]">
+                        <CarouselContent />
+                        <div className="absolute top-[95%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                                <div className="flex gap-2">
+                                    <TrashIcon 
+                                        className={
+                                            `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${
+                                                images.length == 0 
+                                                    ? "text-white/50 border-white/10 cursor-not-allowed"
+                                                    : "text-white border-white/20 hover:border-white/50"
+                                            }`}
+                                        onClick={handleDeleteImage}
+                                    />
+                                    <PlusIcon className={
+                                        `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${
+                                        images.length >= 5 
+                                            ? "text-white/50 border-white/10 cursor-not-allowed"
+                                            : "text-white border-white/20 hover:border-white/50"
+                                      }`}
+                                    />
+                                </div>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
 
@@ -365,20 +427,18 @@ export const ProfileSelectPage: FC = () => {
                                 <div className="flex items-center gap-2">
                                     {isOpen ? (<>
                                         <MinusIcon className="w-4 h-4" />
-                                        <span>Extra profile settings...</span>
                                     </>) : (<>
                                         <PlusIcon className="w-4 h-4" />
-                                        <span>Extra profile settings...</span>
                                     </>)}
-                                </div>
+                                    <span>{globalDict.extraProfileSettings}</span>
+                                    </div>
                             </CollapsibleTrigger>
                             <CollapsibleContent className="grid grid-cols-2 gap-2">
                                 <div className="col-span-2">
-                                    {/* <span className="text-sm text-foreground/40 px-1">{profileDict.aboutMe.label}</span> */}
-                                    <Textarea 
+                                    <TextEdit 
                                         placeholder={profileDict.aboutMe.label}
                                         value={profileRecord?.aboutMe}
-                                        onChange={(e) => handleProfileChange('aboutMe', e.target.value)}
+                                        onChange={(value) => handleProfileChange('aboutMe', value)}
                                     />
                                 </div>
                                 <ProfileSelect 
