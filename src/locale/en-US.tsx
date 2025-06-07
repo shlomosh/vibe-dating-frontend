@@ -45,6 +45,9 @@ export const globalDict = {
     extraProfileSettings: (<>Extra profile settings...</>),
     noImagesOnAlbum: (<>No Images on album</>),
     clickToEditAlbum: (<>Click to edit album...</>),
+    addImage: (<>Add Image</>),
+    clickToUploadImage: (<>Click to upload image...</>),
+    save: (<>Save</>),
 }
 
 export const nameGenerator = {

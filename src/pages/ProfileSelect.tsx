@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
-import { TextEdit } from '@/components/TextEdit';
+import { TextEditor } from '@/components/TextEditor';
+import { ImageEditor } from '@/components/ImageEditor';
 
 import { profileDict, globalDict } from '@/locale/en-US';
 import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
@@ -47,7 +48,8 @@ const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className
 
 const ProfileAlbumCarousel = () => {
     const [images, setImages] = useState<string[]>([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isAlbumDialogOpen, setIsAlbumDialogOpen] = useState(false);
+    const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
     useEffect(() => {
@@ -73,7 +75,7 @@ const ProfileAlbumCarousel = () => {
         const clickPercentage = (clickY / rect.height) * 100;
         
         if (clickPercentage <= 75) {
-            setIsDialogOpen(true);
+            setIsAlbumDialogOpen(true);
         }
     };
 
@@ -87,6 +89,11 @@ const ProfileAlbumCarousel = () => {
                 setCurrentSlideIndex(Math.max(0, newImages.length - 1));
             }
         }
+    };
+
+    const handleAddImage = (imageUrl: string) => {
+        console.log('handleAddImage', imageUrl);
+        setImages([...images, imageUrl]);
     };
 
     const CarouselContent = () => (
@@ -120,7 +127,7 @@ const ProfileAlbumCarousel = () => {
                 )) : (
                     <SwiperSlide className="flex items-center justify-center">
                         <div className="flex w-full h-full items-center justify-center text-foreground/50">
-                            {(isDialogOpen) ? (<>{globalDict.noImagesOnAlbum}</>) : (<>{globalDict.clickToEditAlbum}</>)}
+                            {(isAlbumDialogOpen) ? (<>{globalDict.noImagesOnAlbum}</>) : (<>{globalDict.clickToEditAlbum}</>)}
                         </div>
                     </SwiperSlide>
                 )}
@@ -133,7 +140,7 @@ const ProfileAlbumCarousel = () => {
             <div onClick={handleClick} className="cursor-pointer">
                 <CarouselContent />
             </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog open={isAlbumDialogOpen} onOpenChange={setIsAlbumDialogOpen}>
                 <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
                     <div className="w-[85vw] aspect-[160/240]">
                         <CarouselContent />
@@ -148,15 +155,31 @@ const ProfileAlbumCarousel = () => {
                                             }`}
                                         onClick={handleDeleteImage}
                                     />
-                                    <PlusIcon className={
-                                        `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${
-                                        images.length >= 5 
-                                            ? "text-white/50 border-white/10 cursor-not-allowed"
-                                            : "text-white border-white/20 hover:border-white/50"
-                                      }`}
+                                    <PlusIcon 
+                                        className={
+                                            `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${
+                                            images.length >= 5 
+                                                ? "text-white/50 border-white/10 cursor-not-allowed"
+                                                : "text-white border-white/20 hover:border-white/50"
+                                          }`}
+                                        onClick={() => {
+                                            if (images.length < 5) {
+                                                setIsImageEditorOpen(true);
+                                            }
+                                        }}
                                     />
                                 </div>
                         </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={isImageEditorOpen} onOpenChange={setIsImageEditorOpen}>
+                <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
+                    <div className="w-[85vw] aspect-[160/240]">
+                    <ImageEditor 
+                        onCancel={() => setIsImageEditorOpen(false)}
+                        onImageSave={handleAddImage}
+                    />
                     </div>
                 </DialogContent>
             </Dialog>
@@ -294,20 +317,20 @@ export const ProfileSelectPage: FC = () => {
         }
     }, [profileDB]);
 
-    const handleProfileChange = (field: keyof ProfileRecord, value: string) => {
+    const handleProfileChange = (field: keyof ProfileRecord, value: string | undefined) => {
         if (!profileDB || !profileId) return;
 
         const newProfileDB = { ...profileDB };
         if (field === 'hosting' && value === 'hostOnly') {
             newProfileDB.db[profileId] = {
                 ...profileRecord,
-                [field]: value,
+                [field]: value || '',
                 travelDistance: 'none'
             };
         } else {
             newProfileDB.db[profileId] = {
                 ...profileRecord,
-                [field]: value
+                [field]: value || ''
             };
         }
         setProfileDB(newProfileDB);
@@ -435,7 +458,7 @@ export const ProfileSelectPage: FC = () => {
                             </CollapsibleTrigger>
                             <CollapsibleContent className="grid grid-cols-2 gap-2">
                                 <div className="col-span-2">
-                                    <TextEdit 
+                                    <TextEditor 
                                         placeholder={profileDict.aboutMe.label}
                                         value={profileRecord?.aboutMe}
                                         onChange={(value) => handleProfileChange('aboutMe', value)}

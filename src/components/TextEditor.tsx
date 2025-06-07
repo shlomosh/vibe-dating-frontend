@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Textarea } from "@/components/ui/textarea"
 
-interface TextEditProps {
+interface TextEditorProps {
     label?: string;
     placeholder?: string;
     value?: string;
@@ -9,7 +9,7 @@ interface TextEditProps {
     className?: string;
 }
 
-export const TextEdit: FC<TextEditProps> = ({ 
+export const TextEditor: FC<TextEditorProps> = ({ 
     label, 
     placeholder, 
     value, 
