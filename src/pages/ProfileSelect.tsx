@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 import { Page } from '@/components/Page.tsx';
 import { Content, ContentHeader } from '@/components/Content';
@@ -18,7 +19,7 @@ import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
 import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { PlusIcon, TrashIcon, MinusIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, MinusIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useProfile } from '@/contexts/profile-context';
 
 
@@ -96,44 +97,61 @@ const ProfileAlbumCarousel = () => {
         setImages([...images, imageUrl]);
     };
 
-    const CarouselContent = () => (
-        <div className="w-full aspect-[160/240] rounded-[2%] overflow-hidden bg-foreground/10">
-            <Swiper
-                effect={'fade'}
-                navigation={true}
-                grabCursor={true}
-                modules={[Navigation, EffectFade]}
-                className="w-full h-full"
-                onSlideChange={(swiper) => setCurrentSlideIndex(swiper.activeIndex)}
-            >
-                {images.length > 0 ? images.map((item, index) => (
-                    <SwiperSlide key={index} className="flex items-center justify-center">
-                        <div className="flex w-full h-full">
-                            <img 
-                                src={item} 
-                                alt={`Profile Image ${index + 1}`} 
-                                className="w-full h-full object-cover"
-                                loading="lazy"
-                                style={{
-                                    minWidth: "100%",
-                                    minHeight: "100%",
-                                    objectFit: "cover",
-                                    objectPosition: "center",
-                                    transform: "scale(1.5)"
-                                }}
-                            />
-                        </div>
-                    </SwiperSlide>
-                )) : (
-                    <SwiperSlide className="flex items-center justify-center">
-                        <div className="flex w-full h-full items-center justify-center text-foreground/50">
-                            {(isAlbumDialogOpen) ? (<>{globalDict.noImagesOnAlbum}</>) : (<>{globalDict.clickToEditAlbum}</>)}
-                        </div>
-                    </SwiperSlide>
-                )}
-            </Swiper>
-        </div>
-    );
+    const CarouselContent = () => {
+        const swiperRef = React.useRef<any>(null);
+
+        return (
+            <div className="relative w-full aspect-[160/240] rounded-[2%] overflow-hidden bg-foreground/10">
+                <Swiper
+                    effect={'fade'}
+                    grabCursor={true}
+                    modules={[EffectFade]}
+                    className="w-full h-full"
+                    onSwiper={(swiper) => {
+                        swiperRef.current = swiper;
+                    }}
+                >
+                    {images.length > 0 ? images.map((item, index) => (
+                        <SwiperSlide key={index} className="flex items-center justify-center">
+                            <div className="flex w-full h-full">
+                                <img 
+                                    src={item} 
+                                    alt={`Profile Image ${index + 1}`} 
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                    style={{
+                                        minWidth: "100%",
+                                        minHeight: "100%",
+                                        objectFit: "cover",
+                                        objectPosition: "center",
+                                        transform: "scale(1.5)"
+                                    }}
+                                />
+                            </div>
+                        </SwiperSlide>
+                    )) : (
+                        <SwiperSlide className="flex items-center justify-center">
+                            <div className="flex w-full h-full items-center justify-center text-foreground/50">
+                                {(isAlbumDialogOpen) ? (<>{globalDict.noImagesOnAlbum}</>) : (<>{globalDict.clickToEditAlbum}</>)}
+                            </div>
+                        </SwiperSlide>
+                    )}
+                </Swiper>
+                <div className="absolute w-full top-[100%] pb-16 px-8 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                    <div className="flex justify-between">
+                        <ChevronLeftIcon 
+                            className="w-10 h-10 rounded-[8px] p-1 border-2 bg-black/50 text-white border-white/20 hover:border-white/50"
+                            onClick={() => swiperRef.current?.slidePrev()}
+                        />
+                        <ChevronRightIcon 
+                            className="w-10 h-10 rounded-[8px] p-1 border-2 bg-black/50 text-white border-white/20 hover:border-white/50"
+                            onClick={() => swiperRef.current?.slideNext()}
+                        />
+                    </div>
+                </div>                
+            </div>
+        );
+    };
 
     return (
         <>
@@ -144,7 +162,7 @@ const ProfileAlbumCarousel = () => {
                 <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
                     <div className="w-[85vw] aspect-[160/240]">
                         <CarouselContent />
-                        <div className="absolute top-[95%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                        <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
                                 <div className="flex gap-2">
                                     <TrashIcon 
                                         className={

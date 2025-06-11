@@ -127,13 +127,6 @@
   --shadow-2xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.30);
   --tracking-normal: 0em;
 
-  /* Swiper navigation */
-  --swiper-navigation-size: 1.5em;
-  --swiper-navigation-top-offset: 90%;
-  --swiper-navigation-sides-offset: 1em;
-  --swiper-navigation-color: oklch(0.54 0.05 284.74);
-}
-
 .dark {
   --background: oklch(0.17 0.02 283.80);
   --foreground: oklch(0.92 0.03 285.88);
