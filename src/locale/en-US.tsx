@@ -42,7 +42,7 @@ export const globalDict = {
     addProfile: (<>New Profile</>),
     enterNewProfileName: (<>Enter new profile name (visible only to you)</>),
     profileName: (<>Profile Name</>),
-    extraProfileSettings: (<>Extra profile settings...</>),
+    extraProfileSettings: (<>Additional profile settings (click to open)</>),
     noImagesOnAlbum: (<>No Images on album</>),
     clickToEditAlbum: (<>Click to edit album...</>),
     addImage: (<>Add Image</>),

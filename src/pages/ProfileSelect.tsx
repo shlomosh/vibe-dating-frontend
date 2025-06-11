@@ -19,7 +19,7 @@ import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
 import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { PlusIcon, TrashIcon, MinusIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, MinusIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
 import { useProfile } from '@/contexts/profile-context';
 
 
@@ -463,16 +463,21 @@ export const ProfileSelectPage: FC = () => {
                         <ProfileAlbumCarousel />
                     </div>
                     <div className="col-span-2">
-                        <Collapsible className="col-span-6" open={isOpen} onOpenChange={setIsOpen}>
+                        <Collapsible className="col-span-6 text-center text-muted-foreground" open={isOpen} onOpenChange={setIsOpen}>
                             <CollapsibleTrigger className="my-2">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 cursor-pointer">
                                     {isOpen ? (<>
-                                        <MinusIcon className="w-4 h-4" />
+                                        <ChevronDownIcon className="w-4 h-4" />
                                     </>) : (<>
-                                        <PlusIcon className="w-4 h-4" />
+                                        <ChevronRightIcon className="w-4 h-4" />
                                     </>)}
                                     <span>{globalDict.extraProfileSettings}</span>
-                                    </div>
+                                    {isOpen ? (<>
+                                        <ChevronDownIcon className="w-4 h-4" />
+                                    </>) : (<>
+                                        <ChevronLeftIcon className="w-4 h-4" />
+                                    </>)}
+                                </div>
                             </CollapsibleTrigger>
                             <CollapsibleContent className="grid grid-cols-2 gap-2">
                                 <div className="col-span-2">
