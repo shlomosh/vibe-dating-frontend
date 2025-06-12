@@ -38,7 +38,7 @@ export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign
                 paddingRight: `${3 + safeInsets.right}px`,
             }}
         >
-            <div className='h-full w-full border-2 border-green-200'>
+            <div className='h-full w-full'>
                 {children}
             </div>
         </div>

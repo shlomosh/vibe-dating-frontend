@@ -11,6 +11,24 @@ import { LocationInput } from '@/components/LocationInput';
 
 import { globalDict } from '@/locale/en-US';
 import { Select, SelectGroup, SelectContent, SelectValue, SelectTrigger, SelectLabel, SelectItem } from '@/components/ui/select';
+import { MapPinIcon } from 'lucide-react';
+
+// Function to generate random offset within radius (in kilometers)
+const getRandomOffset = (radiusKm: number): { lat: number; lng: number } => {
+    // Convert radius from km to degrees (approximate)
+    const radiusDegrees = radiusKm / 111.32;
+    
+    // Generate random angle
+    const angle = Math.random() * 2 * Math.PI;
+    
+    // Generate random distance within radius
+    const distance = Math.sqrt(Math.random()) * radiusDegrees;
+    
+    return {
+        lat: distance * Math.cos(angle),
+        lng: distance * Math.sin(angle)
+    };
+};
 
 export const LocationSetupPage: FC = () => {
     const navigate = useNavigate();
@@ -66,12 +84,45 @@ export const LocationSetupPage: FC = () => {
         }
     }, [selectedCoordinates]);
 
+    const handlePrevPageClick = () => {
+        navigate('/profile-setup');
+    }
+
     const handleNextPageClick = () => {
-        navigate('demo-index');
+        navigate('/demo-index');
     }
 
     const handleLocationSelect = (location: { lat: number; lng: number; address: string }) => {
         setSelectedCoordinates({ lat: location.lat, lng: location.lng });
+    };
+
+    const handleUpdateLocation = () => {
+        if (!navigator.geolocation) {
+            console.error('Geolocation is not supported by your browser');
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                
+                // Get random offset based on selected radius
+                const offset = getRandomOffset(randomizationRadius);
+                
+                // Apply offset to coordinates
+                const obscuredLat = latitude + offset.lat;
+                const obscuredLng = longitude + offset.lng;
+                
+                // Update selected coordinates
+                setSelectedCoordinates({
+                    lat: obscuredLat,
+                    lng: obscuredLng
+                });
+            },
+            (error) => {
+                console.error('Error getting location:', error);
+            }
+        );
     };
 
     return (
@@ -82,48 +133,53 @@ export const LocationSetupPage: FC = () => {
                         <ContentHeader text={globalDict.yourLocation} />
                     </div>
                     <div className="col-span-2">
-                        <span className="text-sm text-foreground/40 px-1">Select Location Mode</span>
-                        <div className="flex gap-2">
-                            <Button
-                                variant={locationMode === 'automatic' ? 'default' : 'outline'} 
-                                onClick={() => setLocationMode('automatic')}
-                                className="flex-1"
-                                disabled={locationMode === undefined}
-                            >
-                                Automatic Location
-                            </Button>
-                            <Button
-                                variant={locationMode === 'manual' ? 'default' : 'outline'}
-                                onClick={() => setLocationMode('manual')} 
-                                className="flex-1"
-                                disabled={locationMode === undefined}
-                            >
-                                Manual Location
-                            </Button>
+                        <div className="flex flex-col justify-end w-full">
+                            <span className="text-sm text-foreground px-1">{globalDict.locationMode}</span>
+                            <Select value={locationMode} onValueChange={(value) => setLocationMode(value as 'automatic' | 'manual')}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Location Mode</SelectLabel>
+                                        <SelectItem value="automatic">{globalDict.automaticLocation}</SelectItem>
+                                        <SelectItem value="manual">{globalDict.manualLocation}</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                     {locationMode === 'automatic' ? (
-                        <div className="col-span-2">
-                            <span className="text-sm text-foreground/40 px-1">Hide my accurate location by randomizing it by:</span>
-                                <div className="flex items-center space-x-4">
-                                    <Select value={randomizationRadius.toString()} onValueChange={(value) => setRandomizationRadius(Number(value))}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select radius" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Radius (km)</SelectLabel>
-                                                {[0, 1, 5, 10].map(value => (
-                                                    <SelectItem key={value} value={value.toString()}>{value} Km</SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                        </div>
+                        <>
+                            <div className="col-span-1">
+                                <span className="text-sm text-foreground px-1">{globalDict.obscureRadius}</span>
+                                <Select value={randomizationRadius.toString()} onValueChange={(value) => setRandomizationRadius(Number(value))}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={globalDict.radius} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>{globalDict.radius} ({globalDict.km})</SelectLabel>
+                                            {[0, 1, 5, 10].map(value => (
+                                                <SelectItem key={value} value={value.toString()}>{value} {globalDict.km}</SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="col-span-1 flex items-end">
+                                <Button 
+                                    className="w-full"
+                                    onClick={handleUpdateLocation}
+                                >
+                                    <MapPinIcon className="w-4 h-4" />
+                                    Update Location
+                                </Button>
+                            </div>
+                        </>
                     ) : (
                         <div className="col-span-2">
-                            <span className="text-sm text-foreground/40 px-1">Enter your location</span>
+                            <span className="text-sm text-foreground px-1"> {globalDict.enterYourLocation}</span>
                             <LocationInput
                                 value={manualLocation}
                                 onChange={setManualLocation}
@@ -132,30 +188,55 @@ export const LocationSetupPage: FC = () => {
                         </div>
                     )}
 
-                    {selectedCoordinates && (
-                        <div className="col-span-2">
-                            <div className='flex flex-col h-full'>
-                                <span className="text-sm text-foreground/40 px-1">Your location as it will appear:</span>
-                                <div className="grow rounded-lg border border-border">
-                                    <div ref={mapContainer} className="h-full" />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
                     <div className="col-span-2">
-                        <div className="flex flex-col min-h-[3em] text-center justify-center">
-                            <div>
-                                <Button
-                                    className="bg-primary text-white hover:bg-primary/80 min-w-[15em] mt-auto mx-auto"
-                                    onClick={handleNextPageClick}
-                                    disabled={locationMode === 'manual' && (!manualLocation.trim() || !selectedCoordinates)}
-                                    >
-                                    {globalDict.next} ❯
-                                </Button>
+                        <div className='flex flex-col h-full'>
+                            <div className="text-sm text-foreground px-1">{globalDict.yourLocationAsItWillAppear}</div>
+                            <div className="grow rounded-lg border border-border relative">
+                                <div ref={mapContainer} className="h-full" />
+                                {!selectedCoordinates && (
+                                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                                        <div className="text-white text-center text-lg font-medium">
+                                            {locationMode === 'automatic' 
+                                                ? globalDict.locationNotSetAutomatic
+                                                : globalDict.locationNotSetManual}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+                            {selectedCoordinates && (
+                                <div className="mt-2 text-sm text-foreground px-1">
+                                    <div className="flex justify-between">
+                                        <span>Latitude:</span>
+                                        <span>{selectedCoordinates.lat.toFixed(6)}°</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Longitude:</span>
+                                        <span>{selectedCoordinates.lng.toFixed(6)}°</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    </div>                    
+                    </div>
+
+                    <div className="col-span-2 flex flex-row justify-between">
+                        <div className="flex-1 flex justify-center items-center">
+                            <Button
+                                className="min-w-[10em]"
+                                onClick={handlePrevPageClick}
+                            >
+                                ❮ {globalDict.back}
+                            </Button>
+                        </div>
+                        <div className="flex-1 flex justify-center items-center">
+                            <Button
+                                className="min-w-[10em]"
+                                onClick={handleNextPageClick}
+                                disabled={!selectedCoordinates}
+                            >
+                                {globalDict.next} ❯
+                            </Button>
+                        </div>
+                    </div>                 
                 </div>
             </Content>
         </Page>

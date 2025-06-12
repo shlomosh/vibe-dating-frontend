@@ -27,8 +27,8 @@ const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className
     return (
         <div className={className}>
             <Select disabled={disabled} value={value} onValueChange={onValueChange}>
-                {selectCfg.label ? (<span className="text-sm text-foreground/40 px-1">{selectCfg.label}</span>) : null}
-                <SelectTrigger className="w-full">
+                {selectCfg.label && <span className="text-sm text-foreground px-1">{selectCfg.label}</span>}
+                <SelectTrigger className="w-full text-sm text-foreground">
                     <SelectValue placeholder="--" />
                 </SelectTrigger>
                 <SelectContent>
@@ -131,7 +131,7 @@ const ProfileAlbumCarousel = () => {
                         </SwiperSlide>
                     )) : (
                         <SwiperSlide className="flex items-center justify-center">
-                            <div className="flex w-full h-full items-center justify-center text-foreground/50">
+                            <div className="flex w-full h-full items-center justify-center text-foreground">
                                 {(isAlbumDialogOpen) ? (<>{globalDict.noImagesOnAlbum}</>) : (<>{globalDict.clickToEditAlbum}</>)}
                             </div>
                         </SwiperSlide>
@@ -363,6 +363,10 @@ export const ProfileSetupPage: FC = () => {
         setProfileRecord(newProfileDB.db[value]);
     };
 
+    const handlePrevPageClick = () => {
+        navigate('/');
+    }
+
     const handleNextPageClick = () => {
         navigate('/location-setup');
     }
@@ -402,7 +406,7 @@ export const ProfileSetupPage: FC = () => {
             <Content className='text-md'>
                 <div className="grid grid-cols-2 grid-rows-[auto_auto_auto_1fr_auto] w-full h-full gap-2">
                     <div className="col-span-2">
-                        <ContentHeader text={globalDict.selectProfile} />
+                        <ContentHeader text={globalDict.yourProfile} />
                     </div>
                     <div className="col-span-2">
                         <div className="flex items-end min-h-fit">
@@ -428,9 +432,10 @@ export const ProfileSetupPage: FC = () => {
                     <div className="col-span-1">
                         <div className="flex flex-col">
                             <div className="flex flex-col">
-                                <span className="text-sm text-foreground/40 px-1">{profileDict.nickName.label}</span>
+                                <span className="text-sm text-foreground px-1">{profileDict.nickName.label}</span>
                                     <Input 
                                         type="text" 
+                                        className="text-sm text-foreground"
                                         placeholder={profileDict.nickName.label}
                                         value={profileRecord?.nickName}
                                         onChange={(e) => handleProfileChange('nickName', e.target.value)}
@@ -463,9 +468,9 @@ export const ProfileSetupPage: FC = () => {
                         <ProfileAlbumCarousel />
                     </div>
                     <div className="col-span-2">
-                        <Collapsible className="col-span-6 text-center text-muted-foreground" open={isOpen} onOpenChange={setIsOpen}>
-                            <CollapsibleTrigger className="my-2">
-                                <div className="flex items-center gap-2 cursor-pointer">
+                        <Collapsible className="col-span-6 text-muted-foreground" open={isOpen} onOpenChange={setIsOpen}>
+                            <CollapsibleTrigger className="my-2 w-full">
+                                <div className="text-sm flex items-center justify-center gap-2 cursor-pointer">
                                     {isOpen ? (<>
                                         <ChevronDownIcon className="w-4 h-4" />
                                     </>) : (<>
@@ -481,7 +486,8 @@ export const ProfileSetupPage: FC = () => {
                             </CollapsibleTrigger>
                             <CollapsibleContent className="grid grid-cols-2 gap-2">
                                 <div className="col-span-2">
-                                    <TextEditor 
+                                    <TextEditor
+                                        className="text-sm text-foreground"
                                         placeholder={profileDict.aboutMe.label}
                                         value={profileRecord?.aboutMe}
                                         onChange={(value) => handleProfileChange('aboutMe', value)}
@@ -520,16 +526,22 @@ export const ProfileSetupPage: FC = () => {
                             </CollapsibleContent>
                         </Collapsible>
                     </div>
-                    <div className="col-span-2">
-                        <div className="flex flex-col min-h-[3em] text-center justify-center">
-                            <div>
-                                <Button
-                                    className="bg-primary text-white hover:bg-primary/80 min-w-[15em] mt-auto mx-auto"
-                                    onClick={handleNextPageClick}
-                                >
-                                    {globalDict.next} ❯
-                                </Button>
-                            </div>
+                    <div className="col-span-2 flex flex-row justify-between">
+                        <div className="flex-1 flex justify-center items-center">
+                            <Button
+                                className="min-w-[10em]"
+                                onClick={handlePrevPageClick}
+                            >
+                                ❮ {globalDict.back}
+                            </Button>
+                        </div>
+                        <div className="flex-1 flex justify-center items-center">
+                            <Button
+                                className="min-w-[10em]"
+                                onClick={handleNextPageClick}
+                            >
+                                {globalDict.next} ❯
+                            </Button>
                         </div>
                     </div>
                 </div>

@@ -24,6 +24,7 @@ export const globalDict = {
     cancel: (<>Cancel</>),
     delete: (<>Delete</>),
     next: (<>Next</>),
+    back: (<>Back</>),
     select: (<>Select</>),
     create: (<>Create</>),
 
@@ -36,9 +37,9 @@ export const globalDict = {
     acceptTermsAndLogin: (<>Accept Terms & Login</>),
 
     // profile
+    yourProfile: (<>Your Profile</>),
     deleteProfile: (<>Delete Profile</>),
     deleteProfileAreYouSureQ: (profileId: string) => (<>{`Delete '${profileId}' profile? This action cannot be undone.`}</>),
-    selectProfile: (<>Select Profile</>),
     addProfile: (<>New Profile</>),
     enterNewProfileName: (<>Enter new profile name (visible only to you)</>),
     profileName: (<>Profile Name</>),
@@ -51,6 +52,18 @@ export const globalDict = {
 
     // location
     yourLocation: (<>Your Location</>),
+    locationMode: (<>Location Mode</>),
+    automaticLocation: (<>Automatic Location</>),
+    manualLocation: (<>Manual Location</>),
+    updateLocation: (<>Update Location</>),
+    getDeviceLocation: (<>Get Device Location</>),
+    enterYourLocation: (<>Enter your location</>),
+    yourLocationAsItWillAppear: (<>Your location as it will appear:</>),
+    obscureRadius: (<>Obscure Radius</>),
+    locationNotSetAutomatic: (<div>Your location not set.<p className="text-sm italic">(Click 'Update Location' to set it)</p></div>),
+    locationNotSetManual: (<div>Your location not set.<p className="text-sm italic">(Enter your location address to set it)</p></div>),
+    radius: (<>Radius</>),
+    km: (<>Km</>),
 }
 
 export const nameGenerator = {

@@ -18,8 +18,9 @@ export const TextEditor: FC<TextEditorProps> = ({
 }) => {
     return (
         <div className={className}>
-            {label && <span className="text-sm text-foreground/40 px-1">{label}</span>}
-            <Textarea 
+            {label && <span className="text-sm text-foreground/80 px-1">{label}</span>}
+            <Textarea
+                className='text-sm text-foreground' 
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange?.(e.target.value)}

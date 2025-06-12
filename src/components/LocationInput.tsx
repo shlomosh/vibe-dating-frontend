@@ -37,7 +37,7 @@ export const LocationInput: FC<LocationInputProps> = ({ value, onChange, onLocat
 
         try {
             const response = await fetch(
-                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxgl.accessToken}&limit=5`
+                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?types=region,district,place,address&access_token=${mapboxgl.accessToken}&limit=5`
             );
             const data = await response.json();
             setSuggestions(data.features || []);
@@ -74,7 +74,7 @@ export const LocationInput: FC<LocationInputProps> = ({ value, onChange, onLocat
                 value={value}
                 onChange={handleInputChange}
                 placeholder="Enter city, address, or coordinates"
-                className="w-full"
+                className="w-full text-sm"
             />
             {showSuggestions && suggestions.length > 0 && (
                 <div
