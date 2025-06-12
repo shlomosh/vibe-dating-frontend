@@ -29,7 +29,7 @@ export const SplashPage: FC = () => {
     const navigate = useNavigate();
 
     const handleNextClick = () => {
-        navigate('profile-select'); // demo-index
+        navigate('/profile-setup');
     }
 
     return (

@@ -126,6 +126,7 @@
   --shadow-xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.12), 0px 8px 10px -1px hsl(240 30% 25% / 0.12);
   --shadow-2xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.30);
   --tracking-normal: 0em;
+}
 
 .dark {
   --background: oklch(0.17 0.02 283.80);
@@ -180,8 +181,6 @@
   --shadow-lg: 0px 4px 10px 0px hsl(240 30% 25% / 0.12), 0px 4px 6px -1px hsl(240 30% 25% / 0.12);
   --shadow-xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.12), 0px 8px 10px -1px hsl(240 30% 25% / 0.12);
   --shadow-2xl: 0px 4px 10px 0px hsl(240 30% 25% / 0.30);
-
-  --swiper-navigation-color: oklch(0.72 0.05 285.17);
 }
 
 @layer base {

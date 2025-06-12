@@ -48,6 +48,9 @@ export const globalDict = {
     addImage: (<>Add Image</>),
     clickToUploadImage: (<>Click to upload image...</>),
     save: (<>Save</>),
+
+    // location
+    yourLocation: (<>Your Location</>),
 }
 
 export const nameGenerator = {

@@ -19,7 +19,7 @@ import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
 import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { PlusIcon, TrashIcon, MinusIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
 import { useProfile } from '@/contexts/profile-context';
 
 
@@ -105,7 +105,7 @@ const ProfileAlbumCarousel = () => {
                 <Swiper
                     effect={'fade'}
                     grabCursor={true}
-                    modules={[EffectFade]}
+                    modules={[Navigation, EffectFade]}
                     className="w-full h-full"
                     onSwiper={(swiper) => {
                         swiperRef.current = swiper;
@@ -315,7 +315,7 @@ const DeleteProfileDialog: FC<{
     )
 };
 
-export const ProfileSelectPage: FC = () => {
+export const ProfileSetupPage: FC = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const { profileDB, setProfileDB, isLoading } = useProfile();
@@ -363,8 +363,8 @@ export const ProfileSelectPage: FC = () => {
         setProfileRecord(newProfileDB.db[value]);
     };
 
-    const handleSelectClick = () => {
-        navigate('demo-index');
+    const handleNextPageClick = () => {
+        navigate('/location-setup');
     }
 
     const handleDeleteProfile = async () => { 
@@ -404,7 +404,7 @@ export const ProfileSelectPage: FC = () => {
                     <div className="col-span-2">
                         <ContentHeader text={globalDict.selectProfile} />
                     </div>
-                    <div className="col-span-2 ">
+                    <div className="col-span-2">
                         <div className="flex items-end min-h-fit">
                             <div className="grow">
                                 <ProfileSelect 
@@ -525,7 +525,7 @@ export const ProfileSelectPage: FC = () => {
                             <div>
                                 <Button
                                     className="bg-primary text-white hover:bg-primary/80 min-w-[15em] mt-auto mx-auto"
-                                    onClick={handleSelectClick}
+                                    onClick={handleNextPageClick}
                                 >
                                     {globalDict.next} ❯
                                 </Button>

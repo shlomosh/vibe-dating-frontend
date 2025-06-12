@@ -7,7 +7,8 @@ import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
 import { SplashPage } from '@/pages/SplashPage';
 import { TermsAndConditionsPage } from '@/pages/TermsAndConditionsPage';
-import { ProfileSelectPage } from '@/pages/ProfileSelect';
+import { ProfileSetupPage } from '@/pages/ProfileSetupPage';
+import { LocationSetupPage } from '@/pages/LocationSetupPage';
 
 interface Route {
   path: string;
@@ -19,7 +20,8 @@ interface Route {
 export const routes: Route[] = [
   { path: '/', Component: SplashPage },
   { path: '/read-terms-conditions', Component: TermsAndConditionsPage, title: 'Terms and Conditions' },
-  { path: '/profile-select', Component: ProfileSelectPage, title: 'Profile Select' },
+  { path: '/profile-setup', Component: ProfileSetupPage, title: 'Profile Select' },
+  { path: '/location-setup', Component: LocationSetupPage, title: 'Location Setup' },
   { path: '/demo-index', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
