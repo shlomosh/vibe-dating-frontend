@@ -213,7 +213,7 @@ const CreateProfileDialog: FC<{
 
     return (
         <Dialog>
-            <DialogTrigger asChild>
+            <DialogTrigger>
                 <Button variant="outline" size="icon">
                     <PlusIcon className="w-4 h-4" />
                 </Button>
@@ -273,7 +273,7 @@ const DeleteProfileDialog: FC<{
 
     return (
         <Dialog>
-            <DialogTrigger asChild>
+            <DialogTrigger>
                 <Button variant="outline" size="icon">
                     <TrashIcon className="w-4 h-4" />
                 </Button>

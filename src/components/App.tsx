@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
-import { retrieveLaunchParams, useSignal, isMiniAppDark } from '@telegram-apps/sdk-react';
+import { retrieveLaunchParams, useSignal, isMiniAppDark, expandViewport, requestFullscreen } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { routes } from '@/navigation/routes.tsx';
 
@@ -11,6 +11,23 @@ import { ProfileProvider } from '@/contexts/profile-context';
 export function App() {
   const lp = useMemo(() => retrieveLaunchParams(), []);
   const isDark = useSignal(isMiniAppDark);
+  const fullscreenRequested = useRef(false);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        expandViewport();
+        if (!fullscreenRequested.current) {
+          fullscreenRequested.current = true;
+          await requestFullscreen();
+        }
+      } catch (error) {
+        console.warn('Failed to initialize app:', error);
+      }
+    };
+
+    initializeApp();
+  }, []);
 
   return (
     <AppRoot
@@ -19,7 +36,7 @@ export function App() {
     >
       <ThemeProvider defaultTheme={isDark ? 'dark' : 'light'} storageKey="tw-theme">
         <ProfileProvider>
-          <HashRouter>
+          <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Routes>
               {routes.map((route) => <Route key={route.path} {...route} />)}
               <Route path="*" element={<Navigate to="/"/>}/>
