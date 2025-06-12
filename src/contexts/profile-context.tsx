@@ -1,4 +1,5 @@
-import { CloudStorage } from '@/utils/cloud-storage';
+import { LocalStorage as Storage} from '@/utils/local-storage';
+//import { CloudStorage as Storage} from '@/utils/cloud-storage';
 import { ProfileDB, defaultProfile } from '@/types/profile';
 import { generateRandomProfileName } from '@/utils/generator';
 import { initData as tgInitData } from '@telegram-apps/sdk-react';
@@ -28,7 +29,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
 
   const loadProfileDB = async () => {
     try {
-      let db = await CloudStorage.getItem<ProfileDB>(STORAGE_KEY);
+      let db = await Storage.getItem<ProfileDB>(STORAGE_KEY);
       
       if (!db) {
         db = {
@@ -40,7 +41,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
             }
           }
         };
-        await CloudStorage.setItem(STORAGE_KEY, db);
+        await Storage.setItem(STORAGE_KEY, db);
       }
       
       setProfileDBState(db);
@@ -53,7 +54,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
 
   const setProfileDB = async (newProfileDB: ProfileDB) => {
     try {
-      await CloudStorage.setItem(STORAGE_KEY, newProfileDB);
+      await Storage.setItem(STORAGE_KEY, newProfileDB);
       setProfileDBState(newProfileDB);
     } catch (error) {
       console.error('Error saving profile DB:', error);
