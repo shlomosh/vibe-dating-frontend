@@ -1,9 +1,9 @@
 {
-  "name": "my-cochi-dating",
+  "name": "vibe-dating",
   "private": true,
   "version": "1.0.1",
   "type": "module",
-  "homepage": "https://shlomosh.github.io/cochi",
+  "homepage": "https://shlomosh.github.io/vibe-dating",
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",
