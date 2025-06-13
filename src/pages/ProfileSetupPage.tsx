@@ -431,8 +431,9 @@ export const ProfileSetupPage: FC = () => {
                     </div>
                     <div className="col-span-1">
                         <div className="flex flex-col">
-                            <div className="flex flex-col">
-                                <span className="text-sm text-foreground px-1">{profileDict.nickName.label}</span>
+                            <div className="flex flex-col gap-2">
+                                <div>
+                                    <span className="text-sm text-foreground px-1">{profileDict.nickName.label}</span>
                                     <Input 
                                         type="text" 
                                         className="text-sm text-foreground"
@@ -441,30 +442,39 @@ export const ProfileSetupPage: FC = () => {
                                         onChange={(e) => handleProfileChange('nickName', e.target.value)}
                                     />
                                 </div>
-                                <ProfileSelect 
-                                    selectCfg={profileDict.age}
-                                    value={profileRecord?.age}
-                                    onValueChange={(value) => handleProfileChange('age', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.position}
-                                    value={profileRecord?.position}
-                                    onValueChange={(value) => handleProfileChange('position', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.hosting}
-                                    value={profileRecord?.hosting}
-                                    onValueChange={(value) => handleProfileChange('hosting', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.travelDistance}
-                                    disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
-                                    value={profileRecord?.travelDistance}
-                                    onValueChange={(value) => handleProfileChange('travelDistance', value)}
-                                />
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.age}
+                                        value={profileRecord?.age}
+                                        onValueChange={(value) => handleProfileChange('age', value)}
+                                    />
+                                </div>
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.position}
+                                        value={profileRecord?.position}
+                                        onValueChange={(value) => handleProfileChange('position', value)}
+                                    />
+                                </div>
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.hosting}
+                                        value={profileRecord?.hosting}
+                                        onValueChange={(value) => handleProfileChange('hosting', value)}
+                                    />
+                                </div>
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.travelDistance}
+                                        disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
+                                        value={profileRecord?.travelDistance}
+                                        onValueChange={(value) => handleProfileChange('travelDistance', value)}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="col-span-1">
+                    <div className="col-span-1 flex flex-col justify-end">
                         <ProfileAlbumCarousel />
                     </div>
                     <div className="col-span-2">
@@ -493,36 +503,46 @@ export const ProfileSetupPage: FC = () => {
                                         onChange={(value) => handleProfileChange('aboutMe', value)}
                                     />
                                 </div>
-                                <ProfileSelect 
-                                    selectCfg={profileDict.body}
-                                    value={profileRecord?.body}
-                                    onValueChange={(value) => handleProfileChange('body', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.healthPractices}
-                                    value={profileRecord?.healthPractices}
-                                    onValueChange={(value) => handleProfileChange('healthPractices', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.equipmentSize}
-                                    value={profileRecord?.equipmentSize}
-                                    onValueChange={(value) => handleProfileChange('equipmentSize', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.buttShape}
-                                    value={profileRecord?.buttShape}
-                                    onValueChange={(value) => handleProfileChange('buttShape', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.hivStatus}
-                                    value={profileRecord?.hivStatus}
-                                    onValueChange={(value) => handleProfileChange('hivStatus', value)}
-                                />
-                                <ProfileSelect 
-                                    selectCfg={profileDict.preventionPractices}
-                                    value={profileRecord?.preventionPractices}
-                                    onValueChange={(value) => handleProfileChange('preventionPractices', value)}
-                                />
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.body}
+                                        value={profileRecord?.body}
+                                        onValueChange={(value) => handleProfileChange('body', value)}
+                                    />
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.healthPractices}
+                                        value={profileRecord?.healthPractices}
+                                        onValueChange={(value) => handleProfileChange('healthPractices', value)}
+                                    />
+                                </div>
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.equipmentSize}
+                                        value={profileRecord?.equipmentSize}
+                                        onValueChange={(value) => handleProfileChange('equipmentSize', value)}
+                                    />
+                                </div>
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.buttShape}
+                                        value={profileRecord?.buttShape}
+                                        onValueChange={(value) => handleProfileChange('buttShape', value)}
+                                    />
+                                </div>
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.hivStatus}
+                                        value={profileRecord?.hivStatus}
+                                        onValueChange={(value) => handleProfileChange('hivStatus', value)}
+                                    />
+                                </div>
+                                <div>
+                                    <ProfileSelect 
+                                        selectCfg={profileDict.preventionPractices}
+                                        value={profileRecord?.preventionPractices}
+                                        onValueChange={(value) => handleProfileChange('preventionPractices', value)}
+                                    />
+                                </div>
                             </CollapsibleContent>
                         </Collapsible>
                     </div>

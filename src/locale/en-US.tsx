@@ -17,7 +17,7 @@ import {
 export const globalDict = {
     // general app info
     appName: (<>Vibe</>),
-    appSlogon: (<>Find what makes you vibe.</>),
+    appSlogon: (<>find what makes you vibe</>),
 
     // general buttons  
     accept: (<>Accept</>),
@@ -37,7 +37,7 @@ export const globalDict = {
     acceptTermsAndLogin: (<>Accept Terms & Login</>),
 
     // profile
-    yourProfile: (<>Your Profile</>),
+    yourProfile: (<>Profile</>),
     deleteProfile: (<>Delete Profile</>),
     deleteProfileAreYouSureQ: (profileId: string) => (<>{`Delete '${profileId}' profile? This action cannot be undone.`}</>),
     addProfile: (<>New Profile</>),
@@ -51,7 +51,7 @@ export const globalDict = {
     save: (<>Save</>),
 
     // location
-    yourLocation: (<>Your Location</>),
+    yourLocation: (<>Location</>),
     locationMode: (<>Location Mode</>),
     automaticLocation: (<>Automatic Location</>),
     manualLocation: (<>Manual Location</>),

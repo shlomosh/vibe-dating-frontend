@@ -48,7 +48,7 @@ export const SplashPage: FC = () => {
                             <span className="text-[4em] hover:text-primary">E</span>
                             <img src={peachImage} alt="Peach" className="w-[6em] h-[6em] -mt-3" />
                         </div>
-                        <div className="text-[1.2em] text-primary text-center pb-[1.5em]">
+                        <div className="text-[1.2em] text-primary text-center pb-[1.5em] italic">
                             {globalDict.appSlogon}
                         </div>
                         <div className="text-sm text-muted-foreground text-center pb-[1.5em]">

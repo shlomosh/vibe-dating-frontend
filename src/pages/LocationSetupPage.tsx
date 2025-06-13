@@ -39,15 +39,16 @@ export const LocationSetupPage: FC = () => {
     const [locationMode, setLocationMode] = useState<'automatic' | 'manual'>('automatic');
     const [randomizationRadius, setRandomizationRadius] = useState<number>(1);
     const [manualLocation, setManualLocation] = useState<string>('');
+    const [automaticLocation, setAutomaticLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [selectedCoordinates, setSelectedCoordinates] = useState<{ lat: number; lng: number } | null>(null);
 
-    // Initialize map
+    // initialize map
     useEffect(() => {
         if (mapContainer.current && !map.current) {
             map.current = new mapboxgl.Map({
                 container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [-74.5, 40], // Default center
+                center: [-74.5, 40], // default center
                 zoom: 9
             });
 
@@ -79,7 +80,8 @@ export const LocationSetupPage: FC = () => {
             // Center map on selected location
             map.current.flyTo({
                 center: [selectedCoordinates.lng, selectedCoordinates.lat],
-                zoom: 12
+                zoom: 12,
+                speed: 2.0
             });
         }
     }, [selectedCoordinates]);
@@ -105,25 +107,23 @@ export const LocationSetupPage: FC = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
-                
-                // Get random offset based on selected radius
-                const offset = getRandomOffset(randomizationRadius);
-                
-                // Apply offset to coordinates
-                const obscuredLat = latitude + offset.lat;
-                const obscuredLng = longitude + offset.lng;
-                
-                // Update selected coordinates
-                setSelectedCoordinates({
-                    lat: obscuredLat,
-                    lng: obscuredLng
-                });
+                setAutomaticLocation({ lat: latitude, lng: longitude });
             },
             (error) => {
                 console.error('Error getting location:', error);
             }
         );
     };
+
+    useEffect(() => {
+        if (locationMode === 'automatic' && automaticLocation) {
+            const offset = getRandomOffset(randomizationRadius);
+            setSelectedCoordinates({
+                lat: automaticLocation.lat + offset.lat,
+                lng: automaticLocation.lng + offset.lng
+            });
+        }
+    }, [automaticLocation, randomizationRadius, locationMode]);
 
     return (
         <Page back={true}>
@@ -173,7 +173,7 @@ export const LocationSetupPage: FC = () => {
                                     onClick={handleUpdateLocation}
                                 >
                                     <MapPinIcon className="w-4 h-4" />
-                                    Update Location
+                                    {globalDict.updateLocation}
                                 </Button>
                             </div>
                         </>
