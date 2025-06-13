@@ -91,7 +91,7 @@ export const LocationSetupPage: FC = () => {
     }
 
     const handleNextPageClick = () => {
-        navigate('/demo-index');
+        navigate('/grid');
     }
 
     const handleLocationSelect = (location: { lat: number; lng: number; address: string }) => {

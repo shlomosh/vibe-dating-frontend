@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This project implements "Vibe Dating" frontend application running as Telegram mini-app. The frontend is implemented using: Vite, Typescript, React JS, telegram-sdk, tailwind, shadcn. Implement high quality coding focused on performance, and security.
