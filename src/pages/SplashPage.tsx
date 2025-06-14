@@ -41,7 +41,7 @@ export const SplashPage: FC = () => {
                     <div className="col-span-1">
                     </div>
                     <div className="col-span-1">
-                        <div className="flex w-full justify-center">
+                        <div className="flex w-full justify-center text-gray-900 dark:text-white">
                             <span className="text-[4em] hover:text-primary rotate-v">V</span>
                             <span className="text-[4em] hover:text-primary">I</span>
                             <span className="text-[4em] hover:text-primary">B</span>

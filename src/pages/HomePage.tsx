@@ -46,7 +46,7 @@ export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profi
       </div>
 
       {/* Action buttons */}
-      <div className="p-3">
+      <div className="p-3 text-foreground">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-4">
             <button className="hover:opacity-70 transition-opacity">

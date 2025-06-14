@@ -5,13 +5,15 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { Page } from '@/components/Page.tsx';
-import { Content, ContentHeader } from '@/components/Content';
+import { Content } from '@/components/Content';
 import { Button } from '@/components/ui/button';
 import { LocationInput } from '@/components/LocationInput';
 
 import { globalDict } from '@/locale/en-US';
 import { Select, SelectGroup, SelectContent, SelectValue, SelectTrigger, SelectLabel, SelectItem } from '@/components/ui/select';
-import { MapPinIcon } from 'lucide-react';
+import { ArrowLeftIcon, ArrowRightIcon, MapPinIcon } from 'lucide-react';
+import { ContentFeed } from '@/components/ContentFeed';
+import { ContentNavigation } from '@/components/ContentNavigation';
 
 // Function to generate random offset within radius (in kilometers)
 const getRandomOffset = (radiusKm: number): { lat: number; lng: number } => {
@@ -128,71 +130,67 @@ export const LocationSetupPage: FC = () => {
     return (
         <Page back={true}>
             <Content className='text-md'>
-                <div className="grid grid-cols-2 grid-rows-[auto_auto_auto_1fr_auto] w-full h-full gap-2">
-                    <div className="col-span-2">
-                        <ContentHeader text={globalDict.yourLocation} />
-                    </div>
-                    <div className="col-span-2">
-                        <div className="flex flex-col justify-end w-full">
-                            <span className="text-sm text-foreground px-1">{globalDict.locationMode}</span>
-                            <Select value={locationMode} onValueChange={(value) => setLocationMode(value as 'automatic' | 'manual')}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Location Mode</SelectLabel>
-                                        <SelectItem value="automatic">{globalDict.automaticLocation}</SelectItem>
-                                        <SelectItem value="manual">{globalDict.manualLocation}</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    {locationMode === 'automatic' ? (
-                        <>
-                            <div className="col-span-1">
-                                <span className="text-sm text-foreground px-1">{globalDict.obscureRadius}</span>
-                                <Select value={randomizationRadius.toString()} onValueChange={(value) => setRandomizationRadius(Number(value))}>
+                <ContentFeed>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="col-span-2">
+                            <div className="flex flex-col justify-end w-full">
+                                <span className="text-sm text-foreground px-1">{globalDict.locationMode}</span>
+                                <Select value={locationMode} onValueChange={(value) => setLocationMode(value as 'automatic' | 'manual')}>
                                     <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={globalDict.radius} />
+                                        <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>{globalDict.radius} ({globalDict.km})</SelectLabel>
-                                            {[0, 1, 5, 10].map(value => (
-                                                <SelectItem key={value} value={value.toString()}>{value} {globalDict.km}</SelectItem>
-                                            ))}
+                                            <SelectLabel>Location Mode</SelectLabel>
+                                            <SelectItem value="automatic">{globalDict.automaticLocation}</SelectItem>
+                                            <SelectItem value="manual">{globalDict.manualLocation}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="col-span-1 flex items-end">
-                                <Button 
-                                    className="w-full"
-                                    onClick={handleUpdateLocation}
-                                >
-                                    <MapPinIcon className="w-4 h-4" />
-                                    {globalDict.updateLocation}
-                                </Button>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="col-span-2">
-                            <span className="text-sm text-foreground px-1"> {globalDict.enterYourLocation}</span>
-                            <LocationInput
-                                value={manualLocation}
-                                onChange={setManualLocation}
-                                onLocationSelect={handleLocationSelect}
-                            />
                         </div>
-                    )}
+                        {locationMode === 'automatic' ? (
+                            <>
+                                <div className="col-span-1">
+                                    <span className="text-sm text-foreground px-1">{globalDict.obscureRadius}</span>
+                                    <Select value={randomizationRadius.toString()} onValueChange={(value) => setRandomizationRadius(Number(value))}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder={globalDict.radius} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>{globalDict.radius} ({globalDict.km})</SelectLabel>
+                                                {[0, 1, 5, 10].map(value => (
+                                                    <SelectItem key={value} value={value.toString()}>{value} {globalDict.km}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="col-span-1 flex items-end">
+                                    <Button 
+                                        className="w-full"
+                                        onClick={handleUpdateLocation}
+                                    >
+                                        <MapPinIcon className="w-4 h-4" />
+                                        {globalDict.updateLocation}
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="col-span-2">
+                                <span className="text-sm text-foreground px-1"> {globalDict.enterYourLocation}</span>
+                                <LocationInput
+                                    value={manualLocation}
+                                    onChange={setManualLocation}
+                                    onLocationSelect={handleLocationSelect}
+                                />
+                            </div>
+                        )}
 
-                    <div className="col-span-2">
-                        <div className='flex flex-col h-full'>
-                            <div className="text-sm text-foreground px-1">{globalDict.yourLocationAsItWillAppear}</div>
-                            <div className="grow rounded-lg border border-border relative">
-                                <div ref={mapContainer} className="h-full" />
+                        <div className="col-span-2 px-10 py-5">
+                            <div className="relative w-full aspect-[3/4] rounded-[2%] overflow-hidden bg-foreground/10">
+                                <div ref={mapContainer} className="w-full h-full" />
                                 {!selectedCoordinates && (
                                     <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
                                         <div className="text-white text-center text-lg font-medium">
@@ -203,6 +201,8 @@ export const LocationSetupPage: FC = () => {
                                     </div>
                                 )}
                             </div>
+                        </div>
+                        <div className="col-span-2 px-10">
                             {selectedCoordinates && (
                                 <div className="mt-2 text-sm text-foreground px-1">
                                     <div className="flex justify-between">
@@ -215,29 +215,23 @@ export const LocationSetupPage: FC = () => {
                                     </div>
                                 </div>
                             )}
-                        </div>
+                        </div>              
                     </div>
-
-                    <div className="col-span-2 flex flex-row justify-between">
-                        <div className="flex-1 flex justify-center items-center">
-                            <Button
-                                className="min-w-[10em]"
-                                onClick={handlePrevPageClick}
-                            >
-                                ❮ {globalDict.back}
-                            </Button>
-                        </div>
-                        <div className="flex-1 flex justify-center items-center">
-                            <Button
-                                className="min-w-[10em]"
-                                onClick={handleNextPageClick}
-                                disabled={!selectedCoordinates}
-                            >
-                                {globalDict.next} ❯
-                            </Button>
-                        </div>
-                    </div>                 
-                </div>
+                </ContentFeed>
+                <ContentNavigation items={[
+                    {
+                        icon: ArrowLeftIcon,
+                        label: globalDict.back,
+                        onClick: handlePrevPageClick
+                    },
+                    {
+                        icon: ArrowRightIcon,
+                        label: globalDict.next,
+                        onClick: handleNextPageClick,
+                        isDisabled: !selectedCoordinates
+                    }
+                ]}
+                />
             </Content>
         </Page>
     );

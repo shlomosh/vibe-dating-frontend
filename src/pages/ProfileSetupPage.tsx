@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
 import { Page } from '@/components/Page.tsx';
-import { Content, ContentHeader } from '@/components/Content';
+import { Content } from '@/components/Content';
+import { ContentFeed } from '@/components/ContentFeed';
+import { ContentNavigation } from '@/components/ContentNavigation';
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
 import { TextEditor } from '@/components/TextEditor';
 import { ImageEditor } from '@/components/ImageEditor';
@@ -19,7 +20,7 @@ import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
 import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useProfile } from '@/contexts/profile-context';
 
 
@@ -55,16 +56,15 @@ const ProfileAlbumCarousel = () => {
 
     useEffect(() => {
         const loadImages = async () => {
-            const imageModules = await Promise.all([
-                import('@/assets/sample/00.jpg'),
-                import('@/assets/sample/01.jpg'),
-                import('@/assets/sample/02.jpg'),
-                import('@/assets/sample/03.jpg'),
-                // import('@/assets/sample/04.jpg'),
-                // import('@/assets/sample/05.jpg'),
-            ]);
+            // Using Lorem Picsum for random placeholder images
+            const imageUrls = [
+                'https://picsum.photos/800/1200?random=1',
+                'https://picsum.photos/800/1200?random=2',
+                'https://picsum.photos/800/1200?random=3',
+                'https://picsum.photos/800/1200?random=4',
+            ];
             
-            setImages(imageModules.map(module => module.default));
+            setImages(imageUrls);
         };
 
         loadImages();
@@ -159,7 +159,7 @@ const ProfileAlbumCarousel = () => {
                 <CarouselContent />
             </div>
             <Dialog open={isAlbumDialogOpen} onOpenChange={setIsAlbumDialogOpen}>
-                <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
+                <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
                     <div className="w-[85vw] -[160/240]">
                         <CarouselContent />
                         <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
@@ -192,7 +192,7 @@ const ProfileAlbumCarousel = () => {
                 </DialogContent>
             </Dialog>
             <Dialog open={isImageEditorOpen} onOpenChange={setIsImageEditorOpen}>
-                <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
+                <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
                     <div className="w-[85vw] aspect-[3/4]">
                     <ImageEditor 
                         onCancel={() => setIsImageEditorOpen(false)}
@@ -282,7 +282,7 @@ const DeleteProfileDialog: FC<{
                 <DialogHeader>
                     <DialogTitle>{globalDict.deleteProfile}</DialogTitle>
                     <DialogDescription>
-                        {globalDict.deleteProfileAreYouSureQ(profileId || 'Anonymous')}
+                        {globalDict.deleteProfileAreYouSureQ(profileId || 'Default Profile')}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
@@ -317,7 +317,6 @@ const DeleteProfileDialog: FC<{
 
 export const ProfileSetupPage: FC = () => {
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false);
     const { profileDB, setProfileDB, isLoading } = useProfile();
 
     const [profileId, setProfileId] = useState<string | undefined>();
@@ -389,6 +388,19 @@ export const ProfileSetupPage: FC = () => {
         await setProfileDB(newProfileDB);
     }
     
+    const navigationItems = [
+        {
+            icon: ArrowLeftIcon,
+            label: globalDict.back,
+            onClick: handlePrevPageClick
+        },
+        {
+            icon: ArrowRightIcon,
+            label: globalDict.next,
+            onClick: handleNextPageClick
+        }
+    ];
+
     if (isLoading) {
         return (
             <Page back={true}>
@@ -404,167 +416,139 @@ export const ProfileSetupPage: FC = () => {
     return (
         <Page back={true}>
             <Content className='text-md'>
-                <div className="grid grid-cols-2 grid-rows-[auto_auto_auto_1fr_auto] w-full h-full gap-2">
-                    <div className="col-span-2">
-                        <ContentHeader text={globalDict.yourProfile} />
-                    </div>
-                    <div className="col-span-2">
-                        <div className="flex items-end min-h-fit">
-                            <div className="grow">
-                                <ProfileSelect 
-                                    className="font-bold"
-                                    selectCfg={{
-                                        options: profileIdList.reduce((obj, id) => ({ ...obj, [id]: id }), {})
-                                    }}
-                                    enableClearOption={false}
-                                    value={profileId}
-                                    onValueChange={(value) => handleActiveProfileChange(value)}
-                                />
-                            </div>
-                            <div>
-                                <CreateProfileDialog onSubmit={handleCreateProfile} />
-                            </div>
-                            <div>
-                                <DeleteProfileDialog profileId={profileId} onSubmit={handleDeleteProfile} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-span-1">
-                        <div className="flex flex-col">
-                            <div className="flex flex-col gap-2">
-                                <div>
-                                    <span className="text-sm text-foreground px-1">{profileDict.nickName.label}</span>
-                                    <Input 
-                                        type="text" 
-                                        className="text-sm text-foreground"
-                                        placeholder={profileDict.nickName.label}
-                                        value={profileRecord?.nickName}
-                                        onChange={(e) => handleProfileChange('nickName', e.target.value)}
+                <ContentFeed>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="col-span-2">
+                            <div className="flex items-end">
+                                <div className="grow">
+                                    <span className="text-sm text-foreground px-1">Select Profile:</span>
+                                    <ProfileSelect 
+                                        className="font-bold"
+                                        selectCfg={{
+                                            options: profileIdList.reduce((obj, id) => ({ ...obj, [id]: id }), {})
+                                        }}
+                                        enableClearOption={false}
+                                        value={profileId}
+                                        onValueChange={(value) => handleActiveProfileChange(value)}
                                     />
                                 </div>
                                 <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.age}
-                                        value={profileRecord?.age}
-                                        onValueChange={(value) => handleProfileChange('age', value)}
-                                    />
+                                    <CreateProfileDialog onSubmit={handleCreateProfile} />
                                 </div>
                                 <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.position}
-                                        value={profileRecord?.position}
-                                        onValueChange={(value) => handleProfileChange('position', value)}
-                                    />
-                                </div>
-                                <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.hosting}
-                                        value={profileRecord?.hosting}
-                                        onValueChange={(value) => handleProfileChange('hosting', value)}
-                                    />
-                                </div>
-                                <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.travelDistance}
-                                        disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
-                                        value={profileRecord?.travelDistance}
-                                        onValueChange={(value) => handleProfileChange('travelDistance', value)}
-                                    />
+                                    <DeleteProfileDialog profileId={profileId} onSubmit={handleDeleteProfile} />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col-span-1 flex flex-col justify-end">
-                        <ProfileAlbumCarousel />
-                    </div>
-                    <div className="col-span-2">
-                        <Collapsible className="col-span-6 text-muted-foreground" open={isOpen} onOpenChange={setIsOpen}>
-                            <CollapsibleTrigger className="my-2 w-full">
-                                <div className="text-sm flex items-center justify-center gap-2 cursor-pointer">
-                                    {isOpen ? (<>
-                                        <ChevronDownIcon className="w-4 h-4" />
-                                    </>) : (<>
-                                        <ChevronRightIcon className="w-4 h-4" />
-                                    </>)}
-                                    <span>{globalDict.extraProfileSettings}</span>
-                                    {isOpen ? (<>
-                                        <ChevronDownIcon className="w-4 h-4" />
-                                    </>) : (<>
-                                        <ChevronLeftIcon className="w-4 h-4" />
-                                    </>)}
-                                </div>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent className="grid grid-cols-2 gap-2">
-                                <div className="col-span-2">
-                                    <TextEditor
-                                        className="text-sm text-foreground"
-                                        placeholder={profileDict.aboutMe.label}
-                                        value={profileRecord?.aboutMe}
-                                        onChange={(value) => handleProfileChange('aboutMe', value)}
-                                    />
-                                </div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.body}
-                                        value={profileRecord?.body}
-                                        onValueChange={(value) => handleProfileChange('body', value)}
-                                    />
-                                <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.healthPractices}
-                                        value={profileRecord?.healthPractices}
-                                        onValueChange={(value) => handleProfileChange('healthPractices', value)}
-                                    />
-                                </div>
-                                <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.equipmentSize}
-                                        value={profileRecord?.equipmentSize}
-                                        onValueChange={(value) => handleProfileChange('equipmentSize', value)}
-                                    />
-                                </div>
-                                <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.buttShape}
-                                        value={profileRecord?.buttShape}
-                                        onValueChange={(value) => handleProfileChange('buttShape', value)}
-                                    />
-                                </div>
-                                <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.hivStatus}
-                                        value={profileRecord?.hivStatus}
-                                        onValueChange={(value) => handleProfileChange('hivStatus', value)}
-                                    />
-                                </div>
-                                <div>
-                                    <ProfileSelect 
-                                        selectCfg={profileDict.preventionPractices}
-                                        value={profileRecord?.preventionPractices}
-                                        onValueChange={(value) => handleProfileChange('preventionPractices', value)}
-                                    />
-                                </div>
-                            </CollapsibleContent>
-                        </Collapsible>
-                    </div>
-                    <div className="col-span-2 flex flex-row justify-between">
-                        <div className="flex-1 flex justify-center items-center">
-                            <Button
-                                className="min-w-[10em]"
-                                onClick={handlePrevPageClick}
-                            >
-                                ❮ {globalDict.back}
-                            </Button>
+
+                        <div className="col-span-2">
+                            <span className="text-sm text-foreground px-1">{profileDict.nickName.label}</span>
+                            <Input 
+                                type="text" 
+                                className="text-sm text-foreground"
+                                placeholder={profileDict.nickName.label}
+                                value={profileRecord?.nickName}
+                                onChange={(e) => handleProfileChange('nickName', e.target.value)}
+                            />
                         </div>
-                        <div className="flex-1 flex justify-center items-center">
-                            <Button
-                                className="min-w-[10em]"
-                                onClick={handleNextPageClick}
-                            >
-                                {globalDict.next} ❯
-                            </Button>
+
+                        <div className="col-span-2 px-10 py-5">
+                            <ProfileAlbumCarousel />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.age}
+                                value={profileRecord?.age}
+                                onValueChange={(value) => handleProfileChange('age', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.position}
+                                value={profileRecord?.position}
+                                onValueChange={(value) => handleProfileChange('position', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.hosting}
+                                value={profileRecord?.hosting}
+                                onValueChange={(value) => handleProfileChange('hosting', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.travelDistance}
+                                disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
+                                value={profileRecord?.travelDistance}
+                                onValueChange={(value) => handleProfileChange('travelDistance', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-2">
+                            <span className="text-sm text-foreground px-1">{profileDict.aboutMe.label}</span>
+                            <TextEditor
+                                className="text-sm text-foreground"
+                                placeholder={profileDict.aboutMe.label}
+                                value={profileRecord?.aboutMe}
+                                onChange={(value) => handleProfileChange('aboutMe', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.body}
+                                value={profileRecord?.body}
+                                onValueChange={(value) => handleProfileChange('body', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.healthPractices}
+                                value={profileRecord?.healthPractices}
+                                onValueChange={(value) => handleProfileChange('healthPractices', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.equipmentSize}
+                                value={profileRecord?.equipmentSize}
+                                onValueChange={(value) => handleProfileChange('equipmentSize', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.buttShape}
+                                value={profileRecord?.buttShape}
+                                onValueChange={(value) => handleProfileChange('buttShape', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.hivStatus}
+                                value={profileRecord?.hivStatus}
+                                onValueChange={(value) => handleProfileChange('hivStatus', value)}
+                            />
+                        </div>
+
+                        <div className="col-span-1">
+                            <ProfileSelect 
+                                selectCfg={profileDict.preventionPractices}
+                                value={profileRecord?.preventionPractices}
+                                onValueChange={(value) => handleProfileChange('preventionPractices', value)}
+                            />
                         </div>
                     </div>
-                </div>
+                </ContentFeed>
+                <ContentNavigation items={navigationItems} />
             </Content>
         </Page>
     );

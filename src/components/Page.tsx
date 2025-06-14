@@ -23,7 +23,7 @@ export function Page({ children, back = true, className = '' }: PropsWithChildre
 
   return (
     <div 
-      className={`h-dvh max-w-md mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${className}`}
+      className={`h-dvh max-w-md mx-auto ${className}`}
     >
       <>
         {children}

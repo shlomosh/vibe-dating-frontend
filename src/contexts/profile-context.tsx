@@ -33,9 +33,9 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
       
       if (!db) {
         db = {
-          id: 'Anonymous',
+          id: 'Main Profile',
           db: {
-            'Anonymous': {
+            'Main Profile': {
               ...defaultProfile,
               nickName: generateRandomProfileName(tgInitData.user()?.id || -1)
             }
