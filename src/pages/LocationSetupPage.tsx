@@ -37,7 +37,7 @@ export const LocationSetupPage: FC = () => {
     const marker = useRef<mapboxgl.Marker | null>(null);
     
     const [locationMode, setLocationMode] = useState<'automatic' | 'manual'>('automatic');
-    const [randomizationRadius, setRandomizationRadius] = useState<number>(1);
+    const [randomizationRadius, setRandomizationRadius] = useState<number>(0);
     const [manualLocation, setManualLocation] = useState<string>('');
     const [automaticLocation, setAutomaticLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [selectedCoordinates, setSelectedCoordinates] = useState<{ lat: number; lng: number } | null>(null);
@@ -91,7 +91,7 @@ export const LocationSetupPage: FC = () => {
     }
 
     const handleNextPageClick = () => {
-        navigate('/grid');
+        navigate('/home');
     }
 
     const handleLocationSelect = (location: { lat: number; lng: number; address: string }) => {

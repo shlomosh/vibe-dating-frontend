@@ -199,9 +199,9 @@ export const profileDict = {
   hosting: {
       label: 'Hosting',
       options: {
-        hostAndTravel: 'Host & Travel',
-        hostOnly: 'Host Only',
-        travelOnly: 'Travel Only'
+        hostAndTravel: 'Host / Travel',
+        hostOnly: 'Host',
+        travelOnly: 'Travel'
       }
   } satisfies {
     label: string,

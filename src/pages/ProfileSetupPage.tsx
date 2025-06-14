@@ -101,7 +101,7 @@ const ProfileAlbumCarousel = () => {
         const swiperRef = React.useRef<any>(null);
 
         return (
-            <div className="relative w-full aspect-[160/240] rounded-[2%] overflow-hidden bg-foreground/10">
+            <div className="relative w-full aspect-[3/4] rounded-[2%] overflow-hidden bg-foreground/10">
                 <Swiper
                     effect={'fade'}
                     grabCursor={true}
@@ -160,7 +160,7 @@ const ProfileAlbumCarousel = () => {
             </div>
             <Dialog open={isAlbumDialogOpen} onOpenChange={setIsAlbumDialogOpen}>
                 <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
-                    <div className="w-[85vw] aspect-[160/240]">
+                    <div className="w-[85vw] -[160/240]">
                         <CarouselContent />
                         <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
                                 <div className="flex gap-2">
@@ -193,7 +193,7 @@ const ProfileAlbumCarousel = () => {
             </Dialog>
             <Dialog open={isImageEditorOpen} onOpenChange={setIsImageEditorOpen}>
                 <DialogContent className="w-auto h-auto p-0 border-2 border border-primary rounded-[2%]">
-                    <div className="w-[85vw] aspect-[160/240]">
+                    <div className="w-[85vw] aspect-[3/4]">
                     <ImageEditor 
                         onCancel={() => setIsImageEditorOpen(false)}
                         onImageSave={handleAddImage}
