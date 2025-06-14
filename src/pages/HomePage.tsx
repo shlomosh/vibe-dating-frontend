@@ -9,6 +9,7 @@ import 'swiper/css/pagination';
 import { generateRandomProfileName } from '@/utils/generator';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
+import anonUserImage from '@/assets/anon-user-front.png';
 
 interface FeedImageProps {
   imageUrls: string[];
@@ -19,31 +20,42 @@ interface FeedImageProps {
 
 export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profileSummary, distance }) => {
   return (
-    <div className="w-full mb-4 bg-background rounded-lg overflow-hidden">
+    <div className="w-full mb-4 bg-background overflow-hidden">
       
       {/* Image */}
-      <div className="relative aspect-[3/4] w-full">
-        <Swiper
-          modules={[Pagination]}
-          pagination={{
-            clickable: true,
-            renderBullet: function (_index, className) {
-              return '<span class="' + className + '"></span>';
-            },
-          }}
-          className="w-full h-full"
-        >
-          {imageUrls.map((url, index) => (
-            <SwiperSlide key={index}>
-              <img
-                src={url}
-                alt={nickName}
-                className="w-full h-full object-cover"
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+      {imageUrls.length > 0 ? (
+        <div className="relative aspect-[3/4] w-full">
+          <Swiper
+            modules={[Pagination]}
+            pagination={{
+              clickable: true,
+              renderBullet: function (_index, className) {
+                return '<span class="' + className + '"></span>';
+              },
+            }}
+            className="w-full h-full rounded-lg"
+          >
+            {imageUrls.map((url, index) => (
+              <SwiperSlide key={index}>
+                <img
+                  src={url}
+                  alt={nickName}
+                  className="w-full h-full object-cover"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      ) : (
+        <div className="relative aspect-[3/1] w-full bg-black/70 rounded-lg">
+          <img
+            src={anonUserImage}
+            alt={nickName}
+            className="w-full h-full object-cover opacity-20"
+            style={{ objectPosition: "center 80%" }}
+          />
+        </div>
+      )}
 
       {/* Action buttons */}
       <div className="p-3 text-foreground">
@@ -117,12 +129,21 @@ export const HomePage: React.FC = () => {
       nickName: generateRandomProfileName(4),
       profileSummary: "37 | Blower | Travel (20Km)",
       distance: "10km"
-    },    {
+    }, 
+    {
       id: 5,
+      imageUrls: [
+      ],
+      nickName: generateRandomProfileName(5),
+      profileSummary: "28 | Vers Top | Host",
+      distance: "15km"
+    },   
+    {
+      id: 6,
       imageUrls: [
         `https://picsum.photos/800/600?random=9`,
       ],
-      nickName: generateRandomProfileName(5),
+      nickName: generateRandomProfileName(6),
       profileSummary: "31 | Top | Host",
       distance: "11km"
     }
