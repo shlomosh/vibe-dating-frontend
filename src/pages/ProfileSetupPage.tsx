@@ -163,7 +163,7 @@ const ProfileAlbumCarousel = () => {
             </div>
             <Dialog open={isAlbumDialogOpen} onOpenChange={setIsAlbumDialogOpen}>
                 <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
-                    <div className="w-[85vw] -[160/240]">
+                    <div className="w-[85vw] -[3/4]">
                         <CarouselContent />
                         <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
                                 <div className="flex gap-2">
@@ -198,7 +198,7 @@ const ProfileAlbumCarousel = () => {
                 <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
                     <div className="w-[85vw] aspect-[3/4]">
                     <ImageEditor 
-                        onCancel={() => setIsImageEditorOpen(false)}
+                        onClose={() => setIsImageEditorOpen(false)}
                         onImageSave={handleAddImage}
                     />
                     </div>

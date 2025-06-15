@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
 import { Upload, RotateCcw, Check, X, ZoomIn, ZoomOut } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface CropArea {
   x: number
@@ -15,13 +16,13 @@ interface CropArea {
 
 interface ImageEditorProps {
   onImageSave: (croppedImage: string) => void
-  onCancel?: () => void
+  onClose?: () => void
   maxFileSize?: number // in MB
 }
 
 export const ImageEditor: FC<ImageEditorProps> = ({ 
   onImageSave,
-  onCancel,
+  onClose,
   maxFileSize = 5
 }) => {
   const [imageSrc, setImageSrc] = useState<string | null>(null)
@@ -29,7 +30,8 @@ export const ImageEditor: FC<ImageEditorProps> = ({
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | React.ReactNode | null>(null)
+  const { translations: { globalDict } } = useLanguage();
   
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -40,13 +42,13 @@ export const ImageEditor: FC<ImageEditorProps> = ({
 
     // Validate file size
     if (file.size > maxFileSize * 1024 * 1024) {
-      setError(`File size must be less than ${maxFileSize}MB`)
+      setError(globalDict.fileSizeMustBeLessThan(maxFileSize));
       return
     }
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file')
+      setError(globalDict.pleaseUploadImageFile);
       return
     }
 
@@ -85,13 +87,13 @@ export const ImageEditor: FC<ImageEditorProps> = ({
     return new Promise((resolve, reject) => {
       const image = new Image()
       image.onload = () => {
-        // Set canvas size to the desired output size (160x240)
-        canvas.width = 160
-        canvas.height = 240
+        // Set canvas size to the desired output size (720x960)
+        canvas.width = 720
+        canvas.height = 960
 
-        // Calculate scaling to fit the crop area into 160x240
-        // const scaleX = 160 / croppedAreaPixels.width
-        // const scaleY = 240 / croppedAreaPixels.height
+        // Calculate scaling to fit the crop area into 720x960
+        // const scaleX = 720 / croppedAreaPixels.width
+        // const scaleY = 960 / croppedAreaPixels.height
 
         // Draw the cropped image onto the canvas
         ctx.drawImage(
@@ -102,8 +104,8 @@ export const ImageEditor: FC<ImageEditorProps> = ({
           croppedAreaPixels.height,
           0,
           0,
-          160,
-          240
+          720,
+          960
         )
 
         // Convert to base64
@@ -124,9 +126,12 @@ export const ImageEditor: FC<ImageEditorProps> = ({
       const croppedImage = await createCroppedImage()
       onImageSave(croppedImage)
     } catch (error) {
-      setError('Failed to process image')
+      setError(globalDict.failedToProcessImage);
     } finally {
       setIsProcessing(false)
+      if (onClose) {
+        onClose()
+      }
     }
   }
 
@@ -162,12 +167,12 @@ export const ImageEditor: FC<ImageEditorProps> = ({
             <p className="text-lg font-medium mb-2">Upload Photo</p>
             <p className="text-sm text-gray-500 mb-4">
               {isDragActive
-                ? 'Drop the image here...'
-                : 'Drag & drop an image here, or click to select'
+                ? globalDict.dropImageHere
+                : globalDict.dragAndDropImage
               }
             </p>
             <p className="text-xs text-gray-400">
-              Supports: JPEG, PNG, WebP (max {maxFileSize}MB)
+              {globalDict.supportedImageFormats(maxFileSize)}
             </p>
           </div>
           
@@ -177,10 +182,10 @@ export const ImageEditor: FC<ImageEditorProps> = ({
             </div>
           )}
           
-          {onCancel && (
+          {onClose && (
             <div className="mt-4 flex justify-center">
-              <Button variant="outline" onClick={onCancel}>
-                Cancel
+              <Button variant="outline" onClick={onClose}>
+                {globalDict.cancel}
               </Button>
             </div>
           )}
@@ -195,7 +200,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         <div className="mb-4">
           <h3 className="text-lg font-medium mb-2">Edit Photo</h3>
           <p className="text-sm text-gray-500">
-            Adjust the crop area to fit 2:3 ratio (160×240px)
+            {globalDict.adjustCropArea}
           </p>
         </div>
 
@@ -217,7 +222,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         {/* Zoom Controls */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Zoom</span>
+            <span className="text-sm font-medium">{globalDict.zoom}</span>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -255,17 +260,17 @@ export const ImageEditor: FC<ImageEditorProps> = ({
             className="flex-1"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
+            {globalDict.reset}
           </Button>
           
-          {onCancel && (
+          {onClose && (
             <Button
               variant="outline"
-              onClick={onCancel}
+              onClick={onClose}
               className="flex-1"
             >
               <X className="w-4 h-4 mr-2" />
-              Cancel
+              {globalDict.cancel}
             </Button>
           )}
           
@@ -275,7 +280,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
             className="flex-1"
           >
             <Check className="w-4 h-4 mr-2" />
-            {isProcessing ? 'Processing...' : 'Save'}
+            {isProcessing ? globalDict.processing : globalDict.save}
           </Button>
         </div>
 

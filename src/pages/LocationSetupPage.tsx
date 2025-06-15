@@ -6,11 +6,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
-import { Button } from '@/components/ui/button';
 import { LocationInput } from '@/components/LocationInput';
 
 import { Select, SelectGroup, SelectContent, SelectValue, SelectTrigger, SelectLabel, SelectItem } from '@/components/ui/select';
-import { ArrowLeftIcon, ArrowRightIcon, MapPinIcon } from 'lucide-react';
+import { ArrowLeftIcon, ArrowRightIcon, LocateFixedIcon } from 'lucide-react';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -223,7 +222,7 @@ export const LocationSetupPage: FC = () => {
                         onClick: handlePrevPageClick
                     },
                     ...(locationMode === 'automatic' ? [{
-                        icon: MapPinIcon,
+                        icon: LocateFixedIcon,
                         label: globalDict.updateLocation,
                         onClick: handleUpdateLocation
                     }] : []),

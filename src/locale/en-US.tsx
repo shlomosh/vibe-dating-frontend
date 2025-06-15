@@ -27,7 +27,11 @@ export const globalDict = {
     back: (<>Back</>),
     select: (<>Select</>),
     create: (<>Create</>),
-
+    save: (<>Save</>),
+    reset: (<>Reset</>),
+    zoom: (<>Zoom</>),
+    processing: (<>Processing...</>),
+  
     // general text
     loading: (<>Loading...</>),
 
@@ -49,7 +53,17 @@ export const globalDict = {
     clickToEditAlbum: (<>Click to edit album...</>),
     addImage: (<>Add Image</>),
     clickToUploadImage: (<>Click to upload image...</>),
-    save: (<>Save</>),
+
+    // image-editor
+    uploadPhoto: (<>Upload Photo</>),
+    editPhoto: (<>Edit Photo</>),
+    pleaseUploadImageFile: (<>Please upload an image file</>),
+    failedToProcessImage: (<>Failed to process image</>),
+    adjustCropArea: (<>Adjust the crop area to fit 3:4 ratio</>),
+    supportedImageFormats: (maxFileSize: number) => (<>Supports: JPEG, PNG, WebP (max {maxFileSize}MB)</>),
+    fileSizeMustBeLessThan: (maxFileSize: number) => (<>File size must be less than {maxFileSize}MB</>),
+    dropImageHere: (<>Drop the image here...</>),
+    dragAndDropImage: (<>Drag & drop an image here, or click to select</>),
 
     // location
     yourLocation: (<>Location</>),

@@ -27,6 +27,9 @@ export const globalDict = {
     back: (<>חזור</>),
     select: (<>בחר</>),
     create: (<>צור</>),
+    reset: (<>איפוס</>),
+    zoom: (<>זום</>),
+    processing: (<>מעבד...</>),
 
     // general text
     loading: (<>טוען...</>),
@@ -51,6 +54,17 @@ export const globalDict = {
     clickToUploadImage: (<>לחץ להעלאת תמונה...</>),
     save: (<>שמור</>),
 
+    // image-editor
+    uploadPhoto: (<>העלאת תמונה</>),
+    editPhoto: (<>עריכת תמונה</>),
+    pleaseUploadImageFile: (<>נא להעלות קובץ תמונה</>),
+    failedToProcessImage: (<>נכשל בעיבוד התמונה</>),
+    adjustCropArea: (<>התאמת תאריך ליחס 3:4</>),
+    supportedImageFormats: (maxFileSize: number) => (<>נתמך: JPEG, PNG, WebP (מקסימום {maxFileSize}MB)</>),
+    fileSizeMustBeLessThan: (maxFileSize: number) => (<>גודל הקובץ חייב להיות פחות מ- {maxFileSize}MB</>),
+    dropImageHere: (<>הזן את התמונה כאן...</>),
+    dragAndDropImage: (<>גרור ושחרר את התמונה כאן, או לחץ כדי לבחור</>),
+  
     // location
     yourLocation: (<>מיקום</>),
     locationMode: (<>מצב מיקום</>),
