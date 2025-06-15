@@ -155,7 +155,7 @@ export const LocationSetupPage: FC = () => {
                         </div>
                         {locationMode === 'automatic' ? (
                             <>
-                                <div className="col-span-1">
+                                <div className="col-span-2">
                                     <span className="text-sm text-foreground px-1">{globalDict.obscureRadius}</span>
                                     <Select value={randomizationRadius.toString()} onValueChange={(value) => setRandomizationRadius(Number(value))}>
                                         <SelectTrigger className="w-full">
@@ -170,15 +170,6 @@ export const LocationSetupPage: FC = () => {
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
-                                </div>
-                                <div className="col-span-1 flex items-end">
-                                    <Button 
-                                        className="w-full"
-                                        onClick={handleUpdateLocation}
-                                    >
-                                        <MapPinIcon className="w-4 h-4" />
-                                        {globalDict.updateLocation}
-                                    </Button>
                                 </div>
                             </>
                         ) : (
@@ -196,7 +187,10 @@ export const LocationSetupPage: FC = () => {
                             <div className="relative w-full aspect-[3/4] rounded-[2%] overflow-hidden bg-foreground/10">
                                 <div ref={mapContainer} className="w-full h-full" />
                                 {!selectedCoordinates && (
-                                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                                    <div 
+                                        className="absolute inset-0 bg-black/70 flex items-center justify-center cursor-pointer"
+                                        onClick={handleUpdateLocation}
+                                    >
                                         <div className="text-white text-center text-lg font-medium">
                                             {locationMode === 'automatic' 
                                                 ? globalDict.locationNotSetAutomatic
@@ -228,6 +222,11 @@ export const LocationSetupPage: FC = () => {
                         label: globalDict.back,
                         onClick: handlePrevPageClick
                     },
+                    ...(locationMode === 'automatic' ? [{
+                        icon: MapPinIcon,
+                        label: globalDict.updateLocation,
+                        onClick: handleUpdateLocation
+                    }] : []),
                     {
                         icon: NextArrowIcon,
                         label: globalDict.next,
