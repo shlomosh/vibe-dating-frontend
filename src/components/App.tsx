@@ -6,7 +6,8 @@ import { routes } from '@/navigation/routes.tsx';
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle"
-import { ProfileProvider } from '@/contexts/profile-context';
+import { ProfileProvider } from '@/contexts/ProfileContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 export function App() {
   const lp = useMemo(() => retrieveLaunchParams(), []);
@@ -35,17 +36,19 @@ export function App() {
       platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}
     >
       <ThemeProvider defaultTheme={isDark ? 'dark' : 'light'} storageKey="tw-theme">
-        <ProfileProvider>
-          <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <Routes>
-              {routes.map((route) => <Route key={route.path} {...route} />)}
-              <Route path="*" element={<Navigate to="/"/>}/>
-            </Routes>
-            <div className="absolute top-[30px] left-1/2 -translate-x-1/2">
-              <ThemeToggle />
-            </div>
-          </HashRouter>
-        </ProfileProvider>
+      <LanguageProvider>
+          <ProfileProvider>
+            <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <Routes>
+                {routes.map((route) => <Route key={route.path} {...route} />)}
+                <Route path="*" element={<Navigate to="/"/>}/>
+              </Routes>
+              <div className="absolute top-[30px] left-1/2 -translate-x-1/2">
+                <ThemeToggle />
+              </div>
+            </HashRouter>
+          </ProfileProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </AppRoot>
   );

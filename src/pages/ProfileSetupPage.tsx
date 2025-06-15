@@ -14,15 +14,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { TextEditor } from '@/components/TextEditor';
 import { ImageEditor } from '@/components/ImageEditor';
 
-import { profileDict, globalDict } from '@/locale/en-US';
 import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
 
 import { Navigation, EffectFade } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
-import { useProfile } from '@/contexts/profile-context';
-
+import { useProfile } from '@/contexts/ProfileContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {
     return (
@@ -53,6 +52,10 @@ const ProfileAlbumCarousel = () => {
     const [isAlbumDialogOpen, setIsAlbumDialogOpen] = useState(false);
     const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+    const { translations: { globalDict }, direction } = useLanguage();
+
+    const PrevChevronIcon = direction === 'rtl' ? ChevronRightIcon : ChevronLeftIcon;
+    const NextChevronIcon = direction === 'rtl' ? ChevronLeftIcon : ChevronRightIcon;
 
     useEffect(() => {
         const loadImages = async () => {
@@ -139,11 +142,11 @@ const ProfileAlbumCarousel = () => {
                 </Swiper>
                 <div className="absolute w-full top-[100%] pb-16 px-8 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
                     <div className="flex justify-between">
-                        <ChevronLeftIcon 
+                        <PrevChevronIcon 
                             className="w-10 h-10 rounded-[8px] p-1 border-2 bg-black/50 text-white border-white/20 hover:border-white/50"
                             onClick={() => swiperRef.current?.slidePrev()}
                         />
-                        <ChevronRightIcon 
+                        <NextChevronIcon 
                             className="w-10 h-10 rounded-[8px] p-1 border-2 bg-black/50 text-white border-white/20 hover:border-white/50"
                             onClick={() => swiperRef.current?.slideNext()}
                         />
@@ -210,11 +213,12 @@ const CreateProfileDialog: FC<{
     onSubmit?: (newProfileId: string) => void
 }> = ({ onClose, onSubmit }) => {
     const [newProfileId, setNewProfileId] = useState<string>('');
+    const { translations: { globalDict } } = useLanguage();
 
     return (
         <Dialog>
             <DialogTrigger>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" className="text-foreground">
                     <PlusIcon className="w-4 h-4" />
                 </Button>
             </DialogTrigger>
@@ -270,11 +274,12 @@ const DeleteProfileDialog: FC<{
     onClose?: () => void,
     onSubmit?: () => void
 }> = ({ profileId, onClose, onSubmit }) => {
+    const { translations: { globalDict } } = useLanguage();
 
     return (
         <Dialog>
             <DialogTrigger>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" className="text-foreground">
                     <TrashIcon className="w-4 h-4" />
                 </Button>
             </DialogTrigger>
@@ -318,10 +323,14 @@ const DeleteProfileDialog: FC<{
 export const ProfileSetupPage: FC = () => {
     const navigate = useNavigate();
     const { profileDB, setProfileDB, isLoading } = useProfile();
+    const { translations: { globalDict, profileDict }, direction } = useLanguage();
 
     const [profileId, setProfileId] = useState<string | undefined>();
     const [profileIdList, setProfileIdList] = useState<Array<string>>([]);
     const [profileRecord, setProfileRecord] = useState<ProfileRecord>(defaultProfile);
+
+    const PrevArrowIcon = direction === 'rtl' ? ArrowRightIcon : ArrowLeftIcon;
+    const NextArrowIcon = direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon;
 
     useEffect(() => {
         if (profileDB) {
@@ -390,12 +399,12 @@ export const ProfileSetupPage: FC = () => {
     
     const navigationItems = [
         {
-            icon: ArrowLeftIcon,
+            icon: PrevArrowIcon,
             label: globalDict.back,
             onClick: handlePrevPageClick
         },
         {
-            icon: ArrowRightIcon,
+            icon: NextArrowIcon,
             label: globalDict.next,
             onClick: handleNextPageClick
         }
@@ -421,7 +430,7 @@ export const ProfileSetupPage: FC = () => {
                         <div className="col-span-2">
                             <div className="flex items-end">
                                 <div className="grow">
-                                    <span className="text-sm text-foreground px-1">Select Profile:</span>
+                                    <span className="text-sm text-foreground px-1">{globalDict.selectProfile}</span>
                                     <ProfileSelect 
                                         className="font-bold"
                                         selectCfg={{

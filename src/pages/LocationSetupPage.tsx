@@ -9,11 +9,11 @@ import { Content } from '@/components/Content';
 import { Button } from '@/components/ui/button';
 import { LocationInput } from '@/components/LocationInput';
 
-import { globalDict } from '@/locale/en-US';
 import { Select, SelectGroup, SelectContent, SelectValue, SelectTrigger, SelectLabel, SelectItem } from '@/components/ui/select';
 import { ArrowLeftIcon, ArrowRightIcon, MapPinIcon } from 'lucide-react';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Function to generate random offset within radius (in kilometers)
 const getRandomOffset = (radiusKm: number): { lat: number; lng: number } => {
@@ -37,12 +37,16 @@ export const LocationSetupPage: FC = () => {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
     const marker = useRef<mapboxgl.Marker | null>(null);
+    const { translations: { globalDict }, direction } = useLanguage();
     
     const [locationMode, setLocationMode] = useState<'automatic' | 'manual'>('automatic');
     const [randomizationRadius, setRandomizationRadius] = useState<number>(0);
     const [manualLocation, setManualLocation] = useState<string>('');
     const [automaticLocation, setAutomaticLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [selectedCoordinates, setSelectedCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+
+    const PrevArrowIcon = direction === 'rtl' ? ArrowRightIcon : ArrowLeftIcon;
+    const NextArrowIcon = direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon;
 
     // initialize map
     useEffect(() => {
@@ -206,11 +210,11 @@ export const LocationSetupPage: FC = () => {
                             {selectedCoordinates && (
                                 <div className="mt-2 text-sm text-foreground px-1">
                                     <div className="flex justify-between">
-                                        <span>Latitude:</span>
+                                        <span>{globalDict.latitude}</span>
                                         <span>{selectedCoordinates.lat.toFixed(6)}°</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span>Longitude:</span>
+                                        <span>{globalDict.longitude}</span>
                                         <span>{selectedCoordinates.lng.toFixed(6)}°</span>
                                     </div>
                                 </div>
@@ -220,12 +224,12 @@ export const LocationSetupPage: FC = () => {
                 </ContentFeed>
                 <ContentNavigation items={[
                     {
-                        icon: ArrowLeftIcon,
+                        icon: PrevArrowIcon,
                         label: globalDict.back,
                         onClick: handlePrevPageClick
                     },
                     {
-                        icon: ArrowRightIcon,
+                        icon: NextArrowIcon,
                         label: globalDict.next,
                         onClick: handleNextPageClick,
                         isDisabled: !selectedCoordinates

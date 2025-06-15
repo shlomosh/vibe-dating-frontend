@@ -6,11 +6,11 @@ import { Content, ContentHeader } from '@/components/Content';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-import { termsAndConditionsDict, globalDict } from '@/locale/en-US';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const TermsAndConditionsPage: FC = () => {
     const navigate = useNavigate();
+    const { translations: { globalDict, termsAndConditionsDict }, direction } = useLanguage();
 
     const handleAcceptClick = () => {
         navigate('/');
@@ -24,7 +24,7 @@ export const TermsAndConditionsPage: FC = () => {
                         <ContentHeader text={globalDict.termsAndConditions} />
                     </div>
                     <div className="col-span-1 overflow-y-auto">
-                        <ScrollArea>
+                        <ScrollArea dir={direction}>
                             <Card className="bg-transparent border-none shadow-none px-[1em] py-[1em]">
                                 <CardContent className="p-0">
                                     {termsAndConditionsDict.sectionsText.map((section, index) => (

@@ -37,6 +37,7 @@ export const globalDict = {
     acceptTermsAndLogin: (<>Accept Terms & Login</>),
 
     // profile
+    selectProfile: (<>Select Profile</>),
     yourProfile: (<>Profile</>),
     deleteProfile: (<>Delete Profile</>),
     deleteProfileAreYouSureQ: (profileId: string) => (<>{`Delete '${profileId}' profile? This action cannot be undone.`}</>),
@@ -64,6 +65,8 @@ export const globalDict = {
     locationNotSetManual: (<div>Your location not set.<p className="text-sm italic">(Enter your location address to set it)</p></div>),
     radius: (<>Radius</>),
     km: (<>Km</>),
+    longitude: (<>Longitude</>),
+    latitude: (<>Latitude</>),
 }
 
 export const nameGenerator = {

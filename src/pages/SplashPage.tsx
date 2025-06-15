@@ -5,9 +5,10 @@ import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/components/Link/Link';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 import peachImage from '@/assets/peach.png';
-import { globalDict } from '@/locale/en-US';
+
 // import { Background } from '@/components/Background';
 
 const styles = `
@@ -27,6 +28,7 @@ const styles = `
 
 export const SplashPage: FC = () => {    
     const navigate = useNavigate();
+    const { translations: { globalDict } } = useLanguage();
 
     const handleNextClick = () => {
         navigate('/profile-setup');
@@ -41,15 +43,17 @@ export const SplashPage: FC = () => {
                     <div className="col-span-1">
                     </div>
                     <div className="col-span-1">
-                        <div className="flex w-full justify-center text-gray-900 dark:text-white">
-                            <span className="text-[4em] hover:text-primary rotate-v">V</span>
-                            <span className="text-[4em] hover:text-primary">I</span>
-                            <span className="text-[4em] hover:text-primary">B</span>
-                            <span className="text-[4em] hover:text-primary">E</span>
-                            <img src={peachImage} alt="Peach" className="w-[6em] h-[6em] -mt-3" />
-                        </div>
-                        <div className="text-[1.2em] text-primary text-center pb-[1.5em] italic">
-                            {globalDict.appSlogon}
+                        <div dir="ltr" className="ltr">
+                            <div className="flex w-full justify-center text-gray-900 dark:text-white">
+                                <span className="text-[4em] hover:text-primary rotate-v">V</span>
+                                <span className="text-[4em] hover:text-primary">I</span>
+                                <span className="text-[4em] hover:text-primary">B</span>
+                                <span className="text-[4em] hover:text-primary">E</span>
+                                <img src={peachImage} alt="Peach" className="w-[6em] h-[6em] -mt-3" />
+                            </div>
+                            <div className="text-[1.2em] text-primary text-center pb-[1.5em] italic">
+                                {globalDict.appSlogon}
+                            </div>
                         </div>
                         <div className="text-sm text-muted-foreground text-center pb-[1.5em]">
                             <Link to="/read-terms-conditions">{globalDict.readTermsAndConditions}</Link>
