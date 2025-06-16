@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radar, Zap, SlidersHorizontal, Send, User, Heart, MessageCircle, EyeOff } from 'lucide-react';
+import { RadarIcon, ZapIcon, SlidersHorizontalIcon, SendIcon, UserIcon, HeartIcon, CircleOffIcon, InboxIcon } from 'lucide-react';
 import { Page } from '@/components/Page';
 import { Content } from '@/components/Content';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -10,15 +10,17 @@ import { generateRandomProfileName } from '@/utils/generator';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
 import anonUserImage from '@/assets/anon-user-front.png';
+import { Badge } from "@/components/ui/badge";
 
 interface FeedImageProps {
   imageUrls: string[];
   nickName: string;
   profileSummary: string;
   distance: string;
+  lastSeen: number;
 }
 
-export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profileSummary, distance }) => {
+export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profileSummary, distance, lastSeen }) => {
   return (
     <div className="w-full mb-4 bg-background overflow-hidden">
       
@@ -62,23 +64,33 @@ export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profi
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-4">
             <button className="hover:opacity-70 transition-opacity">
-              <Heart className="w-6 h-6" />
+              <HeartIcon className="w-6 h-6" />
             </button>
             <button className="hover:opacity-70 transition-opacity">
-              <MessageCircle className="w-6 h-6" />
+              <CircleOffIcon className="w-6 h-6" />
             </button>
             <button className="hover:opacity-70 transition-opacity">
-              <EyeOff className="w-6 h-6" />
-            </button>
-          </div>
-          <button className="hover:opacity-70 transition-opacity">
-            <Send className="w-6 h-6" />
+            <SendIcon className="w-6 h-6" />
           </button>
+          </div>
+          <div className="text-muted-foreground flex items-center gap-1">
+              {lastSeen == 0 ? (
+                <Badge variant="outline" className="border-green-500 text-green-500 hover:bg-green-500/10">
+                  Online
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-500/10">
+                  {lastSeen >= 60 ? `${Math.floor(lastSeen/60)}h ago` : `${lastSeen}m ago`}
+                </Badge>
+              )}
+            </div>
         </div>
         
         {/* Profile info */}
         <div className="text-sm">
-          <div className="font-medium">{nickName}</div>
+          <div className="flex justify-between items-center">
+            <div className="font-medium">{nickName}</div>
+          </div>
           <div className="flex justify-between items-center">
             <div className="text-muted-foreground">{profileSummary}</div>
             <div className="text-muted-foreground">{distance}</div>
@@ -97,7 +109,8 @@ export const HomePage: React.FC = () => {
       imageUrls: [`https://picsum.photos/800/600?random=1`],
       nickName: generateRandomProfileName(1),
       profileSummary: "25 | Top | Travel (1Km)",
-      distance: "500m"
+      distance: "500m",
+      lastSeen: 0,
     },
     {
       id: 2,
@@ -108,7 +121,8 @@ export const HomePage: React.FC = () => {
       ],
       nickName: generateRandomProfileName(2),
       profileSummary: "29 | Vers Bottom | Host / Travel (5Km)",
-      distance: "1km"
+      distance: "1km",
+      lastSeen: 0,
     },
     {
       id: 3,
@@ -118,7 +132,8 @@ export const HomePage: React.FC = () => {
       ],
       nickName: generateRandomProfileName(3),
       profileSummary: "51 | Side | Host",
-      distance: "1km"
+      distance: "1km",
+      lastSeen: 10,
     },
     {
       id: 4,
@@ -128,7 +143,8 @@ export const HomePage: React.FC = () => {
       ],
       nickName: generateRandomProfileName(4),
       profileSummary: "37 | Blower | Travel (20Km)",
-      distance: "10km"
+      distance: "10km",
+      lastSeen: 30,
     }, 
     {
       id: 5,
@@ -136,7 +152,8 @@ export const HomePage: React.FC = () => {
       ],
       nickName: generateRandomProfileName(5),
       profileSummary: "28 | Vers Top | Host",
-      distance: "15km"
+      distance: "15km",
+      lastSeen: 60,
     },   
     {
       id: 6,
@@ -145,7 +162,8 @@ export const HomePage: React.FC = () => {
       ],
       nickName: generateRandomProfileName(6),
       profileSummary: "31 | Top | Host",
-      distance: "11km"
+      distance: "11km",
+      lastSeen: 120,
     }
   ];
 
@@ -156,33 +174,33 @@ export const HomePage: React.FC = () => {
 
   const navigationItems = [
     { 
-      icon: Radar, 
+      icon: RadarIcon, 
       label: "Radar", 
       isActive: true,
       onClick: () => handleNavigationClick("Radar")
     },
     { 
-      icon: SlidersHorizontal, 
+      icon: SlidersHorizontalIcon, 
       label: "Filters",
       onClick: () => handleNavigationClick("Filters")
     },
     { 
-      icon: Heart, 
+      icon: HeartIcon, 
       label: "Likes",
       onClick: () => handleNavigationClick("Likes")
     },
     { 
-      icon: Send, 
+      icon: InboxIcon, 
       label: "Inbox",
       onClick: () => handleNavigationClick("Inbox")
     },
     { 
-      icon: Zap, 
+      icon: ZapIcon, 
       label: "Feed",
       onClick: () => handleNavigationClick("Feed")
     },
     { 
-      icon: User, 
+      icon: UserIcon, 
       label: "Profile",
       onClick: () => handleNavigationClick("Profile")
     }
@@ -199,6 +217,7 @@ export const HomePage: React.FC = () => {
               nickName={image.nickName}
               profileSummary={image.profileSummary}
               distance={image.distance}
+              lastSeen={image.lastSeen}
             />
           ))}
         </ContentFeed>

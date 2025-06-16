@@ -1,7 +1,7 @@
 import type { FC } from 'react';
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import React from 'react';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
+
 import { TextEditor } from '@/components/TextEditor';
 import { ImageEditor } from '@/components/ImageEditor';
 
@@ -22,19 +23,22 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
 
 const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {
+    const emptyValue = '--';
+
     return (
-        <div className={className}>
+        <div className={cn(className, "text-sm text-foreground")}>
             <Select disabled={disabled} value={value} onValueChange={onValueChange}>
-                {selectCfg.label && <span className="text-sm text-foreground px-1">{selectCfg.label}</span>}
-                <SelectTrigger className="w-full text-sm text-foreground">
-                    <SelectValue placeholder="--" />
+                {selectCfg.label && <span className="px-1">{selectCfg.label}</span>}
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder={emptyValue} />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
                         <SelectLabel>{selectCfg.label}</SelectLabel>
-                        {enableClearOption ? (<SelectItem className="italic" key={'--'} value={'--'}>--</SelectItem>) : null}
+                        {enableClearOption ? (<SelectItem className="italic" key={emptyValue} value={emptyValue}>{emptyValue}</SelectItem>) : null}
                         {
                             Object.keys(selectCfg.options).map((value) => (
                                 <SelectItem key={value} value={value}>{selectCfg.options[value]}</SelectItem>
@@ -424,13 +428,13 @@ export const ProfileSetupPage: FC = () => {
     
     return (
         <Page back={true}>
-            <Content className='text-md'>
+            <Content className='text-sm text-foreground'>
                 <ContentFeed>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-3">
                         <div className="col-span-2">
                             <div className="flex items-end">
                                 <div className="grow">
-                                    <span className="text-sm text-foreground px-1">{globalDict.selectProfile}</span>
+                                    <span className="ps-1">{globalDict.selectProfile}</span>
                                     <ProfileSelect 
                                         className="font-bold"
                                         selectCfg={{
@@ -451,10 +455,10 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div className="col-span-2">
-                            <span className="text-sm text-foreground px-1">{profileDict.nickName.label}</span>
+                            <span className="ps-1">{profileDict.nickName.label}</span>
                             <Input 
-                                type="text" 
-                                className="text-sm text-foreground"
+                                type="text"
+                                className="text-sm"
                                 placeholder={profileDict.nickName.label}
                                 value={profileRecord?.nickName}
                                 onChange={(e) => handleProfileChange('nickName', e.target.value)}
@@ -465,7 +469,7 @@ export const ProfileSetupPage: FC = () => {
                             <ProfileAlbumCarousel />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.age}
                                 value={profileRecord?.age}
@@ -473,7 +477,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.position}
                                 value={profileRecord?.position}
@@ -481,7 +485,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.hosting}
                                 value={profileRecord?.hosting}
@@ -489,7 +493,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.travelDistance}
                                 disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
@@ -499,16 +503,16 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div className="col-span-2">
-                            <span className="text-sm text-foreground px-1">{profileDict.aboutMe.label}</span>
+                            <span className="ps-1">{profileDict.aboutMe.label}</span>
                             <TextEditor
-                                className="text-sm text-foreground"
+                                className="text-sm"
                                 placeholder={profileDict.aboutMe.label}
                                 value={profileRecord?.aboutMe}
                                 onChange={(value) => handleProfileChange('aboutMe', value)}
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.body}
                                 value={profileRecord?.body}
@@ -516,7 +520,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.healthPractices}
                                 value={profileRecord?.healthPractices}
@@ -524,7 +528,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.equipmentSize}
                                 value={profileRecord?.equipmentSize}
@@ -532,7 +536,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.buttShape}
                                 value={profileRecord?.buttShape}
@@ -540,7 +544,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.hivStatus}
                                 value={profileRecord?.hivStatus}
@@ -548,7 +552,7 @@ export const ProfileSetupPage: FC = () => {
                             />
                         </div>
 
-                        <div className="col-span-1">
+                        <div>
                             <ProfileSelect 
                                 selectCfg={profileDict.preventionPractices}
                                 value={profileRecord?.preventionPractices}

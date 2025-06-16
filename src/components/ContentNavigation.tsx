@@ -1,6 +1,8 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { viewportSafeAreaInsets } from '@telegram-apps/sdk';
+import { useSignal } from '@telegram-apps/sdk-react';
 
 interface NavigationItem {
     icon: LucideIcon;
@@ -15,8 +17,16 @@ interface ContentNavigationProps {
 }
 
 export const ContentNavigation: React.FC<ContentNavigationProps> = ({ items }) => {
+    const safeInsets = useSignal(viewportSafeAreaInsets) ?? { top: 0, bottom: 0, left: 0, right: 0 };
+    
     return (
-        <nav className="fixed bottom-0 left-0 right-0 flex items-center justify-around px-3 py-3 border-t bg-background z-50">
+        <nav className={cn(
+            "fixed bottom-0 left-0 right-0 flex px-12 border-t bg-background z-50",
+            items.length === 1 ? "justify-center" : "justify-between"
+        )} style={{
+            paddingTop: "0.75rem",
+            paddingBottom: `max(0.75rem,${safeInsets.bottom}px)`,
+        }}>
             {items.map((item, index) => {
                 const Icon = item.icon;
                 return (

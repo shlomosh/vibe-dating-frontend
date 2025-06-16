@@ -1,3 +1,5 @@
+import { LocateFixedIcon } from 'lucide-react';
+
 import { 
   AgeType,
   TravelDistanceType, 
@@ -75,8 +77,17 @@ export const globalDict = {
     enterYourLocation: (<>Enter your location</>),
     yourLocationAsItWillAppear: (<>Your location as it will appear:</>),
     obscureRadius: (<>Obscure Radius</>),
-    locationNotSetAutomatic: (<div>Your location not set.<p className="text-sm italic">(Click 'Update Location' to set it)</p></div>),
-    locationNotSetManual: (<div>Your location not set.<p className="text-sm italic">(Enter your location address to set it)</p></div>),
+    locationNotSetAutomatic: (<div>
+      Your location not set
+      <p className="text-sm italic">
+        Click Map or 
+        <div className="inline-block bg-black/20 border-1 border-white text-white px-1 py-1 rounded-md flex items-center gap-1 mx-2">
+          <LocateFixedIcon className="inline-block w-5 h-5 mt-[-2px]" />
+          <span className="text-sm ps-1">Update Location</span>
+        </div>
+      </p>
+    </div>),
+    locationNotSetManual: (<div>Your location not set<p className="text-sm italic">Enter your location address manually</p></div>),
     radius: (<>Radius</>),
     km: (<>Km</>),
     longitude: (<>Longitude</>),

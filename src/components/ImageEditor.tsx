@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
-import { Upload, RotateCcw, Check, X, ZoomIn, ZoomOut } from 'lucide-react'
+import { UploadIcon, RotateCcwIcon, CheckIcon, XIcon, ZoomInIcon, ZoomOutIcon } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 interface CropArea {
@@ -163,7 +163,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
             `}
                     >
                         <input {...getInputProps()} />
-                        <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                        <UploadIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                         <p className="text-lg font-medium mb-2">Upload Photo</p>
                         <p className="text-sm text-gray-500 mb-4">
                             {isDragActive
@@ -230,7 +230,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                                 onClick={handleZoomOut}
                                 disabled={zoom <= 1}
                             >
-                                <ZoomOut className="w-4 h-4" />
+                                <ZoomOutIcon className="w-4 h-4" />
                             </Button>
                             <Button
                                 size="sm"
@@ -238,7 +238,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                                 onClick={handleZoomIn}
                                 disabled={zoom >= 3}
                             >
-                                <ZoomIn className="w-4 h-4" />
+                                <ZoomInIcon className="w-4 h-4" />
                             </Button>
                         </div>
                     </div>
@@ -259,7 +259,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                         onClick={handleReset}
                         className="flex-1"
                     >
-                        <RotateCcw className="w-4 h-4 mr-2" />
+                        <RotateCcwIcon className="w-4 h-4 mr-2" />
                         {globalDict.reset}
                     </Button>
 
@@ -269,7 +269,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                             onClick={onClose}
                             className="flex-1"
                         >
-                            <X className="w-4 h-4 mr-2" />
+                            <XIcon className="w-4 h-4 mr-2" />
                             {globalDict.cancel}
                         </Button>
                     )}
@@ -279,7 +279,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                         disabled={!croppedAreaPixels || isProcessing}
                         className="flex-1"
                     >
-                        <Check className="w-4 h-4 mr-2" />
+                        <CheckIcon className="w-4 h-4 mr-2" />
                         {isProcessing ? globalDict.processing : globalDict.save}
                     </Button>
                 </div>

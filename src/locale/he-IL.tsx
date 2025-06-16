@@ -75,7 +75,7 @@ export const globalDict = {
     enterYourLocation: (<>הזן את המיקום שלך</>),
     yourLocationAsItWillAppear: (<>המיקום שלך כפי שיופיע:</>),
     obscureRadius: (<>רדיוס הסתרה</>),
-    locationNotSetAutomatic: (<div>המיקום שלך לא הוגדר.<p className="text-sm italic">(לחץ על 'עדכן מיקום' כדי להגדיר אותו)</p></div>),
+    locationNotSetAutomatic: (<div>המיקום שלך לא הוגדר.<p className="text-sm italic">לחץ על מפה או על <div className="inline-block border-1 border-white text-white px-1 py-1 rounded-md">עדכן מיקום</div> כדי להגדיר אותו</p></div>),
     locationNotSetManual: (<div>המיקום שלך לא הוגדר.<p className="text-sm italic">(הזן את כתובת המיקום שלך כדי להגדיר אותו)</p></div>),
     radius: (<>רדיוס</>),
     km: (<>ק"מ</>),
