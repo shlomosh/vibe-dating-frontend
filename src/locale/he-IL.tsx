@@ -27,6 +27,7 @@ export const globalDict = {
     back: (<>חזור</>),
     select: (<>בחר</>),
     create: (<>צור</>),
+    save: (<>שמור</>),
     reset: (<>איפוס</>),
     zoom: (<>זום</>),
     processing: (<>מעבד...</>),
@@ -52,7 +53,7 @@ export const globalDict = {
     clickToEditAlbum: (<>לחץ לעריכת אלבום...</>),
     addImage: (<>הוסף תמונה</>),
     clickToUploadImage: (<>לחץ להעלאת תמונה...</>),
-    save: (<>שמור</>),
+    profileImage: (<>תמונת פרופיל</>),
 
     // image-editor
     uploadPhoto: (<>העלאת תמונה</>),
@@ -64,7 +65,18 @@ export const globalDict = {
     fileSizeMustBeLessThan: (maxFileSize: number) => (<>גודל הקובץ חייב להיות פחות מ- {maxFileSize}MB</>),
     dropImageHere: (<>הזן את התמונה כאן...</>),
     dragAndDropImage: (<>גרור ושחרר את התמונה כאן, או לחץ כדי לבחור</>),
-  
+    clickToTakePhoto: (<>לחץ לצילום תמונה</>),
+    errorUploadingImage: (<>שגיאה בעיבוד התמונה</>),
+
+    // camera
+    cameraAccessDenied: (<>גישה למצלמה נדחתה</>),
+    cameraNotSupported: (<>מצלמה לא נתמכת במכשיר זה</>),
+    takePhoto: (<>צלם תמונה</>),
+    retakePhoto: (<>צלם מחדש</>),
+    cameraLoading: (<>טוען מצלמה...</>),
+    switchCamera: (<>החלף מצלמה</>),
+    cameraError: (<>אירעה שגיאה במצלמה</>),
+    
     // location
     yourLocation: (<>מיקום</>),
     locationMode: (<>מצב מיקום</>),

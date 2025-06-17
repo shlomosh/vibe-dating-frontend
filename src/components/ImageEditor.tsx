@@ -4,8 +4,21 @@ import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
-import { UploadIcon, RotateCcwIcon, CheckIcon, XIcon, ZoomInIcon, ZoomOutIcon } from 'lucide-react'
+import { UploadIcon, RotateCcwIcon, CheckIcon, XIcon, ZoomInIcon, ZoomOutIcon, CameraIcon, AlertCircleIcon } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { retrieveLaunchParams } from '@telegram-apps/sdk-react'
+
+// Add Telegram WebApp type declaration
+declare global {
+    interface Window {
+        Telegram?: {
+            WebApp: {
+                platform: string;
+            };
+        };
+    }
+}
 
 interface CropArea {
     x: number
@@ -32,8 +45,10 @@ export const ImageEditor: FC<ImageEditorProps> = ({
     const [isProcessing, setIsProcessing] = useState(false)
     const [error, setError] = useState<string | React.ReactNode | null>(null)
     const { translations: { globalDict } } = useLanguage();
+    const { tgWebAppPlatform } = retrieveLaunchParams();
 
     const canvasRef = useRef<HTMLCanvasElement>(null)
+    const cameraInputRef = useRef<HTMLInputElement>(null)
 
     // Handle file drop/upload
     const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -59,6 +74,38 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         })
         reader.readAsDataURL(file)
     }, [maxFileSize])
+
+    // Handle camera capture
+    const handleCameraCapture = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (!file) return
+
+        // Validate file size
+        if (file.size > maxFileSize * 1024 * 1024) {
+            setError(globalDict.fileSizeMustBeLessThan(maxFileSize));
+            return
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            setError(globalDict.pleaseUploadImageFile);
+            return
+        }
+
+        setError(null)
+        const reader = new FileReader()
+        reader.addEventListener('load', () => {
+            setImageSrc(reader.result as string)
+        })
+        reader.readAsDataURL(file)
+        
+        // Reset the input value so the same file can be selected again
+        event.target.value = ''
+    }, [maxFileSize])
+
+    const handleCameraClick = () => {
+        cameraInputRef.current?.click()
+    }
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -150,47 +197,58 @@ export const ImageEditor: FC<ImageEditorProps> = ({
 
     if (!imageSrc) {
         return (
-            <Card className="w-full max-w-md mx-auto">
-                <div className="p-6">
+            <div className="h-full flex flex-col justify-end pb-8 pt-12 px-8">
+                <div className="h-full flex flex-col justify-start gap-4">
                     <div
                         {...getRootProps()}
                         className={`
-              border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-              ${isDragActive
-                                ? 'border-blue-400 bg-blue-50'
-                                : 'border-gray-300 hover:border-gray-400'
-                            }
-            `}
+                            border-2 border-dashed rounded-lg p-2 text-center cursor-pointer transition-colors
+                            ${isDragActive ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                        }`}
                     >
                         <input {...getInputProps()} />
-                        <UploadIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                        <p className="text-lg font-medium mb-2">Upload Photo</p>
+                        <UploadIcon className="w-12 h-12 mx-auto mb-2 text-gray-400" />
                         <p className="text-sm text-gray-500 mb-4">
-                            {isDragActive
-                                ? globalDict.dropImageHere
-                                : globalDict.dragAndDropImage
-                            }
+                            {isDragActive ? globalDict.dropImageHere : globalDict.dragAndDropImage}
                         </p>
                         <p className="text-xs text-gray-400">
                             {globalDict.supportedImageFormats(maxFileSize)}
                         </p>
                     </div>
 
-                    {error && (
-                        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                            <p className="text-sm text-red-600">{error}</p>
-                        </div>
-                    )}
+                    {(tgWebAppPlatform === 'ios') && (
+                        <>
+                            <div
+                                onClick={handleCameraClick}
+                                className="border-2 border-dashed rounded-lg p-2 text-center cursor-pointer transition-colors border-gray-300 hover:border-gray-400"
+                            >
+                                <CameraIcon className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                                <p className="text-sm text-gray-500 mb-4">
+                                    {globalDict.clickToTakePhoto}
+                                </p>
+                            </div>
 
-                    {onClose && (
-                        <div className="mt-4 flex justify-center">
-                            <Button variant="outline" onClick={onClose}>
-                                {globalDict.cancel}
-                            </Button>
-                        </div>
+                            <input
+                                ref={cameraInputRef}
+                                type="file"
+                                accept="image/*"
+                                capture="user"
+                                onChange={handleCameraCapture}
+                                style={{ display: 'none' }}
+                            />
+                        </>
                     )}
                 </div>
-            </Card>
+                <div>
+                    {error && (
+                        <Alert variant="destructive">
+                            <AlertCircleIcon />
+                            <AlertTitle>{globalDict.errorUploadingImage}</AlertTitle>                            
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    )}            
+                </div>
+            </div>
         )
     }
 
@@ -283,12 +341,6 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                         {isProcessing ? globalDict.processing : globalDict.save}
                     </Button>
                 </div>
-
-                {error && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                        <p className="text-sm text-red-600">{error}</p>
-                    </div>
-                )}
             </div>
 
             {/* Hidden canvas for image processing */}

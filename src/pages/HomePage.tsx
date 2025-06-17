@@ -4,13 +4,11 @@ import { Page } from '@/components/Page';
 import { Content } from '@/components/Content';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
 import { generateRandomProfileName } from '@/utils/generator';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
 import anonUserImage from '@/assets/anon-user-front.png';
-import { Badge } from "@/components/ui/badge";
+import { LastSeenBadge } from '@/components/LastSeenBadge';
 
 interface FeedImageProps {
   imageUrls: string[];
@@ -26,7 +24,7 @@ export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profi
       
       {/* Image */}
       {imageUrls.length > 0 ? (
-        <div className="relative aspect-[3/4] w-full">
+        <div className="relative aspect-[3/4] w-full swiper-container">
           <Swiper
             modules={[Pagination]}
             pagination={{
@@ -70,30 +68,22 @@ export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profi
               <CircleOffIcon className="w-6 h-6" />
             </button>
             <button className="hover:opacity-70 transition-opacity">
-            <SendIcon className="w-6 h-6" />
-          </button>
+              <SendIcon className="w-6 h-6" />
+            </button>
           </div>
           <div className="text-muted-foreground flex items-center gap-1">
-              {lastSeen == 0 ? (
-                <Badge variant="outline" className="border-green-500 text-green-500 hover:bg-green-500/10">
-                  Online
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-500/10">
-                  {lastSeen >= 60 ? `${Math.floor(lastSeen/60)}h ago` : `${lastSeen}m ago`}
-                </Badge>
-              )}
-            </div>
+            <LastSeenBadge lastSeen={lastSeen} />
+          </div>
         </div>
         
         {/* Profile info */}
         <div className="text-sm">
-          <div className="flex justify-between items-center">
-            <div className="font-medium">{nickName}</div>
+          <div className="flex justify-between items-center font-medium">
+            <div>{nickName}</div>
           </div>
-          <div className="flex justify-between items-center">
-            <div className="text-muted-foreground">{profileSummary}</div>
-            <div className="text-muted-foreground">{distance}</div>
+          <div className="flex justify-between items-center text-muted-foreground">
+            <div>{profileSummary}</div>
+            <div>{distance}</div>
           </div>
         </div>
       </div>

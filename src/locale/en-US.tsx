@@ -55,7 +55,8 @@ export const globalDict = {
     clickToEditAlbum: (<>Click to edit album...</>),
     addImage: (<>Add Image</>),
     clickToUploadImage: (<>Click to upload image...</>),
-
+    profileImage: (<>Profile Image</>),
+    
     // image-editor
     uploadPhoto: (<>Upload Photo</>),
     editPhoto: (<>Edit Photo</>),
@@ -66,7 +67,18 @@ export const globalDict = {
     fileSizeMustBeLessThan: (maxFileSize: number) => (<>File size must be less than {maxFileSize}MB</>),
     dropImageHere: (<>Drop the image here...</>),
     dragAndDropImage: (<>Drag & drop an image here, or click to select</>),
+    clickToTakePhoto: (<>Click to take a photo</>),
+    errorUploadingImage: (<>Error uploading image</>),
 
+    // camera
+    cameraAccessDenied: (<>Camera access denied</>),
+    cameraNotSupported: (<>Camera not supported on this device</>),
+    takePhoto: (<>Take Photo</>),
+    retakePhoto: (<>Retake Photo</>),
+    cameraLoading: (<>Loading camera...</>),
+    switchCamera: (<>Switch Camera</>),
+    cameraError: (<>Camera error occurred</>),
+  
     // location
     yourLocation: (<>Location</>),
     locationMode: (<>Location Mode</>),

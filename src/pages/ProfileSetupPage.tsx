@@ -11,16 +11,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
 
 import { TextEditor } from '@/components/TextEditor';
 import { ImageEditor } from '@/components/ImageEditor';
 
 import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
 
-import { Navigation, EffectFade } from 'swiper/modules';
+import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { PlusIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -48,7 +49,7 @@ const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className
                 </SelectContent>
             </Select>
         </div>
-    )   
+    )
 }
 
 const ProfileAlbumCarousel = () => {
@@ -56,10 +57,7 @@ const ProfileAlbumCarousel = () => {
     const [isAlbumDialogOpen, setIsAlbumDialogOpen] = useState(false);
     const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-    const { translations: { globalDict }, direction } = useLanguage();
-
-    const PrevChevronIcon = direction === 'rtl' ? ChevronRightIcon : ChevronLeftIcon;
-    const NextChevronIcon = direction === 'rtl' ? ChevronLeftIcon : ChevronRightIcon;
+    const { translations: { globalDict } } = useLanguage();
 
     useEffect(() => {
         const loadImages = async () => {
@@ -70,7 +68,7 @@ const ProfileAlbumCarousel = () => {
                 'https://picsum.photos/800/1200?random=3',
                 'https://picsum.photos/800/1200?random=4',
             ];
-            
+
             setImages(imageUrls);
         };
 
@@ -81,7 +79,7 @@ const ProfileAlbumCarousel = () => {
         const rect = e.currentTarget.getBoundingClientRect();
         const clickY = e.clientY - rect.top;
         const clickPercentage = (clickY / rect.height) * 100;
-        
+
         if (clickPercentage <= 75) {
             setIsAlbumDialogOpen(true);
         }
@@ -108,22 +106,27 @@ const ProfileAlbumCarousel = () => {
         const swiperRef = React.useRef<any>(null);
 
         return (
-            <div className="relative w-full aspect-[3/4] rounded-[2%] overflow-hidden bg-foreground/10">
+            <div className="relative aspect-[3/4] w-full swiper-container">
                 <Swiper
-                    effect={'fade'}
+                    modules={[Pagination]}
                     grabCursor={true}
-                    modules={[Navigation, EffectFade]}
-                    className="w-full h-full"
                     onSwiper={(swiper) => {
                         swiperRef.current = swiper;
                     }}
+                    pagination={{
+                        clickable: true,
+                        renderBullet: function (_index, className) {
+                            return '<span class="' + className + '"></span>';
+                        },
+                    }}
+                    className="w-full h-full rounded-lg"
                 >
                     {images.length > 0 ? images.map((item, index) => (
-                        <SwiperSlide key={index} className="flex items-center justify-center">
-                            <div className="flex w-full h-full">
-                                <img 
-                                    src={item} 
-                                    alt={`Profile Image ${index + 1}`} 
+                        <SwiperSlide key={index}>
+                            <div className="flex w-full h-full relative">
+                                <img
+                                    src={item}
+                                    alt={`Profile Image ${index + 1}`}
                                     className="w-full h-full object-cover"
                                     loading="lazy"
                                     style={{
@@ -131,9 +134,15 @@ const ProfileAlbumCarousel = () => {
                                         minHeight: "100%",
                                         objectFit: "cover",
                                         objectPosition: "center",
-                                        transform: "scale(1.5)"
                                     }}
                                 />
+                                {index === 0 && (
+                                    <div className="absolute bottom-[1.25rem] right-[1.25rem] z-10">
+                                        <Badge variant="outline" className="bg-black/80 text-foreground h-[1.5rem]">
+                                            {globalDict.profileImage}
+                                        </Badge>
+                                    </div>
+                                )}
                             </div>
                         </SwiperSlide>
                     )) : (
@@ -144,18 +153,6 @@ const ProfileAlbumCarousel = () => {
                         </SwiperSlide>
                     )}
                 </Swiper>
-                <div className="absolute w-full top-[100%] pb-16 px-8 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
-                    <div className="flex justify-between">
-                        <PrevChevronIcon 
-                            className="w-10 h-10 rounded-[8px] p-1 border-2 bg-black/50 text-white border-white/20 hover:border-white/50"
-                            onClick={() => swiperRef.current?.slidePrev()}
-                        />
-                        <NextChevronIcon 
-                            className="w-10 h-10 rounded-[8px] p-1 border-2 bg-black/50 text-white border-white/20 hover:border-white/50"
-                            onClick={() => swiperRef.current?.slideNext()}
-                        />
-                    </div>
-                </div>                
             </div>
         );
     };
@@ -170,30 +167,28 @@ const ProfileAlbumCarousel = () => {
                     <div className="w-[85vw] -[3/4]">
                         <CarouselContent />
                         <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
-                                <div className="flex gap-2">
-                                    <TrashIcon 
-                                        className={
-                                            `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${
-                                                images.length == 0 
-                                                    ? "text-white/50 border-white/10 cursor-not-allowed"
-                                                    : "text-white border-white/20 hover:border-white/50"
-                                            }`}
-                                        onClick={handleDeleteImage}
-                                    />
-                                    <PlusIcon 
-                                        className={
-                                            `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${
-                                            images.length >= 5 
-                                                ? "text-white/50 border-white/10 cursor-not-allowed"
-                                                : "text-white border-white/20 hover:border-white/50"
-                                          }`}
-                                        onClick={() => {
-                                            if (images.length < 5) {
-                                                setIsImageEditorOpen(true);
-                                            }
-                                        }}
-                                    />
-                                </div>
+                            <div className="flex gap-2">
+                                <TrashIcon
+                                    className={
+                                        `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${images.length == 0
+                                            ? "text-white/50 border-white/10 cursor-not-allowed"
+                                            : "text-white border-white/20 hover:border-white/50"
+                                        }`}
+                                    onClick={handleDeleteImage}
+                                />
+                                <PlusIcon
+                                    className={
+                                        `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${images.length >= 5
+                                            ? "text-white/50 border-white/10 cursor-not-allowed"
+                                            : "text-white border-white/20 hover:border-white/50"
+                                        }`}
+                                    onClick={() => {
+                                        if (images.length < 5) {
+                                            setIsImageEditorOpen(true);
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
                 </DialogContent>
@@ -201,10 +196,10 @@ const ProfileAlbumCarousel = () => {
             <Dialog open={isImageEditorOpen} onOpenChange={setIsImageEditorOpen}>
                 <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
                     <div className="w-[85vw] aspect-[3/4]">
-                    <ImageEditor 
-                        onClose={() => setIsImageEditorOpen(false)}
-                        onImageSave={handleAddImage}
-                    />
+                        <ImageEditor
+                            onClose={() => setIsImageEditorOpen(false)}
+                            onImageSave={handleAddImage}
+                        />
                     </div>
                 </DialogContent>
             </Dialog>
@@ -234,9 +229,9 @@ const CreateProfileDialog: FC<{
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4">
-                    <Input 
+                    <Input
                         className="w-full"
-                        type="text" 
+                        type="text"
                         placeholder={newProfileId}
                         value={newProfileId}
                         onChange={(e) => setNewProfileId(e.target.value)}
@@ -247,19 +242,19 @@ const CreateProfileDialog: FC<{
                         <DialogClose asChild>
                             <Button
                                 variant="outline"
-                                onClick={() => { 
-                                    if (onClose) onClose(); 
+                                onClick={() => {
+                                    if (onClose) onClose();
                                 }}
                             >
                                 {globalDict.cancel}
                             </Button>
                         </DialogClose>
                         <DialogClose asChild>
-                            <Button 
+                            <Button
                                 type="submit"
                                 disabled={newProfileId.trim().length === 0}
-                                onClick={() => { 
-                                    if (onSubmit) onSubmit(newProfileId.trim()); 
+                                onClick={() => {
+                                    if (onSubmit) onSubmit(newProfileId.trim());
                                 }}
                                 autoFocus
                             >
@@ -299,17 +294,17 @@ const DeleteProfileDialog: FC<{
                         <DialogClose asChild>
                             <Button
                                 variant="outline"
-                                onClick={() => { 
-                                    if (onClose) onClose(); 
+                                onClick={() => {
+                                    if (onClose) onClose();
                                 }}
                             >
                                 {globalDict.cancel}
                             </Button>
                         </DialogClose>
                         <DialogClose asChild>
-                            <Button 
+                            <Button
                                 type="submit"
-                                onClick={async () => { 
+                                onClick={async () => {
                                     if (onSubmit) { onSubmit(); }
                                 }}
                                 autoFocus
@@ -383,9 +378,9 @@ export const ProfileSetupPage: FC = () => {
         navigate('/location-setup');
     }
 
-    const handleDeleteProfile = async () => { 
+    const handleDeleteProfile = async () => {
         if (!profileDB || !profileId) return;
-        
+
         const newProfileDB = { ...profileDB };
         delete newProfileDB.db[profileId];
         newProfileDB.id = Object.keys(newProfileDB.db)[0];
@@ -394,13 +389,13 @@ export const ProfileSetupPage: FC = () => {
 
     const handleCreateProfile = async (newProfileId: string) => {
         if (!profileDB) return;
-        
+
         const newProfileDB = { ...profileDB };
         newProfileDB.db[newProfileId] = profileRecord;
         newProfileDB.id = newProfileId;
         await setProfileDB(newProfileDB);
     }
-    
+
     const navigationItems = [
         {
             icon: PrevArrowIcon,
@@ -425,7 +420,7 @@ export const ProfileSetupPage: FC = () => {
             </Page>
         );
     }
-    
+
     return (
         <Page back={true}>
             <Content className='text-sm text-foreground'>
@@ -435,7 +430,7 @@ export const ProfileSetupPage: FC = () => {
                             <div className="flex items-end">
                                 <div className="grow">
                                     <span className="ps-1">{globalDict.selectProfile}</span>
-                                    <ProfileSelect 
+                                    <ProfileSelect
                                         className="font-bold"
                                         selectCfg={{
                                             options: profileIdList.reduce((obj, id) => ({ ...obj, [id]: id }), {})
@@ -456,7 +451,7 @@ export const ProfileSetupPage: FC = () => {
 
                         <div className="col-span-2">
                             <span className="ps-1">{profileDict.nickName.label}</span>
-                            <Input 
+                            <Input
                                 type="text"
                                 className="text-sm"
                                 placeholder={profileDict.nickName.label}
@@ -470,7 +465,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.age}
                                 value={profileRecord?.age}
                                 onValueChange={(value) => handleProfileChange('age', value)}
@@ -478,7 +473,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.position}
                                 value={profileRecord?.position}
                                 onValueChange={(value) => handleProfileChange('position', value)}
@@ -486,7 +481,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.hosting}
                                 value={profileRecord?.hosting}
                                 onValueChange={(value) => handleProfileChange('hosting', value)}
@@ -494,7 +489,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.travelDistance}
                                 disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
                                 value={profileRecord?.travelDistance}
@@ -513,7 +508,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.body}
                                 value={profileRecord?.body}
                                 onValueChange={(value) => handleProfileChange('body', value)}
@@ -521,7 +516,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.healthPractices}
                                 value={profileRecord?.healthPractices}
                                 onValueChange={(value) => handleProfileChange('healthPractices', value)}
@@ -529,7 +524,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.equipmentSize}
                                 value={profileRecord?.equipmentSize}
                                 onValueChange={(value) => handleProfileChange('equipmentSize', value)}
@@ -537,7 +532,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.buttShape}
                                 value={profileRecord?.buttShape}
                                 onValueChange={(value) => handleProfileChange('buttShape', value)}
@@ -545,7 +540,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.hivStatus}
                                 value={profileRecord?.hivStatus}
                                 onValueChange={(value) => handleProfileChange('hivStatus', value)}
@@ -553,7 +548,7 @@ export const ProfileSetupPage: FC = () => {
                         </div>
 
                         <div>
-                            <ProfileSelect 
+                            <ProfileSelect
                                 selectCfg={profileDict.preventionPractices}
                                 value={profileRecord?.preventionPractices}
                                 onValueChange={(value) => handleProfileChange('preventionPractices', value)}
