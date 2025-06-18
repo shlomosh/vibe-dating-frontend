@@ -10,6 +10,7 @@ import { TermsAndConditionsPage } from '@/pages/TermsAndConditionsPage';
 import { ProfileSetupPage } from '@/pages/ProfileSetupPage';
 import { LocationSetupPage } from '@/pages/LocationSetupPage';
 import { HomePage } from '@/pages/HomePage';
+import { InboxPage } from '@/pages/InboxPage';
 
 interface Route {
   path: string;
@@ -24,6 +25,7 @@ export const routes: Route[] = [
   { path: '/profile-setup', Component: ProfileSetupPage, title: 'Profile Select' },
   { path: '/location-setup', Component: LocationSetupPage, title: 'Location Setup' },
   { path: '/home', Component: HomePage, title: 'Home' },
+  { path: '/inbox', Component: InboxPage, title: 'Inbox' },
   { path: '/demo-index', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },

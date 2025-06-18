@@ -1,12 +1,12 @@
 import React from 'react';
-import { RadarIcon, ZapIcon, SlidersHorizontalIcon, SendIcon, UserIcon, HeartIcon, CircleOffIcon, InboxIcon } from 'lucide-react';
+import { SendIcon, HeartIcon, CircleOffIcon } from 'lucide-react';
 import { Page } from '@/components/Page';
 import { Content } from '@/components/Content';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { generateRandomProfileName } from '@/utils/generator';
 import { ContentFeed } from '@/components/ContentFeed';
-import { ContentNavigation } from '@/components/ContentNavigation';
+import { MainNavigationBar } from '@/navigation/MainNavigationBar';
 import anonUserImage from '@/assets/anon-user-front.png';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
 
@@ -157,45 +157,6 @@ export const HomePage: React.FC = () => {
     }
   ];
 
-  const handleNavigationClick = (label: string) => {
-    console.log(`Navigation item clicked: ${label}`);
-    // Add your navigation logic here
-  };
-
-  const navigationItems = [
-    { 
-      icon: RadarIcon, 
-      label: "Radar", 
-      isActive: true,
-      onClick: () => handleNavigationClick("Radar")
-    },
-    { 
-      icon: SlidersHorizontalIcon, 
-      label: "Filters",
-      onClick: () => handleNavigationClick("Filters")
-    },
-    { 
-      icon: HeartIcon, 
-      label: "Likes",
-      onClick: () => handleNavigationClick("Likes")
-    },
-    { 
-      icon: InboxIcon, 
-      label: "Inbox",
-      onClick: () => handleNavigationClick("Inbox")
-    },
-    { 
-      icon: ZapIcon, 
-      label: "Feed",
-      onClick: () => handleNavigationClick("Feed")
-    },
-    { 
-      icon: UserIcon, 
-      label: "Profile",
-      onClick: () => handleNavigationClick("Profile")
-    }
-  ];
-
   return (
     <Page>
       <Content className="flex flex-col h-full">
@@ -212,7 +173,7 @@ export const HomePage: React.FC = () => {
           ))}
         </ContentFeed>
 
-        <ContentNavigation items={navigationItems} />
+        <MainNavigationBar />
       </Content>
     </Page>
   );
