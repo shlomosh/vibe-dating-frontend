@@ -5,7 +5,7 @@ import { Content } from '@/components/Content';
 import { ContentFeed } from '@/components/ContentFeed';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { MessageCountBadge } from '@/components/MessageCountBadge';
-import { MainNavigationBar } from '@/navigation/MainNavigationBar';
+import { InboxNavigationBar } from '@/navigation/InboxNavigationBar';
 import { generateRandomProfileName } from '@/utils/generator';
 
 import anonUserImage from '@/assets/anon-user-front.png';
@@ -166,7 +166,34 @@ export const InboxPage: React.FC = () => {
             lastSeen: 4320,
             unreadCount: 1,
             avatarUrl: `https://picsum.photos/100/100?random=10`
-        }
+        },
+        {
+            id: 11,
+            username: generateRandomProfileName(11),
+            lastMessage: "Thanks for the great conversation",
+            lastTime: "1d ago",
+            lastSeen: 1440,
+            unreadCount: 0,
+            avatarUrl: `https://picsum.photos/100/100?random=11`
+        },
+        {
+            id: 12,
+            username: generateRandomProfileName(12),
+            lastMessage: "Hope you're having a good day!",
+            lastTime: "2d ago",
+            lastSeen: 2880,
+            unreadCount: 0,
+            avatarUrl: `https://picsum.photos/100/100?random=12`
+        },
+        {
+            id: 13,
+            username: generateRandomProfileName(13),
+            lastMessage: "Let's catch up soon!",
+            lastTime: "3d ago",
+            lastSeen: 4320,
+            unreadCount: 1,
+            avatarUrl: `https://picsum.photos/100/100?random=13`
+        }        
     ];
 
     return (
@@ -185,8 +212,7 @@ export const InboxPage: React.FC = () => {
                         />
                     ))}
                 </ContentFeed>
-
-                <MainNavigationBar />
+                <InboxNavigationBar />
             </Content>
         </Page>
     );

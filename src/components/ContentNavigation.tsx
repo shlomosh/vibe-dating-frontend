@@ -5,7 +5,7 @@ import { viewportSafeAreaInsets } from '@telegram-apps/sdk';
 import { useSignal } from '@telegram-apps/sdk-react';
 
 interface NavigationItem {
-    icon: LucideIcon;
+    icon: LucideIcon | undefined;
     label: string | React.ReactNode;
     isActive?: boolean;
     isDisabled?: boolean;
@@ -43,7 +43,7 @@ export const ContentNavigation: React.FC<ContentNavigationProps> = ({ items }) =
                             !item.isDisabled && "group-hover:text-primary",
                             item.isDisabled ? "text-muted-foreground" : (item.isActive ? "text-primary" : "text-foreground")
                         )}>
-                            <Icon size={24} />
+                            {Icon ? <Icon size={24} /> : <div className="w-6 h-6" />}
                         </div>
                         <div className={cn(
                             "text-xs transition-all duration-200",

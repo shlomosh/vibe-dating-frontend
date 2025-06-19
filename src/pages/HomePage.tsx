@@ -8,7 +8,7 @@ import { Page } from '@/components/Page';
 import { Content } from '@/components/Content';
 import { ContentFeed } from '@/components/ContentFeed';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
-import { MainNavigationBar } from '@/navigation/MainNavigationBar';
+import { HomeNavigationBar } from '@/navigation/HomeNavigationBar';
 import { generateRandomProfileName } from '@/utils/generator';
 
 import anonUserImage from '@/assets/anon-user-front.png';
@@ -175,8 +175,7 @@ export const HomePage: React.FC = () => {
             />
           ))}
         </ContentFeed>
-
-        <MainNavigationBar />
+        <HomeNavigationBar />
       </Content>
     </Page>
   );

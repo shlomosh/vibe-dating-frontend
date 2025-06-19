@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { RadarIcon, ZapIcon, SlidersHorizontalIcon, UserIcon, HeartIcon, InboxIcon } from 'lucide-react';
+import { RadarIcon, SlidersHorizontalIcon, ZapIcon, UserIcon, HeartIcon, InboxIcon } from 'lucide-react';
 import { ContentNavigation } from '@/components/ContentNavigation';
 
-export const MainNavigationBar: React.FC = () => {
+export const InboxNavigationBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -14,9 +14,6 @@ export const MainNavigationBar: React.FC = () => {
         break;
       case 'Radar':
         navigate('/home');
-        break;
-      case 'Filters':
-        console.log('Filters page not implemented yet');
         break;
       case 'Likes':
         console.log('Likes page not implemented yet');
@@ -48,6 +45,7 @@ export const MainNavigationBar: React.FC = () => {
       icon: SlidersHorizontalIcon, 
       label: "Filters",
       isActive: false,
+      isDisabled: true,
       onClick: () => handleNavigationClick("Filters")
     },
     { 
