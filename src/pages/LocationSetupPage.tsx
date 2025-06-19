@@ -1,17 +1,17 @@
 import type { FC } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { ArrowLeftIcon, ArrowRightIcon, LocateFixedIcon } from 'lucide-react';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
-import { LocationInput } from '@/components/LocationInput';
-
-import { Select, SelectGroup, SelectContent, SelectValue, SelectTrigger, SelectLabel, SelectItem } from '@/components/ui/select';
-import { ArrowLeftIcon, ArrowRightIcon, LocateFixedIcon } from 'lucide-react';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
+import { LocationInput } from '@/components/LocationInput';
+import { Select, SelectGroup, SelectContent, SelectValue, SelectTrigger, SelectLabel, SelectItem } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // Function to generate random offset within radius (in kilometers)

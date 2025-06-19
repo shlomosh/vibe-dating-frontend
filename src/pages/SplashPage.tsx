@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
-import { Button } from '@/components/ui/button';
 import { Link } from '@/components/Link/Link';
+import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 import peachImage from '@/assets/peach.png';

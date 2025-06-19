@@ -1,14 +1,17 @@
 import React from 'react';
+
 import { SendIcon, HeartIcon, CircleOffIcon } from 'lucide-react';
-import { Page } from '@/components/Page';
-import { Content } from '@/components/Content';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import { generateRandomProfileName } from '@/utils/generator';
+
+import { Page } from '@/components/Page';
+import { Content } from '@/components/Content';
 import { ContentFeed } from '@/components/ContentFeed';
-import { MainNavigationBar } from '@/navigation/MainNavigationBar';
-import anonUserImage from '@/assets/anon-user-front.png';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
+import { MainNavigationBar } from '@/navigation/MainNavigationBar';
+import { generateRandomProfileName } from '@/utils/generator';
+
+import anonUserImage from '@/assets/anon-user-front.png';
 
 interface FeedImageProps {
   imageUrls: string[];

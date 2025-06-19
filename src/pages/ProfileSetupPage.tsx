@@ -3,27 +3,24 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { PlusIcon, TrashIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
-import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-
 import { TextEditor } from '@/components/TextEditor';
 import { ImageEditor } from '@/components/ImageEditor';
-
-import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
-
-import { Pagination } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-
-import { PlusIcon, TrashIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
 import { cn } from '@/lib/utils';
 
 const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {

@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CheckIcon } from 'lucide-react';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { ContentFeed } from '@/components/ContentFeed';
 import { ContentNavigation } from '@/components/ContentNavigation';
-import { CheckIcon } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const TermsAndConditionsPage: FC = () => {
     const navigate = useNavigate();
