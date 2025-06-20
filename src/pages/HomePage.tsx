@@ -9,6 +9,8 @@ import { Content } from '@/components/Content';
 import { ContentFeed } from '@/components/ContentFeed';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { HomeNavigationBar } from '@/navigation/HomeNavigationBar';
+import { FiltersDrawer } from '@/pages/drawers/FiltersDrawer';
+import { FiltersDrawerProvider } from '@/contexts/FiltersDrawerContext';
 import { generateRandomProfileName } from '@/utils/generator';
 
 import anonUserImage from '@/assets/anon-user-front.png';
@@ -161,22 +163,25 @@ export const HomePage: React.FC = () => {
   ];
 
   return (
-    <Page>
-      <Content className="flex flex-col h-full">
-        <ContentFeed>
-          {feedImages.map((image) => (
-            <FeedImage
-              key={image.id}
-              imageUrls={image.imageUrls}
-              nickName={image.nickName}
-              profileSummary={image.profileSummary}
-              distance={image.distance}
-              lastSeen={image.lastSeen}
-            />
-          ))}
-        </ContentFeed>
-        <HomeNavigationBar />
-      </Content>
-    </Page>
+    <FiltersDrawerProvider>
+      <Page>
+        <Content className="flex flex-col h-full">
+          <ContentFeed>
+            {feedImages.map((image) => (
+              <FeedImage
+                key={image.id}
+                imageUrls={image.imageUrls}
+                nickName={image.nickName}
+                profileSummary={image.profileSummary}
+                distance={image.distance}
+                lastSeen={image.lastSeen}
+              />
+            ))}
+          </ContentFeed>
+          <HomeNavigationBar />
+        </Content>
+        <FiltersDrawer />
+      </Page>
+    </FiltersDrawerProvider>
   );
 };

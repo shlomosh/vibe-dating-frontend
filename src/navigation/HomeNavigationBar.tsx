@@ -2,10 +2,14 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { RadarIcon, ZapIcon, SlidersHorizontalIcon, UserIcon, HeartIcon, InboxIcon } from 'lucide-react';
 import { ContentNavigation } from '@/components/ContentNavigation';
+import { useFiltersDrawer } from '@/contexts/FiltersDrawerContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const HomeNavigationBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { openDrawer } = useFiltersDrawer();
+  const { translations: { globalDict } } = useLanguage();
 
   const handleNavigationClick = (label: string) => { 
     switch (label) {
@@ -16,16 +20,13 @@ export const HomeNavigationBar: React.FC = () => {
         navigate('/home');
         break;
       case 'Filters':
-        console.log('Filters page not implemented yet');
+        openDrawer();
         break;
       case 'Likes':
-        console.log('Likes page not implemented yet');
         break;
-      case 'Feed':
-        console.log('Feed page not implemented yet');
+      case 'Board':
         break;
       case 'Profile':
-        console.log('Profile page not implemented yet');
         break;
       default:
         console.log(`Navigation to ${label} not implemented yet`);
@@ -40,37 +41,37 @@ export const HomeNavigationBar: React.FC = () => {
   const navigationItems = [
     { 
       icon: RadarIcon, 
-      label: "Radar", 
+      label: globalDict.radar, 
       isActive: isActive('/home'),
       onClick: () => handleNavigationClick("Radar")
     },
     { 
       icon: SlidersHorizontalIcon, 
-      label: "Filters",
+      label: globalDict.filters,
       isActive: false,
       onClick: () => handleNavigationClick("Filters")
     },
     { 
       icon: HeartIcon, 
-      label: "Likes",
+      label: globalDict.likes,
       isActive: false,
       onClick: () => handleNavigationClick("Likes")
     },
     { 
       icon: InboxIcon, 
-      label: "Inbox",
+      label: globalDict.inbox,
       isActive: isActive('/inbox'),
       onClick: () => handleNavigationClick("Inbox")
     },
     { 
       icon: ZapIcon, 
-      label: "Feed",
+      label: globalDict.board,
       isActive: false,
       onClick: () => handleNavigationClick("Feed")
     },
     { 
       icon: UserIcon, 
-      label: "Profile",
+      label: globalDict.profile,
       isActive: false,
       onClick: () => handleNavigationClick("Profile")
     }

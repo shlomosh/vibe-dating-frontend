@@ -25,7 +25,7 @@ interface ContentProps {
     extraTopPadding?: number;
 }
 
-export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign = 'center', extraTopPadding = 38 }) => {
+export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign = 'center', extraTopPadding = 40 }) => {
     const safeInsets = useSignal(viewportSafeAreaInsets) ?? { top: 0, bottom: 0, left: 0, right: 0 };
 
     return (

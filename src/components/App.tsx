@@ -44,7 +44,7 @@ export function App() {
                                 {routes.map((route) => <Route key={route.path} {...route} />)}
                                 <Route path="*" element={<Navigate to="/" />} />
                             </Routes>
-                            <div className="absolute top-[30px] left-1/2 -translate-x-1/2">
+                            <div className="absolute top-[18px] left-1/2 -translate-x-1/2">
                                 <ThemeToggle />
                             </div>
                         </HashRouter>

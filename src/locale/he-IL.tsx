@@ -29,6 +29,7 @@ export const globalDict = {
     create: (<>צור</>),
     save: (<>שמור</>),
     reset: (<>איפוס</>),
+    apply: (<>החל</>),
     zoom: (<>זום</>),
     processing: (<>מעבד...</>),
 
@@ -93,6 +94,15 @@ export const globalDict = {
     km: (<>ק"מ</>),
     longitude: (<>קו אורך</>),
     latitude: (<>קו רוחב</>),
+    
+    // home
+    radar: (<>ראדר</>),
+    likes: (<>מועדפים</>),
+    inbox: (<>הודעות</>),
+    board: (<>לוח</>),
+    profile: (<>פרופיל</>),
+    filters: (<>סינון</>),
+    customizeYourRadarFeedPreferences: (<>התאמת סינון הראדר שלך.</>),
 }
 
 export const nameGenerator = {
@@ -192,7 +202,7 @@ export const profileDict = {
   sexuality: {
       label: 'נטייה',
       options: {
-        gay: 'הומו',
+        gay: ' גיי',
         bisexual: 'ביסקסואל',
         curious: 'סקרן',
         trans: 'טרנס',
@@ -243,6 +253,9 @@ export const profileDict = {
   } satisfies {
     label: string,
     options: Record<TravelDistanceType, string>
+  },
+  distance: {
+    label: 'מרחק',
   },
   position: {
       label: 'פוזיציה',

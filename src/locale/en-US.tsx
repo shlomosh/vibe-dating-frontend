@@ -31,6 +31,7 @@ export const globalDict = {
     create: (<>Create</>),
     save: (<>Save</>),
     reset: (<>Reset</>),
+    apply: (<>Apply</>),
     zoom: (<>Zoom</>),
     processing: (<>Processing...</>),
   
@@ -104,6 +105,15 @@ export const globalDict = {
     km: (<>Km</>),
     longitude: (<>Longitude</>),
     latitude: (<>Latitude</>),
+
+    // home
+    radar: (<>Radar</>),
+    likes: (<>Likes</>),
+    inbox: (<>Inbox</>),
+    board: (<>Board</>),
+    profile: (<>Profile</>),
+    filters: (<>Filters</>),
+    customizeYourRadarFeedPreferences: (<>Customize your radar feed preferences.</>),
 }
 
 export const nameGenerator = {
@@ -260,6 +270,9 @@ export const profileDict = {
   } satisfies {
     label: string,
     options: Record<TravelDistanceType, string>
+  },
+  distance: {
+    label: 'Distance',
   },
   position: {
       label: 'Position',
