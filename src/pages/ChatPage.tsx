@@ -8,10 +8,10 @@ import { Content } from '@/components/Content';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { generateRandomProfileName } from '@/utils/generator';
-
-import anonUserImage from '@/assets/anon-user-front.png';
+import { generateRandomProfileNickNameSimple } from '@/utils/generator';
 import { cn } from '@/lib/utils';
+
+import anonUserImage from '@/assets/anon-user-back.png';
 
 interface Message {
     id: number;
@@ -178,7 +178,7 @@ export const ChatPage: React.FC = () => {
     // Mock user data
     const user = {
         id: userId || '1',
-        username: generateRandomProfileName(parseInt(userId || '1')),
+        username: generateRandomProfileNickNameSimple(parseInt(userId || '1')),
         lastSeen: 0,
         avatarUrl: `https://picsum.photos/100/100?random=${userId || '1'}`
     };

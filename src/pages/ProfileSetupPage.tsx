@@ -1,5 +1,5 @@
-import type { FC } from 'react';
-import React from 'react';
+import type { FC, ReactNode } from 'react';
+import React, { act } from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,9 +21,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
+import { generateRandomId } from '@/utils/generator';
 import { cn } from '@/lib/utils';
 
-const ProfileSelect: FC<{ selectCfg: { label?: string, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {
+const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {
     const emptyValue = '--';
 
     return (
@@ -208,7 +209,7 @@ const CreateProfileDialog: FC<{
     onClose?: () => void,
     onSubmit?: (newProfileId: string) => void
 }> = ({ onClose, onSubmit }) => {
-    const [newProfileId, setNewProfileId] = useState<string>('');
+    const [newProfileName, setNewProfileName] = useState<string>('');
     const { translations: { globalDict } } = useLanguage();
 
     return (
@@ -229,9 +230,9 @@ const CreateProfileDialog: FC<{
                     <Input
                         className="w-full"
                         type="text"
-                        placeholder={newProfileId}
-                        value={newProfileId}
-                        onChange={(e) => setNewProfileId(e.target.value)}
+                        placeholder="Enter new profile name (visible only to you)"
+                        value={newProfileName}
+                        onChange={(e) => setNewProfileName(e.target.value)}
                     />
                 </div>
                 <DialogFooter>
@@ -249,9 +250,9 @@ const CreateProfileDialog: FC<{
                         <DialogClose asChild>
                             <Button
                                 type="submit"
-                                disabled={newProfileId.trim().length === 0}
+                                disabled={newProfileName.trim().length === 0}
                                 onClick={() => {
-                                    if (onSubmit) onSubmit(newProfileId.trim());
+                                    if (onSubmit) onSubmit(newProfileName.trim());
                                 }}
                                 autoFocus
                             >
@@ -266,10 +267,10 @@ const CreateProfileDialog: FC<{
 };
 
 const DeleteProfileDialog: FC<{
-    profileId: string | undefined,
+    profileName: string | undefined,
     onClose?: () => void,
     onSubmit?: () => void
-}> = ({ profileId, onClose, onSubmit }) => {
+}> = ({ profileName, onClose, onSubmit }) => {
     const { translations: { globalDict } } = useLanguage();
 
     return (
@@ -283,7 +284,7 @@ const DeleteProfileDialog: FC<{
                 <DialogHeader>
                     <DialogTitle>{globalDict.deleteProfile}</DialogTitle>
                     <DialogDescription>
-                        {globalDict.deleteProfileAreYouSureQ(profileId || 'Default Profile')}
+                        {globalDict.deleteProfileAreYouSureQ(profileName || 'Default Profile')}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
@@ -384,14 +385,44 @@ export const ProfileSetupPage: FC = () => {
         await setProfileDB(newProfileDB);
     }
 
-    const handleCreateProfile = async (newProfileId: string) => {
+    const handleCreateProfile = async (newProfileName: string) => {
         if (!profileDB) return;
 
+        const newProfileId = generateRandomId();
         const newProfileDB = { ...profileDB };
-        newProfileDB.db[newProfileId] = profileRecord;
+        newProfileDB.db[newProfileId] = {
+            ...profileRecord,
+            profileName: newProfileName
+        };
         newProfileDB.id = newProfileId;
         await setProfileDB(newProfileDB);
     }
+
+    const profileOptions = profileIdList.reduce((obj, id) => {
+        obj[id] = profileDB?.db[id]?.profileName || id;
+        return obj;
+    }, {} as Record<string, string>);
+
+    // Get the current active profile ID (not name)
+    const activeProfileId = profileId || '';
+
+    // Helper function to find profile ID by profile name
+    const findProfileIdByName = (profileName: string): string | undefined => {
+        if (!profileDB) return undefined;
+        for (const [id, profile] of Object.entries(profileDB.db)) {
+            if (profile.profileName === profileName) {
+                return id;
+            }
+        }
+        return undefined;
+    };
+
+    const handleActiveProfileChangeByName = (profileName: string) => {
+        const targetProfileId = findProfileIdByName(profileName);
+        if (targetProfileId) {
+            handleActiveProfileChange(targetProfileId);
+        }
+    };
 
     const navigationItems = [
         {
@@ -426,14 +457,14 @@ export const ProfileSetupPage: FC = () => {
                         <div className="col-span-2">
                             <div className="flex items-end">
                                 <div className="grow">
-                                    <span className="ps-1">{globalDict.selectProfile}</span>
                                     <ProfileSelect
                                         className="font-bold"
                                         selectCfg={{
-                                            options: profileIdList.reduce((obj, id) => ({ ...obj, [id]: id }), {})
+                                            label: globalDict.selectProfile,
+                                            options: profileOptions
                                         }}
                                         enableClearOption={false}
-                                        value={profileId}
+                                        value={activeProfileId}
                                         onValueChange={(value) => handleActiveProfileChange(value)}
                                     />
                                 </div>
@@ -441,7 +472,10 @@ export const ProfileSetupPage: FC = () => {
                                     <CreateProfileDialog onSubmit={handleCreateProfile} />
                                 </div>
                                 <div>
-                                    <DeleteProfileDialog profileId={profileId} onSubmit={handleDeleteProfile} />
+                                    <DeleteProfileDialog 
+                                        profileName={profileRecord?.profileName}
+                                        onSubmit={handleDeleteProfile} 
+                                    />
                                 </div>
                             </div>
                         </div>

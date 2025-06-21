@@ -12,7 +12,7 @@ import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { HomeNavigationBar } from '@/navigation/HomeNavigationBar';
 import { FiltersDrawer } from '@/pages/drawers/FiltersDrawer';
 import { FiltersDrawerProvider } from '@/contexts/FiltersDrawerContext';
-import { generateRandomProfileName } from '@/utils/generator';
+import { generateRandomProfileNickNameSimple } from '@/utils/generator';
 
 import anonUserImage from '@/assets/anon-user-front.png';
 
@@ -113,7 +113,7 @@ export const HomePage: React.FC = () => {
     {
       id: 1,
       imageUrls: [`https://picsum.photos/800/600?random=1`],
-      nickName: generateRandomProfileName(1),
+      nickName: generateRandomProfileNickNameSimple(1),
       profileSummary: "25 | Top | Travel (1Km)",
       distance: "500m",
       lastSeen: 0,
@@ -125,7 +125,7 @@ export const HomePage: React.FC = () => {
         `https://picsum.photos/800/600?random=3`,
         `https://picsum.photos/800/600?random=4`
       ],
-      nickName: generateRandomProfileName(2),
+      nickName: generateRandomProfileNickNameSimple(2),
       profileSummary: "29 | Vers Bottom | Host / Travel (5Km)",
       distance: "1km",
       lastSeen: 0,
@@ -136,7 +136,7 @@ export const HomePage: React.FC = () => {
         `https://picsum.photos/800/600?random=5`,
         `https://picsum.photos/800/600?random=6`
       ],
-      nickName: generateRandomProfileName(3),
+      nickName: generateRandomProfileNickNameSimple(3),
       profileSummary: "51 | Side | Host",
       distance: "1km",
       lastSeen: 10,
@@ -147,7 +147,7 @@ export const HomePage: React.FC = () => {
         `https://picsum.photos/800/600?random=7`,
         `https://picsum.photos/800/600?random=8`
       ],
-      nickName: generateRandomProfileName(4),
+      nickName: generateRandomProfileNickNameSimple(4),
       profileSummary: "37 | Blower | Travel (20Km)",
       distance: "10km",
       lastSeen: 30,
@@ -156,7 +156,7 @@ export const HomePage: React.FC = () => {
       id: 5,
       imageUrls: [
       ],
-      nickName: generateRandomProfileName(5),
+      nickName: generateRandomProfileNickNameSimple(5),
       profileSummary: "28 | Vers Top | Host",
       distance: "15km",
       lastSeen: 60,
@@ -166,7 +166,7 @@ export const HomePage: React.FC = () => {
       imageUrls: [
         `https://picsum.photos/800/600?random=9`,
       ],
-      nickName: generateRandomProfileName(6),
+      nickName: generateRandomProfileNickNameSimple(6),
       profileSummary: "31 | Top | Host",
       distance: "11km",
       lastSeen: 120,

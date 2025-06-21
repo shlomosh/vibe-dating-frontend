@@ -5,9 +5,9 @@ import { LocalStorage as Storage } from '@/utils/local-storage';
 //import { CloudStorage as Storage} from '@/utils/cloud-storage';
 
 import { ProfileDB, defaultProfile } from '@/types/profile';
-import { generateRandomProfileName } from '@/utils/generator';
+import { generateRandomId, generateRandomProfileNickNameSimple } from '@/utils/generator';
 
-const STORAGE_KEY = 'vibe/settings/profile-db';
+const STORAGE_KEY = 'vibe/config/profile-db';
 
 interface ProfileContextType {
     profileDB: ProfileDB | null;
@@ -25,21 +25,18 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     const [profileDB, setProfileDBState] = useState<ProfileDB | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        loadProfileDB();
-    }, []);
-
     const loadProfileDB = async () => {
         try {
             let db = await Storage.getItem<ProfileDB>(STORAGE_KEY);
 
             if (!db) {
+                const defaultProfileId = generateRandomId();
                 db = {
-                    id: 'Main Profile',
+                    id: defaultProfileId,
                     db: {
-                        'Main Profile': {
+                        [defaultProfileId]: {
                             ...defaultProfile,
-                            nickName: generateRandomProfileName(tgInitData.user()?.id || -1)
+                            nickName: generateRandomProfileNickNameSimple(tgInitData.user()?.id || -1)
                         }
                     }
                 };
@@ -53,6 +50,10 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        loadProfileDB();
+    }, []);
 
     const setProfileDB = async (newProfileDB: ProfileDB) => {
         try {

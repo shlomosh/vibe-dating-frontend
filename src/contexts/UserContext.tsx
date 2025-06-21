@@ -1,10 +1,11 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import { initData as tgInitData } from '@telegram-apps/sdk-react';
+import { hashStringToId } from '@/utils/generator';
 
 interface UserData {
-    platform: 'telegram';
-    platform_id: number;
-    user_id: string;
+    userId: string;
+    platform: string;
+    platformId: number;
 }
 
 interface UserContextType {
@@ -27,14 +28,16 @@ export function UserProvider({ children }: UserProviderProps) {
                 return null;
             }
 
-            // Create user_id by hashing platform:platform_id to base64
-            const platformString = `telegram:${tgUser.id}`;
-            const user_id = btoa(platformString);
+            // Create userId by hashing platform:platformId to base64
+            const platform = 'tg';
+            const platformId = tgUser.id;
+            const platformIdString = `${platform}:${String(platformId)}`;
+            const userId = hashStringToId(platformIdString);
 
             return {
-                platform: 'telegram' as const,
-                platform_id: tgUser.id,
-                user_id
+                userId,
+                platform,
+                platformId,
             };
         } catch (error) {
             console.error('Error creating user data:', error);

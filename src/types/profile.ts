@@ -118,6 +118,7 @@ const ChatStatusTypeOptions = [
 export type ChatStatusType = typeof ChatStatusTypeOptions[number];
 
 export interface ProfileRecord {
+    profileName: string;
     nickName: string;
     aboutMe: string;
     age: AgeType | undefined;
@@ -140,6 +141,7 @@ export interface ProfileDB {
 };
 
 export const defaultProfile: ProfileRecord = {
+  profileName: 'My Profile',
   nickName: '',
   aboutMe: '',
   age: undefined,
