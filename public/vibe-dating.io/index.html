@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Dating - Find what makes you vibe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 4em;
+            font-weight: bold;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+
+        .logo-text:hover {
+            color: oklch(0.72 0.16 290.40);
+        }
+
+        .rotate-v {
+            animation: rotateV 0.5s ease-out 1s forwards;
+        }
+
+        @keyframes rotateV {
+            to { 
+                transform: rotate(-90deg); 
+            }
+        }
+
+        .peach-image {
+            width: 6em;
+            height: 6em;
+            margin-top: -0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .slogan {
+            font-size: 1.2em;
+            color: oklch(0.72 0.16 290.40);
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .terms-link {
+            font-size: 0.875rem;
+            color: #a1a1aa;
+            margin-bottom: 1.5rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .terms-link:hover {
+            color: oklch(0.72 0.16 290.40);
+        }
+
+        .cta-button {
+            background-color: oklch(0.72 0.16 290.40);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            min-width: 15em;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button:hover {
+            background-color: oklch(0.72 0.16 290.40);
+        }
+
+        .footer {
+            text-align: center;
+            color: #71717a;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .logo-text {
+                font-size: 3em;
+            }
+            
+            .peach-image {
+                width: 4.5em;
+                height: 4.5em;
+            }
+            
+            .slogan {
+                font-size: 1em;
+            }
+            
+            .cta-button {
+                min-width: 12em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="logo-container">
+                <span class="logo-text rotate-v">V</span>
+                <span class="logo-text">I</span>
+                <span class="logo-text">B</span>
+                <span class="logo-text">E</span>
+                <img src="peach.png" alt="Peach" class="peach-image">
+            </div>
+            
+            <div class="slogan">
+                find what makes you vibe
+            </div>
+
+            <a href="https://t.me/vibe_dating_bot" target="_blank" class="cta-button" style="text-decoration: none; display: inline-block;">
+                Access via Telegram
+            </a>
+        </div>
+        
+        <div class="footer">
+            © 2025 Vibe Dating. All rights reserved.
+        </div>
+    </div>
+</body>
+</html> 

@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ThemeToggle } from "@/contexts/ThemeToggle"
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ProfileProvider } from '@/contexts/ProfileContext';
+import { UserProvider } from '@/contexts/UserContext';
 
 export function App() {
     const tgLaunchParams = useMemo(() => retrieveLaunchParams(), []);
@@ -38,17 +39,19 @@ export function App() {
         >
             <ThemeProvider defaultTheme={tgIsDark ? 'dark' : 'light'} storageKey="tw-theme">
                 <LanguageProvider>
-                    <ProfileProvider>
-                        <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                            <Routes>
-                                {routes.map((route) => <Route key={route.path} {...route} />)}
-                                <Route path="*" element={<Navigate to="/" />} />
-                            </Routes>
-                            <div className="absolute top-[18px] left-1/2 -translate-x-1/2">
-                                <ThemeToggle />
-                            </div>
-                        </HashRouter>
-                    </ProfileProvider>
+                    <UserProvider>
+                        <ProfileProvider>
+                            <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                                <Routes>
+                                    {routes.map((route) => <Route key={route.path} {...route} />)}
+                                    <Route path="*" element={<Navigate to="/" />} />
+                                </Routes>
+                                <div className="absolute top-[18px] left-1/2 -translate-x-1/2">
+                                    <ThemeToggle />
+                                </div>
+                            </HashRouter>
+                        </ProfileProvider>
+                    </UserProvider>
                 </LanguageProvider>
             </ThemeProvider>
         </AppRoot>
