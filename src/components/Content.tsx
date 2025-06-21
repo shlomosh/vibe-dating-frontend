@@ -43,4 +43,4 @@ export const Content: FC<ContentProps> = ({ children, className = '', itemsAlign
             </div>
         </div>
     );
-}; 
+};

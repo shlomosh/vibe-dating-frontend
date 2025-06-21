@@ -9,7 +9,7 @@ export const generateRandomProfileNickNameSimple = (seed: number = -1, direction
     'Hart', 'Bullock', 'Stud', 'Colt', 'Filly', 'Foal', 'Jackal', 'Tiger', 'Wolf', 'Bear',
     'Hawk', 'Falcon', 'Eagle', 'Cheetah', 'Panther', 'Jaguar', 'Leopard'
   ];
-  
+
   const adjectives = [
     'Red', 'Blue', 'Yellow', 'Green', 'Orange', 'Purple', 'Pink', 'Brown', 'Black', 'White',
     'Gray', 'Silver', 'Gold', 'Crimson', 'Scarlet', 'Ruby', 'Cherry', 'Burgundy', 'Maroon', 'Brick',
@@ -29,7 +29,7 @@ export const generateRandomProfileNickNameSimple = (seed: number = -1, direction
 
   if (seed < 0) {
     seed = Math.floor(Math.random() * 1000000);
-  }  
+  }
   const randomAnimal = animals[(seed * 199) % animals.length];
   const randomAdjective = adjectives[(seed * 463) % adjectives.length];
 
@@ -42,7 +42,7 @@ export const generateRandomProfileNickName = (seed: number = -1): string => {
 
   if (seed < 0) {
     seed = Math.floor(Math.random() * 1000000);
-  }  
+  }
   const randomAnimal = nameGenerator.animals[(seed * 199) % nameGenerator.animals.length];
   const randomAdjective = nameGenerator.adjectives[(seed * 463) % nameGenerator.adjectives.length];
 

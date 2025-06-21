@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { RadarIcon, SlidersHorizontalIcon, ZapIcon, UserIcon, HeartIcon, InboxIcon } from 'lucide-react';
+import { RadarIcon, ZapIcon, SlidersHorizontalIcon, UserIcon, HeartIcon, InboxIcon } from 'lucide-react';
 import { ContentNavigation } from '@/components/ContentNavigation';
+import { useFiltersDrawer } from '@/contexts/FiltersDrawerContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export const InboxNavigationBar: React.FC = () => {
+export const RadarNavigationBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { openDrawer } = useFiltersDrawer();
   const { translations: { globalDict } } = useLanguage();
 
   const handleNavigationClick = (label: string) => {
@@ -16,6 +18,9 @@ export const InboxNavigationBar: React.FC = () => {
         break;
       case 'Radar':
         navigate('/radar');
+        break;
+      case 'Filters':
+        openDrawer();
         break;
       case 'Likes':
         break;
@@ -44,7 +49,6 @@ export const InboxNavigationBar: React.FC = () => {
       icon: SlidersHorizontalIcon,
       label: globalDict.filters,
       isActive: false,
-      isDisabled: true,
       onClick: () => handleNavigationClick("Filters")
     },
     {

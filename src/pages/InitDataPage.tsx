@@ -72,10 +72,10 @@ export const InitDataPage: FC = () => {
   return (
     <Page>
       <List>
-        <DisplayData header={'Init Data'} rows={initDataRows}/>
-        {userRows && <DisplayData header={'User'} rows={userRows}/>}
-        {receiverRows && <DisplayData header={'Receiver'} rows={receiverRows}/>}
-        {chatRows && <DisplayData header={'Chat'} rows={chatRows}/>}
+        <DisplayData header={'Init Data'} rows={initDataRows} />
+        {userRows && <DisplayData header={'User'} rows={userRows} />}
+        {receiverRows && <DisplayData header={'Receiver'} rows={receiverRows} />}
+        {chatRows && <DisplayData header={'Chat'} rows={chatRows} />}
       </List>
     </Page>
   );

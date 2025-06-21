@@ -15,4 +15,4 @@ export const LastSeenBadge: React.FC<LastSeenBadgeProps> = ({ lastSeen, hideIfNo
       {lastSeen >= 60 ? `${Math.floor(lastSeen/60)}h ago` : `${lastSeen}m ago`}
     </Badge>
   );
-}; 
+};

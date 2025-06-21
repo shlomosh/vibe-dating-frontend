@@ -3,11 +3,11 @@ import { initData as tgInitData } from '@telegram-apps/sdk-react';
 
 import { LocalStorage as Storage } from '@/utils/local-storage';
 //import { CloudStorage as Storage} from '@/utils/cloud-storage';
+import { StorageKeys } from '@/config';
 
 import { ProfileDB, defaultProfile } from '@/types/profile';
 import { generateRandomId, generateRandomProfileNickNameSimple } from '@/utils/generator';
 
-const STORAGE_KEY = 'vibe/config/profile-db';
 
 interface ProfileContextType {
     profileDB: ProfileDB | null;
@@ -27,7 +27,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
 
     const loadProfileDB = async () => {
         try {
-            let db = await Storage.getItem<ProfileDB>(STORAGE_KEY);
+            let db = await Storage.getItem<ProfileDB>(StorageKeys.ProfileDB);
 
             if (!db) {
                 const defaultProfileId = generateRandomId();
@@ -40,7 +40,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
                         }
                     }
                 };
-                await Storage.setItem(STORAGE_KEY, db);
+                await Storage.setItem(StorageKeys.ProfileDB, db);
             }
 
             setProfileDBState(db);
@@ -57,7 +57,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
 
     const setProfileDB = async (newProfileDB: ProfileDB) => {
         try {
-            await Storage.setItem(STORAGE_KEY, newProfileDB);
+            await Storage.setItem(StorageKeys.ProfileDB, newProfileDB);
             setProfileDBState(newProfileDB);
         } catch (error) {
             console.error('Error saving profile DB:', error);

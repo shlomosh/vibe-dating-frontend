@@ -63,4 +63,4 @@ export class LocalStorage {
       console.error('Error clearing localStorage:', error);
     }
   }
-} 
+}

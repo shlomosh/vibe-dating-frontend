@@ -53,7 +53,7 @@ export const ContentNavigationBar: React.FC<ContentNavigationProps> = ({ items }
 
 export const ContentNavigation: React.FC<ContentNavigationProps> = ({ items }) => {
     const safeInsets = useSignal(viewportSafeAreaInsets) ?? { top: 0, bottom: 0, left: 0, right: 0 };
-    
+
     return (
         <nav className={cn(
             "fixed bottom-0 left-0 right-0 flex px-12 border-t bg-background z-50",
@@ -65,4 +65,4 @@ export const ContentNavigation: React.FC<ContentNavigationProps> = ({ items }) =
             <ContentNavigationBar items={items} />
         </nav>
     );
-}; 
+};

@@ -191,12 +191,12 @@
   height: 1.5rem !important;
   z-index: 10 !important;
   pointer-events: none !important;
-  background-color: var(--background) !important;
+  background-color: var(--secondary) !important;
   opacity: 0.8 !important;
   width: auto !important;
   padding-left: 0.4rem !important;
   padding-right: 0.4rem !important;
-  border-radius: 0.4rem !important;
+  border-radius: 0.5rem !important;
   padding-top: 0px !important;
   padding-bottom: 0px !important;
 }
@@ -205,15 +205,14 @@
   pointer-events: auto !important;
   width: 8px !important;
   height: 8px !important;
-} 
+}
 
 .swiper-container .swiper-pagination-bullet {
-  background-color: var(--foreground) !important;
+  background-color: var(--secondary-foreground) !important;
 }
 
 .swiper-container .swiper-pagination-bullet-active {
-  background-color: var(--foreground) !important;
-  
+  background-color: var(--secondary-foreground) !important;
 }
 
 @layer base {

@@ -11,4 +11,4 @@ export const Background: FC<BackgroundProps> = ({ imageUrl, className = '' }) =>
             <div className="h-full [background:linear-gradient(180deg,rgba(0,0,0,0.67)_0%,rgba(0,0,0,0.65)_100%)]" />
         </div>
     );
-}; 
+};

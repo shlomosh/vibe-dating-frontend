@@ -20,4 +20,4 @@ export const ContentFeed: React.FC<ContentFeedProps> = ({ children, extraTopPadd
             </div>
         </main>
     );
-}; 
+};

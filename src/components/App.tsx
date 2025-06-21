@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ThemeToggle } from "@/contexts/ThemeToggle"
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ProfileProvider } from '@/contexts/ProfileContext';
+import { LocationProvider } from '@/contexts/LocationContext';
 import { UserProvider } from '@/contexts/UserContext';
 
 export function App() {
@@ -41,15 +42,17 @@ export function App() {
                 <LanguageProvider>
                     <UserProvider>
                         <ProfileProvider>
-                            <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                                <Routes>
-                                    {routes.map((route) => <Route key={route.path} {...route} />)}
-                                    <Route path="*" element={<Navigate to="/" />} />
-                                </Routes>
-                                <div className="absolute top-[18px] left-1/2 -translate-x-1/2">
-                                    <ThemeToggle />
-                                </div>
-                            </HashRouter>
+                            <LocationProvider>
+                                <HashRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                                    <Routes>
+                                        {routes.map((route) => <Route key={route.path} {...route} />)}
+                                        <Route path="*" element={<Navigate to="/" />} />
+                                    </Routes>
+                                    <div className="absolute top-[18px] left-1/2 -translate-x-1/2">
+                                        <ThemeToggle />
+                                    </div>
+                                </HashRouter>
+                            </LocationProvider>
                         </ProfileProvider>
                     </UserProvider>
                 </LanguageProvider>

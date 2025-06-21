@@ -17,7 +17,7 @@ export const BodyTypeOptions = [
   'petite',
   'slim',
   'average',
-  'fit', 
+  'fit',
   'muscular',
   'stocky',
   'chubby',
@@ -56,11 +56,11 @@ export const TravelDistanceTypeOptions = [
 export type TravelDistanceType = typeof TravelDistanceTypeOptions[number];
 
 export const EquipmentSizeTypeOptions = [
-    'small',
-    'average',
-    'large',
-    'extraLarge',
-    'gigantic'
+  'small',
+  'average',
+  'large',
+  'extraLarge',
+  'gigantic'
 ] as const;
 
 export type EquipmentSizeType = typeof EquipmentSizeTypeOptions[number];
@@ -118,19 +118,19 @@ const ChatStatusTypeOptions = [
 export type ChatStatusType = typeof ChatStatusTypeOptions[number];
 
 export interface ProfileRecord {
-    profileName: string;
-    nickName: string;
-    aboutMe: string;
-    age: AgeType | undefined;
-    position: PositionType | undefined;
-    body: BodyType | undefined;
-    equipmentSize: EquipmentSizeType | undefined;
-    buttShape: ButtShapeType | undefined;
-    healthPractices: HealthPracticesType | undefined;
-    hivStatus: HivStatusType | undefined;
-    preventionPractices: PreventionPracticesType | undefined;
-    hosting: HostingType | undefined;
-    travelDistance: TravelDistanceType | undefined;
+  profileName: string;
+  nickName: string;
+  aboutMe: string;
+  age: AgeType | undefined;
+  position: PositionType | undefined;
+  body: BodyType | undefined;
+  equipmentSize: EquipmentSizeType | undefined;
+  buttShape: ButtShapeType | undefined;
+  healthPractices: HealthPracticesType | undefined;
+  hivStatus: HivStatusType | undefined;
+  preventionPractices: PreventionPracticesType | undefined;
+  hosting: HostingType | undefined;
+  travelDistance: TravelDistanceType | undefined;
 };
 
 export type ProfileId = string;

@@ -20,4 +20,4 @@ export const MessageCountBadge: React.FC<MessageCountBadgeProps> = ({
             </div>
         </div>
     );
-}; 
+};
