@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Page } from '@/components/Page';
 import { Content } from '@/components/Content';
@@ -11,6 +12,7 @@ import { generateRandomProfileName } from '@/utils/generator';
 import anonUserImage from '@/assets/anon-user-front.png';
 
 interface ConversationItemProps {
+    id: number;
     username: string;
     lastMessage: string;
     lastTime: string;
@@ -20,6 +22,7 @@ interface ConversationItemProps {
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
+    id,
     username,
     lastMessage,
     lastTime,
@@ -27,8 +30,17 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     lastSeen,
     avatarUrl
 }) => {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/chat/${id}`);
+    };
+
     return (
-        <div className="w-full p-2 border-b border-border/50 hover:bg-muted/30 transition-colors cursor-pointer">
+        <div 
+            className="w-full p-2 border-b border-border/50 hover:bg-muted/30 transition-colors cursor-pointer"
+            onClick={handleClick}
+        >
             <div className="flex items-center gap-3">
                 {/* Avatar */}
                 <div className="flex-shrink-0">
@@ -203,6 +215,7 @@ export const InboxPage: React.FC = () => {
                     {conversations.map((conversation) => (
                         <ConversationItem
                             key={conversation.id}
+                            id={conversation.id}
                             username={conversation.username}
                             lastMessage={conversation.lastMessage}
                             lastTime={conversation.lastTime}

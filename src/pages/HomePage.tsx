@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { SendIcon, HeartIcon, CircleOffIcon } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -16,6 +17,7 @@ import { generateRandomProfileName } from '@/utils/generator';
 import anonUserImage from '@/assets/anon-user-front.png';
 
 interface FeedImageProps {
+  id: number;
   imageUrls: string[];
   nickName: string;
   profileSummary: string;
@@ -23,7 +25,13 @@ interface FeedImageProps {
   lastSeen: number;
 }
 
-export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profileSummary, distance, lastSeen }) => {
+export const FeedImage: React.FC<FeedImageProps> = ({ id, imageUrls, nickName, profileSummary, distance, lastSeen }) => {
+  const navigate = useNavigate();
+
+  const handleSendClick = () => {
+    navigate(`/chat/${id}`);
+  };
+
   return (
     <div className="w-full mb-4 bg-background overflow-hidden">
       
@@ -72,7 +80,10 @@ export const FeedImage: React.FC<FeedImageProps> = ({ imageUrls, nickName, profi
             <button className="hover:opacity-70 transition-opacity">
               <CircleOffIcon className="w-6 h-6" />
             </button>
-            <button className="hover:opacity-70 transition-opacity">
+            <button 
+              className="hover:opacity-70 transition-opacity"
+              onClick={handleSendClick}
+            >
               <SendIcon className="w-6 h-6" />
             </button>
           </div>
@@ -170,6 +181,7 @@ export const HomePage: React.FC = () => {
             {feedImages.map((image) => (
               <FeedImage
                 key={image.id}
+                id={image.id}
                 imageUrls={image.imageUrls}
                 nickName={image.nickName}
                 profileSummary={image.profileSummary}

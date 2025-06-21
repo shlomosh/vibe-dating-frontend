@@ -11,6 +11,7 @@ import { ProfileSetupPage } from '@/pages/ProfileSetupPage';
 import { LocationSetupPage } from '@/pages/LocationSetupPage';
 import { HomePage } from '@/pages/HomePage';
 import { InboxPage } from '@/pages/InboxPage';
+import { ChatPage } from '@/pages/ChatPage';
 
 interface Route {
   path: string;
@@ -26,6 +27,7 @@ export const routes: Route[] = [
   { path: '/location-setup', Component: LocationSetupPage, title: 'Location Setup' },
   { path: '/home', Component: HomePage, title: 'Home' },
   { path: '/inbox', Component: InboxPage, title: 'Inbox' },
+  { path: '/chat/:userId', Component: ChatPage, title: 'Chat' },
   { path: '/demo-index', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
