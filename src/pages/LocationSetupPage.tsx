@@ -169,7 +169,7 @@ export const LocationSetupPage: FC = () => {
           <div className="grid grid-cols-2 gap-2">
             <div className="col-span-2">
               <div className="flex flex-col justify-end w-full">
-                <span className="text-sm text-foreground px-1">{globalDict.locationMode}</span>
+                <span className="text-sm px-1">{globalDict.locationMode}</span>
                 <Select value={locationMode} onValueChange={(value) => setLocationMode(value as 'automatic' | 'manual')}>
                   <SelectTrigger className="w-full">
                     <SelectValue />
@@ -187,7 +187,7 @@ export const LocationSetupPage: FC = () => {
             {locationMode === 'automatic' ? (
               <>
                 <div className="col-span-2">
-                  <span className="text-sm text-foreground px-1">{globalDict.obscureRadius}</span>
+                  <span className="text-sm px-1">{globalDict.obscureRadius}</span>
                   <Select value={randomizationRadius.toString()} onValueChange={(value) => setRandomizationRadius(Number(value))}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder={globalDict.radius} />
@@ -205,7 +205,7 @@ export const LocationSetupPage: FC = () => {
               </>
             ) : (
               <div className="col-span-2">
-                <span className="text-sm text-foreground px-1"> {globalDict.enterYourLocation}</span>
+                <span className="text-sm px-1"> {globalDict.enterYourLocation}</span>
                 <LocationInput
                   value={manualLocation}
                   onChange={setManualLocation}
@@ -233,7 +233,7 @@ export const LocationSetupPage: FC = () => {
             </div>
             <div className="col-span-2 px-10">
               {selectedCoordinates && (
-                <div className="mt-2 text-sm text-foreground px-1">
+                <div className="mt-2 text-sm px-1">
                   <div className="flex justify-between">
                     <span>{globalDict.latitude}</span>
                     <span>{selectedCoordinates.lat.toFixed(6)}°</span>

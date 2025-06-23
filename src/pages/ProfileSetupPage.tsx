@@ -30,7 +30,7 @@ const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any 
   const emptyValue = '--';
 
   return (
-    <div className={cn(className, "text-sm text-foreground")}>
+    <div className={cn(className, "text-sm")}>
       <Select disabled={disabled} value={value} onValueChange={onValueChange}>
         {selectCfg.label && <span className="px-1">{selectCfg.label}</span>}
         <SelectTrigger className="w-full">
@@ -142,7 +142,7 @@ const ProfileAlbumCarousel = () => {
             </SwiperSlide>
           )) : (
             <SwiperSlide className="flex items-center justify-center">
-              <div className="flex w-full h-full items-center justify-center text-foreground">
+              <div className="flex w-full h-full items-center justify-center">
                 {(isAlbumDialogOpen) ? (<>{globalDict.noImagesOnAlbum}</>) : (<>{globalDict.clickToEditAlbum}</>)}
               </div>
             </SwiperSlide>
@@ -212,7 +212,7 @@ const CreateProfileDialog: FC<{
   return (
     <Dialog>
       <DialogTrigger>
-        <Button variant="outline" size="icon" className="text-foreground">
+        <Button variant="outline" size="icon">
           <PlusIcon className="w-4 h-4" />
         </Button>
       </DialogTrigger>
@@ -273,7 +273,7 @@ const DeleteProfileDialog: FC<{
   return (
     <Dialog>
       <DialogTrigger>
-        <Button variant="outline" size="icon" className="text-foreground">
+        <Button variant="outline" size="icon">
           <TrashIcon className="w-4 h-4" />
         </Button>
       </DialogTrigger>
@@ -424,7 +424,7 @@ export const ProfileSetupPage: FC = () => {
 
   return (
     <Page back={true}>
-      <Content className='text-sm text-foreground'>
+      <Content className="text-sm">
         <ContentFeed>
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
