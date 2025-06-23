@@ -19,8 +19,8 @@ export const FiltersDrawer: React.FC = () => {
     closeDrawer();
   };
 
-  const handleResetFilters = () => {
-    setFilters({
+  const handleResetFilters = async () => {
+    await setFilters({
       ageIsEnabled: false,
       ageValuesRange: [18, 60],
       travelDistanceIsEnabled: false,
@@ -36,8 +36,8 @@ export const FiltersDrawer: React.FC = () => {
     });
   };
 
-  const handleFilterChange = (filterKey: string, value: any) => {
-    setFilters({
+  const handleFilterChange = async (filterKey: string, value: any) => {
+    await setFilters({
       ...filters,
       [filterKey]: value
     });

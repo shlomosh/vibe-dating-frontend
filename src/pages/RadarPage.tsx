@@ -12,31 +12,63 @@ import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { RadarNavigationBar } from '@/navigation/RadarNavigationBar';
 import { FiltersDrawer } from '@/pages/drawers/FiltersDrawer';
 import { FiltersDrawerProvider } from '@/contexts/FiltersDrawerContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 import anonUserImage from '@/assets/anon-user-front.png';
-import { mockRadarFeedImages } from '@/mock/radar';
+import { mockRadarProfiles } from '@/mock/radar';
+import { ProfileRecord } from '@/types/profile';
+
+// Helper function to format distance from meters to readable string
+const formatDistance = (distanceMeters: number): string => {
+  if (distanceMeters < 1000) {
+    // Round to nearest 100m when below 1km
+    const roundedMeters = Math.round(distanceMeters / 100) * 100;
+    return `${roundedMeters}m`;
+  } else {
+    // Round to nearest 1km when above 1km
+    const roundedKm = Math.round(distanceMeters / 1000);
+    return `${roundedKm}km`;
+  }
+};
 
 interface FeedImageProps {
-  id: number;
-  imageUrls: string[];
-  nickName: string;
-  profileSummary: string;
-  distance: string;
-  lastSeen: number;
+  profile: ProfileRecord;
 }
 
-export const FeedImage: React.FC<FeedImageProps> = ({ id, imageUrls, nickName, profileSummary, distance, lastSeen }) => {
+export const FeedImage: React.FC<FeedImageProps> = ({ profile }) => {
   const navigate = useNavigate();
+  const { translations: { profileDict } } = useLanguage();
 
   const handleSendClick = () => {
-    navigate(`/chat/${id}`);
+    navigate(`/chat/${profile.profileId}`);
   };
+
+  const { profileInfo, profileImagesUrls } = profile;
+  const { nickName, age, position, hosting, distance, lastSeen } = profileInfo;
+
+  const profileSummary = (
+    <div className="flex gap-1 text-muted-foreground">
+      {age && <span>{age}</span>}
+      {position && (
+        <>
+          <span>|</span>
+          <span>{profileDict.position.options[position]}</span>
+        </>
+      )}
+      {hosting && (
+        <>
+          <span>|</span>
+          <span>{profileDict.hosting.options[hosting]}</span>
+        </>
+      )}
+    </div>
+  );
 
   return (
     <div className="w-full mb-4 bg-background overflow-hidden">
 
       {/* Image */}
-      {imageUrls.length > 0 ? (
+      {profileImagesUrls.length > 0 ? (
         <div className="relative aspect-[3/4] w-full swiper-container">
           <Swiper
             modules={[Pagination]}
@@ -48,7 +80,7 @@ export const FeedImage: React.FC<FeedImageProps> = ({ id, imageUrls, nickName, p
             }}
             className="w-full h-full rounded-lg"
           >
-            {imageUrls.map((url, index) => (
+            {profileImagesUrls.map((url, index) => (
               <SwiperSlide key={index}>
                 <img
                   src={url}
@@ -97,9 +129,9 @@ export const FeedImage: React.FC<FeedImageProps> = ({ id, imageUrls, nickName, p
           <div className="flex justify-between items-center font-medium">
             <div>{nickName}</div>
           </div>
-          <div className="flex justify-between items-center text-muted-foreground">
-            <div>{profileSummary}</div>
-            <div>{distance}</div>
+          <div className="flex justify-between items-center">
+            {profileSummary}
+            <div className="text-muted-foreground">{formatDistance(distance)}</div>
           </div>
         </div>
       </div>
@@ -108,23 +140,18 @@ export const FeedImage: React.FC<FeedImageProps> = ({ id, imageUrls, nickName, p
 };
 
 export const RadarPage: React.FC = () => {
-  // Mock data for feed images with multiple images per post
-  const feedImages = mockRadarFeedImages;
+  // Get mock radar profiles and sort by distance
+  const radarProfiles = mockRadarProfiles(10).sort((a, b) => a.profileInfo.distance - b.profileInfo.distance);
 
   return (
     <FiltersDrawerProvider>
       <Page>
         <Content className="flex flex-col h-full">
           <ContentFeed>
-            {feedImages.map((image) => (
+            {radarProfiles.map((profile) => (
               <FeedImage
-                key={image.id}
-                id={image.id}
-                imageUrls={image.imageUrls}
-                nickName={image.nickName}
-                profileSummary={image.profileSummary}
-                distance={image.distance}
-                lastSeen={image.lastSeen}
+                key={profile.profileId}
+                profile={profile}
               />
             ))}
           </ContentFeed>

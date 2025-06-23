@@ -5,7 +5,7 @@ import { LocalStorage as Storage } from '@/utils/local-storage';
 //import { CloudStorage as Storage} from '@/utils/cloud-storage';
 import { StorageKeys } from '@/config';
 
-import { ProfileDB, defaultProfile } from '@/types/profile';
+import { ProfileDB, defaultMyProfileInfo } from '@/types/profile';
 import { generateRandomId, generateRandomProfileNickNameSimple } from '@/utils/generator';
 
 
@@ -27,7 +27,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
 
     const loadProfileDB = async () => {
         try {
-            let db = await Storage.getItem<ProfileDB>(StorageKeys.ProfileDB);
+            let db = await Storage.getItem<ProfileDB>(StorageKeys.Profiles);
 
             if (!db) {
                 const defaultProfileId = generateRandomId();
@@ -35,12 +35,12 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
                     id: defaultProfileId,
                     db: {
                         [defaultProfileId]: {
-                            ...defaultProfile,
+                            ...defaultMyProfileInfo,
                             nickName: generateRandomProfileNickNameSimple(tgInitData.user()?.id || -1)
                         }
                     }
                 };
-                await Storage.setItem(StorageKeys.ProfileDB, db);
+                await Storage.setItem(StorageKeys.Profiles, db);
             }
 
             setProfileDBState(db);
@@ -57,7 +57,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
 
     const setProfileDB = async (newProfileDB: ProfileDB) => {
         try {
-            await Storage.setItem(StorageKeys.ProfileDB, newProfileDB);
+            await Storage.setItem(StorageKeys.Profiles, newProfileDB);
             setProfileDBState(newProfileDB);
         } catch (error) {
             console.error('Error saving profile DB:', error);

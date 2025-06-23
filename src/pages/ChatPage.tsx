@@ -59,7 +59,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ username, lastSeen, avat
 
       {/* User info */}
       <div className="flex-1 min-w-0 px-1">
-        <div className="flex flex-col">
+        <div className="flex items-center gap-2">
           <div className="font-semibold text-foreground truncate">
             {username}
           </div>
@@ -159,23 +159,23 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onAttachmen
 };
 
 export const ChatPage: React.FC = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { profileId } = useParams<{ profileId: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Mock user data
   const user = {
-    id: userId || '1',
-    username: generateRandomProfileNickNameSimple(parseInt(userId || '1')),
+    id: profileId || '1',
+    username: generateRandomProfileNickNameSimple(parseInt(profileId || '1')),
     lastSeen: 0,
-    avatarUrl: `https://picsum.photos/100/100?random=${userId || '1'}`
+    avatarUrl: `https://picsum.photos/100/100?random=${profileId || '1'}`
   };
 
   // Mock initial messages
   useEffect(() => {
     const messagesNew = mockChatMessages;
     setMessages(messagesNew);
-  }, [userId]);
+  }, [profileId]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {

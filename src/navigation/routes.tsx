@@ -27,7 +27,7 @@ export const routes: Route[] = [
   { path: '/location', Component: LocationSetupPage, title: 'Location Setup' },
   { path: '/radar', Component: RadarPage, title: 'Radar' },
   { path: '/inbox', Component: InboxPage, title: 'Inbox' },
-  { path: '/chat/:userId', Component: ChatPage, title: 'Chat' },
+  { path: '/chat/:profileId', Component: ChatPage, title: 'Chat' },
   { path: '/demo-index', Component: IndexPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },

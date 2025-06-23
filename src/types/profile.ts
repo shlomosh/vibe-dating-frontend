@@ -55,7 +55,7 @@ export const TravelDistanceTypeOptions = [
 
 export type TravelDistanceType = typeof TravelDistanceTypeOptions[number];
 
-export const EquipmentSizeTypeOptions = [
+export const EggplantSizeTypeOptions = [
   'small',
   'average',
   'large',
@@ -63,9 +63,9 @@ export const EquipmentSizeTypeOptions = [
   'gigantic'
 ] as const;
 
-export type EquipmentSizeType = typeof EquipmentSizeTypeOptions[number];
+export type EggplantSizeType = typeof EggplantSizeTypeOptions[number];
 
-export const ButtShapeTypeOptions = [
+export const PeachShapeTypeOptions = [
   'small',
   'average',
   'bubble',
@@ -73,9 +73,9 @@ export const ButtShapeTypeOptions = [
   'large'
 ] as const;
 
-export type ButtShapeType = typeof ButtShapeTypeOptions[number];
+export type PeachShapeType = typeof PeachShapeTypeOptions[number];
 
-const HealthPracticesTypeOptions = [
+export const HealthPracticesTypeOptions = [
   'condoms',
   'bb',
   'condomsOrBb',
@@ -84,7 +84,7 @@ const HealthPracticesTypeOptions = [
 
 export type HealthPracticesType = typeof HealthPracticesTypeOptions[number];
 
-const HivStatusTypeOptions = [
+export const HivStatusTypeOptions = [
   'negative',
   'positive',
   'positiveUndetectable'
@@ -92,7 +92,7 @@ const HivStatusTypeOptions = [
 
 export type HivStatusType = typeof HivStatusTypeOptions[number];
 
-const PreventionPracticesTypeOptions = [
+export const PreventionPracticesTypeOptions = [
   'none',
   'prep',
   'doxypep',
@@ -101,7 +101,7 @@ const PreventionPracticesTypeOptions = [
 
 export type PreventionPracticesType = typeof PreventionPracticesTypeOptions[number];
 
-const MeetingTimeTypeOptions = [
+export const MeetingTimeTypeOptions = [
   'now',
   'today',
   'whenever'
@@ -109,7 +109,7 @@ const MeetingTimeTypeOptions = [
 
 export type MeetingTimeType = typeof MeetingTimeTypeOptions[number];
 
-const ChatStatusTypeOptions = [
+export const ChatStatusTypeOptions = [
   'online',
   'busy',
   'offline',
@@ -117,15 +117,14 @@ const ChatStatusTypeOptions = [
 
 export type ChatStatusType = typeof ChatStatusTypeOptions[number];
 
-export interface ProfileRecord {
-  profileName: string;
+export interface ProfileInfo {
   nickName: string;
   aboutMe: string;
   age: AgeType | undefined;
   position: PositionType | undefined;
   body: BodyType | undefined;
-  equipmentSize: EquipmentSizeType | undefined;
-  buttShape: ButtShapeType | undefined;
+  eggplantSize: EggplantSizeType | undefined;
+  peachShape: PeachShapeType | undefined;
   healthPractices: HealthPracticesType | undefined;
   hivStatus: HivStatusType | undefined;
   preventionPractices: PreventionPracticesType | undefined;
@@ -133,25 +132,40 @@ export interface ProfileRecord {
   travelDistance: TravelDistanceType | undefined;
 };
 
+export interface MyProfileInfo extends ProfileInfo {
+  profileName: string;
+};
+
+export interface OtherProfileInfo extends ProfileInfo {
+  distance: number;
+  lastSeen: number;
+};
+
 export type ProfileId = string;
 
 export interface ProfileDB {
   id: ProfileId | undefined;
-  db: Record<ProfileId, ProfileRecord>;
+  db: Record<ProfileId, MyProfileInfo>;
 };
 
-export const defaultProfile: ProfileRecord = {
+export const defaultMyProfileInfo: MyProfileInfo = {
   profileName: 'My Profile',
   nickName: '',
   aboutMe: '',
   age: undefined,
   position: undefined,
   body: undefined,
-  equipmentSize: undefined,
-  buttShape: undefined,
+  eggplantSize: undefined,
+  peachShape: undefined,
   healthPractices: undefined,
   hivStatus: undefined,
   preventionPractices: undefined,
   hosting: undefined,
   travelDistance: undefined,
 };
+
+export interface ProfileRecord {
+  profileId: string;
+  profileInfo: OtherProfileInfo;
+  profileImagesUrls: string[];
+}

@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ProfileId, ProfileRecord, defaultProfile } from '@/types/profile';
+import { ProfileId, MyProfileInfo, defaultMyProfileInfo } from '@/types/profile';
 import { generateRandomId } from '@/utils/generator';
 import { cn } from '@/lib/utils';
 
@@ -61,7 +61,7 @@ const ProfileAlbumCarousel = () => {
 
   useEffect(() => {
     const loadImages = async () => {
-      const imagesNew = mockProfileImageUrls;
+      const imagesNew = mockProfileImageUrls();
       setImages(imagesNew);
     };
 
@@ -319,7 +319,7 @@ export const ProfileSetupPage: FC = () => {
 
   const [profileId, setProfileId] = useState<string | undefined>();
   const [profileIdList, setProfileIdList] = useState<Array<string>>([]);
-  const [profileRecord, setProfileRecord] = useState<ProfileRecord>(defaultProfile);
+  const [profileInfo, setProfileInfo] = useState<MyProfileInfo>(defaultMyProfileInfo);
 
   const PrevArrowIcon = direction === 'rtl' ? ArrowRightIcon : ArrowLeftIcon;
   const NextArrowIcon = direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon;
@@ -330,29 +330,29 @@ export const ProfileSetupPage: FC = () => {
       if (activeProfileId) {
         setProfileId(activeProfileId);
         setProfileIdList(Object.keys(profileDB.db));
-        setProfileRecord(profileDB.db[activeProfileId]);
+        setProfileInfo(profileDB.db[activeProfileId]);
       }
     }
   }, [profileDB]);
 
-  const handleProfileChange = (field: keyof ProfileRecord, value: string | undefined) => {
+  const handleProfileChange = (field: keyof MyProfileInfo, value: string | undefined) => {
     if (!profileDB || !profileId) return;
 
     const newProfileDB = { ...profileDB };
     if (field === 'hosting' && value === 'hostOnly') {
       newProfileDB.db[profileId] = {
-        ...profileRecord,
+        ...profileInfo,
         [field]: value || '',
         travelDistance: 'none'
       };
     } else {
       newProfileDB.db[profileId] = {
-        ...profileRecord,
+        ...profileInfo,
         [field]: value || ''
       };
     }
     setProfileDB(newProfileDB);
-    setProfileRecord(newProfileDB.db[profileId]);
+    setProfileInfo(newProfileDB.db[profileId]);
   };
 
   const handleActiveProfileChange = (value: ProfileId) => {
@@ -360,7 +360,7 @@ export const ProfileSetupPage: FC = () => {
     const newProfileDB = { ...profileDB, id: value };
     setProfileDB(newProfileDB);
     setProfileId(value);
-    setProfileRecord(newProfileDB.db[value]);
+    setProfileInfo(newProfileDB.db[value]);
   };
 
   const handlePrevPageClick = () => {
@@ -385,7 +385,7 @@ export const ProfileSetupPage: FC = () => {
 
     const newProfileId = generateRandomId();
     const newProfileDB = { ...profileDB };
-    newProfileDB.db[newProfileId] = { ...profileRecord, profileName: newProfileName };
+    newProfileDB.db[newProfileId] = { ...profileInfo, profileName: newProfileName };
     newProfileDB.id = newProfileId;
     await setProfileDB(newProfileDB);
   }
@@ -444,7 +444,7 @@ export const ProfileSetupPage: FC = () => {
                 </div>
                 <div>
                   <DeleteProfileDialog
-                    profileName={profileRecord?.profileName}
+                    profileName={profileInfo?.profileName}
                     onSubmit={handleDeleteProfile}
                   />
                 </div>
@@ -457,7 +457,7 @@ export const ProfileSetupPage: FC = () => {
                 type="text"
                 className="text-sm"
                 placeholder={profileDict.nickName.label}
-                value={profileRecord?.nickName}
+                value={profileInfo?.nickName}
                 onChange={(e) => handleProfileChange('nickName', e.target.value)}
               />
             </div>
@@ -469,7 +469,7 @@ export const ProfileSetupPage: FC = () => {
             <div>
               <ProfileSelect
                 selectCfg={profileDict.age}
-                value={profileRecord?.age}
+                value={profileInfo?.age}
                 onValueChange={(value) => handleProfileChange('age', value)}
               />
             </div>
@@ -477,7 +477,7 @@ export const ProfileSetupPage: FC = () => {
             <div>
               <ProfileSelect
                 selectCfg={profileDict.position}
-                value={profileRecord?.position}
+                value={profileInfo?.position}
                 onValueChange={(value) => handleProfileChange('position', value)}
               />
             </div>
@@ -485,7 +485,7 @@ export const ProfileSetupPage: FC = () => {
             <div>
               <ProfileSelect
                 selectCfg={profileDict.hosting}
-                value={profileRecord?.hosting}
+                value={profileInfo?.hosting}
                 onValueChange={(value) => handleProfileChange('hosting', value)}
               />
             </div>
@@ -493,8 +493,8 @@ export const ProfileSetupPage: FC = () => {
             <div>
               <ProfileSelect
                 selectCfg={profileDict.travelDistance}
-                disabled={(profileRecord?.hosting !== 'travelOnly') && (profileRecord?.hosting !== 'hostAndTravel')}
-                value={profileRecord?.travelDistance}
+                disabled={(profileInfo?.hosting !== 'travelOnly') && (profileInfo?.hosting !== 'hostAndTravel')}
+                value={profileInfo?.travelDistance}
                 onValueChange={(value) => handleProfileChange('travelDistance', value)}
               />
             </div>
@@ -504,7 +504,7 @@ export const ProfileSetupPage: FC = () => {
               <TextEditor
                 className="text-sm"
                 placeholder={profileDict.aboutMe.label}
-                value={profileRecord?.aboutMe}
+                value={profileInfo?.aboutMe}
                 onChange={(value) => handleProfileChange('aboutMe', value)}
               />
             </div>
@@ -512,7 +512,7 @@ export const ProfileSetupPage: FC = () => {
             <div>
               <ProfileSelect
                 selectCfg={profileDict.body}
-                value={profileRecord?.body}
+                value={profileInfo?.body}
                 onValueChange={(value) => handleProfileChange('body', value)}
               />
             </div>
@@ -520,31 +520,31 @@ export const ProfileSetupPage: FC = () => {
             <div>
               <ProfileSelect
                 selectCfg={profileDict.healthPractices}
-                value={profileRecord?.healthPractices}
+                value={profileInfo?.healthPractices}
                 onValueChange={(value) => handleProfileChange('healthPractices', value)}
               />
             </div>
 
             <div>
               <ProfileSelect
-                selectCfg={profileDict.equipmentSize}
-                value={profileRecord?.equipmentSize}
-                onValueChange={(value) => handleProfileChange('equipmentSize', value)}
+                selectCfg={profileDict.eggplantSize}
+                value={profileInfo?.eggplantSize}
+                onValueChange={(value) => handleProfileChange('eggplantSize', value)}
               />
             </div>
 
             <div>
               <ProfileSelect
-                selectCfg={profileDict.buttShape}
-                value={profileRecord?.buttShape}
-                onValueChange={(value) => handleProfileChange('buttShape', value)}
+                selectCfg={profileDict.peachShape}
+                value={profileInfo?.peachShape}
+                onValueChange={(value) => handleProfileChange('peachShape', value)}
               />
             </div>
 
             <div>
               <ProfileSelect
                 selectCfg={profileDict.hivStatus}
-                value={profileRecord?.hivStatus}
+                value={profileInfo?.hivStatus}
                 onValueChange={(value) => handleProfileChange('hivStatus', value)}
               />
             </div>
@@ -552,7 +552,7 @@ export const ProfileSetupPage: FC = () => {
             <div>
               <ProfileSelect
                 selectCfg={profileDict.preventionPractices}
-                value={profileRecord?.preventionPractices}
+                value={profileInfo?.preventionPractices}
                 onValueChange={(value) => handleProfileChange('preventionPractices', value)}
               />
             </div>

@@ -6,8 +6,8 @@ import {
   SexualityType,
   HostingType,
   MeetingTimeType,
-  EquipmentSizeType,
-  ButtShapeType,
+  EggplantSizeType,
+  PeachShapeType,
   HealthPracticesType,
   HivStatusType,
   PreventionPracticesType,
@@ -289,7 +289,7 @@ export const profileDict = {
     label: string,
     options: Record<BodyType, string>
   },
-  equipmentSize: {
+  eggplantSize: {
     label: 'חציל 🍆',
     options: {
       small: 'קטן',
@@ -300,9 +300,9 @@ export const profileDict = {
     }
   } satisfies {
     label: string,
-    options: Record<EquipmentSizeType, string>
+    options: Record<EggplantSizeType, string>
   },
-  buttShape: {
+  peachShape: {
     label: 'אפרסק 🍑',
     options: {
       small: 'קטן',
@@ -313,7 +313,7 @@ export const profileDict = {
     }
   } satisfies {
     label: string,
-    options: Record<ButtShapeType, string>
+    options: Record<PeachShapeType, string>
   },
   healthPractices: {
     label: 'מנהגי מין',

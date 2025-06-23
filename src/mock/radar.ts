@@ -1,65 +1,59 @@
-import { generateRandomProfileNickNameSimple } from "@/utils/generator";
+import { ProfileRecord, PositionTypeOptions, BodyTypeOptions, EggplantSizeTypeOptions, PeachShapeTypeOptions, HealthPracticesTypeOptions, HivStatusTypeOptions, PreventionPracticesTypeOptions, HostingTypeOptions, TravelDistanceTypeOptions } from "../types/profile";
+import { mockProfileImageUrls } from "./profile";
 
-export const mockRadarFeedImages = [
-  {
-    id: 1,
-    imageUrls: [`https://picsum.photos/800/600?random=1`],
-    nickName: generateRandomProfileNickNameSimple(1),
-    profileSummary: "25 | Top | Travel (1Km)",
-    distance: "500m",
-    lastSeen: 0,
-  },
-  {
-    id: 2,
-    imageUrls: [
-      `https://picsum.photos/800/600?random=2`,
-      `https://picsum.photos/800/600?random=3`,
-      `https://picsum.photos/800/600?random=4`
-    ],
-    nickName: generateRandomProfileNickNameSimple(2),
-    profileSummary: "29 | Vers Bottom | Host / Travel (5Km)",
-    distance: "1km",
-    lastSeen: 0,
-  },
-  {
-    id: 3,
-    imageUrls: [
-      `https://picsum.photos/800/600?random=5`,
-      `https://picsum.photos/800/600?random=6`
-    ],
-    nickName: generateRandomProfileNickNameSimple(3),
-    profileSummary: "51 | Side | Host",
-    distance: "1km",
-    lastSeen: 10,
-  },
-  {
-    id: 4,
-    imageUrls: [
-      `https://picsum.photos/800/600?random=7`,
-      `https://picsum.photos/800/600?random=8`
-    ],
-    nickName: generateRandomProfileNickNameSimple(4),
-    profileSummary: "37 | Blower | Travel (20Km)",
-    distance: "10km",
-    lastSeen: 30,
-  },
-  {
-    id: 5,
-    imageUrls: [
-    ],
-    nickName: generateRandomProfileNickNameSimple(5),
-    profileSummary: "28 | Vers Top | Host",
-    distance: "15km",
-    lastSeen: 60,
-  },
-  {
-    id: 6,
-    imageUrls: [
-      `https://picsum.photos/800/600?random=9`,
-    ],
-    nickName: generateRandomProfileNickNameSimple(6),
-    profileSummary: "31 | Top | Host",
-    distance: "11km",
-    lastSeen: 120,
+export const generateBase64Id = (length: number = 16): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
+  return result;
+};
+
+export const getRandomItem = <T>(array: readonly T[]): T => {
+  return array[Math.floor(Math.random() * array.length)];
+};
+
+export const sampleNicknames = [
+  'HotGuy', 'FitDude', 'MuscleMan', 'SmoothOperator', 'CharmMaster',
+  'WildOne', 'GentleGiant', 'SpeedDemon', 'CoolCat', 'FireStarter'
 ];
+
+export const sampleAboutMe = [
+  'Looking for fun and adventure. Love to travel and meet new people.',
+  'Fitness enthusiast who enjoys outdoor activities and good conversation.',
+  'Creative soul seeking meaningful connections and exciting experiences.',
+  'Easy-going guy who loves music, movies, and spontaneous adventures.',
+  'Professional by day, wild by night. Let\'s make some memories together.'
+];
+
+export const mockRadarProfiles = (count: number = 10): ProfileRecord[] => {
+  const profiles: ProfileRecord[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const profile: ProfileRecord = {
+      profileId: generateBase64Id(),
+      profileInfo: {
+        nickName: getRandomItem(sampleNicknames),
+        aboutMe: getRandomItem(sampleAboutMe),
+        age: (Math.floor(Math.random() * 30) + 18).toString(), // 18-47
+        position: getRandomItem(PositionTypeOptions),
+        body: getRandomItem(BodyTypeOptions),
+        eggplantSize: getRandomItem(EggplantSizeTypeOptions),
+        peachShape: getRandomItem(PeachShapeTypeOptions),
+        healthPractices: getRandomItem(HealthPracticesTypeOptions),
+        hivStatus: getRandomItem(HivStatusTypeOptions),
+        preventionPractices: getRandomItem(PreventionPracticesTypeOptions),
+        hosting: getRandomItem(HostingTypeOptions),
+        travelDistance: getRandomItem(TravelDistanceTypeOptions),
+        distance: Math.floor(Math.random() * 50000) + 100, // 100-50000 meters (100m to 50km)
+        lastSeen: Date.now() - Math.floor(Math.random() * 86400000), // Within last 24 hours
+      },
+      profileImagesUrls: mockProfileImageUrls(),
+    };
+
+    profiles.push(profile);
+  }
+
+  return profiles;
+};

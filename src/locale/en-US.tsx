@@ -8,8 +8,8 @@ import {
   SexualityType,
   HostingType,
   MeetingTimeType,
-  EquipmentSizeType,
-  ButtShapeType,
+  EggplantSizeType,
+  PeachShapeType,
   HealthPracticesType,
   HivStatusType,
   PreventionPracticesType,
@@ -306,7 +306,7 @@ export const profileDict = {
     label: string,
     options: Record<BodyType, string>
   },
-  equipmentSize: {
+  eggplantSize: {
     label: 'Eggplant 🍆',
     options: {
       small: 'Small',
@@ -317,9 +317,9 @@ export const profileDict = {
     }
   } satisfies {
     label: string,
-    options: Record<EquipmentSizeType, string>
+    options: Record<EggplantSizeType, string>
   },
-  buttShape: {
+  peachShape: {
     label: 'Peach 🍑',
     options: {
       small: 'Small',
@@ -330,7 +330,7 @@ export const profileDict = {
     }
   } satisfies {
     label: string,
-    options: Record<ButtShapeType, string>
+    options: Record<PeachShapeType, string>
   },
   healthPractices: {
     label: 'Sex Practices',
