@@ -173,8 +173,8 @@ export const ChatPage: React.FC = () => {
 
   // Mock initial messages
   useEffect(() => {
-    const chatMessages = mockChatMessages;
-    setMessages(chatMessages);
+    const messagesNew = mockChatMessages;
+    setMessages(messagesNew);
   }, [userId]);
 
   // Auto-scroll to bottom when new messages arrive

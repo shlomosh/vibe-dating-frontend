@@ -89,19 +89,19 @@ export const FiltersDrawer: React.FC = () => {
             </div>
             <div>
               <div className="space-y-2">
+                <div className={`flex justify-between text-xs ${filters.ageIsEnabled ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span>{filters.ageValuesRange?.[0] || 18} years</span>
+                  <span>{filters.ageValuesRange?.[1] || 100} years</span>
+                </div>
                 <Slider
                   disabled={!filters.ageIsEnabled}
-                  value={filters.ageValuesRange || [18, 99]}
+                  value={filters.ageValuesRange || [18, 100]}
                   onValueChange={(value) => handleFilterChange('ageValuesRange', value)}
                   min={18}
-                  max={99}
+                  max={100}
                   step={1}
                   className="w-full"
                 />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{filters.ageValuesRange?.[0] || 18} years</span>
-                  <span>{filters.ageValuesRange?.[1] || 60} years</span>
-                </div>
               </div>
             </div>
             <div>
@@ -167,19 +167,19 @@ export const FiltersDrawer: React.FC = () => {
             </div>
             <div>
               <div className="space-y-2">
+                <div className={`flex justify-between text-xs ${filters.travelDistanceIsEnabled ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span>{filters.travelDistanceValuesRange?.[0] || 0} km</span>
+                  <span>{filters.travelDistanceValuesRange?.[1] || 100} km</span>
+                </div>
                 <Slider
                   disabled={!filters.travelDistanceIsEnabled}
-                  value={filters.travelDistanceValuesRange || [1, 50]}
+                  value={filters.travelDistanceValuesRange || [0, 100]}
                   onValueChange={(value) => handleFilterChange('travelDistanceValuesRange', value)}
-                  min={1}
+                  min={0}
                   max={100}
                   step={1}
                   className="w-full"
                 />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{filters.travelDistanceValuesRange?.[0] || 1} km</span>
-                  <span>{filters.travelDistanceValuesRange?.[1] || 50} km</span>
-                </div>
               </div>
             </div>
             <div>

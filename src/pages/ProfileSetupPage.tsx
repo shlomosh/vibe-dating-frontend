@@ -61,10 +61,8 @@ const ProfileAlbumCarousel = () => {
 
   useEffect(() => {
     const loadImages = async () => {
-      // Using Lorem Picsum for random placeholder images
-      const imageUrls = mockProfileImageUrls;
-
-      setImages(imageUrls);
+      const imagesNew = mockProfileImageUrls;
+      setImages(imagesNew);
     };
 
     loadImages();
