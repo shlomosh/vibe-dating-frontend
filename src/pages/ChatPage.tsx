@@ -8,11 +8,11 @@ import { Content } from '@/components/Content';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { generateRandomProfileNickNameSimple } from '@/utils/generator';
 import { Message } from '@/types/chat';
+import { generateRandomProfileNickNameSimple } from '@/utils/generator';
 import { mockChatMessages, mockChatReplies } from '@/mock/chat';
 
-import anonUserImage from '@/assets/anon-user-back.png';
+import anonUserImage from '@/assets/anon-user-front.png';
 
 interface ChatHeaderProps {
   username: string;

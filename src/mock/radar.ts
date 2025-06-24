@@ -1,4 +1,5 @@
 import { ProfileRecord, PositionTypeOptions, BodyTypeOptions, EggplantSizeTypeOptions, PeachShapeTypeOptions, HealthPracticesTypeOptions, HivStatusTypeOptions, PreventionPracticesTypeOptions, HostingTypeOptions, TravelDistanceTypeOptions } from "../types/profile";
+import { generateRandomProfileNickNameSimple } from "../utils/generator";
 import { mockProfileImageUrls } from "./profile";
 
 export const generateBase64Id = (length: number = 16): string => {
@@ -13,11 +14,6 @@ export const generateBase64Id = (length: number = 16): string => {
 export const getRandomItem = <T>(array: readonly T[]): T => {
   return array[Math.floor(Math.random() * array.length)];
 };
-
-export const sampleNicknames = [
-  'HotGuy', 'FitDude', 'MuscleMan', 'SmoothOperator', 'CharmMaster',
-  'WildOne', 'GentleGiant', 'SpeedDemon', 'CoolCat', 'FireStarter'
-];
 
 export const sampleAboutMe = [
   'Looking for fun and adventure. Love to travel and meet new people.',
@@ -34,7 +30,7 @@ export const mockRadarProfiles = (count: number = 10): ProfileRecord[] => {
     const profile: ProfileRecord = {
       profileId: generateBase64Id(),
       profileInfo: {
-        nickName: getRandomItem(sampleNicknames),
+        nickName: generateRandomProfileNickNameSimple(100 + i),
         aboutMe: getRandomItem(sampleAboutMe),
         age: (Math.floor(Math.random() * 30) + 18).toString(), // 18-47
         position: getRandomItem(PositionTypeOptions),

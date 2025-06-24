@@ -66,3 +66,21 @@ export const hashStringToId = (str: string, len: number = 8): string => {
 export const generateRandomId = (len: number = 16): string => {
   return uuidToBase64(crypto.randomUUID()).slice(0, len)
 };
+
+export function formatTimeAgo(secondsSinceEpoch: number): string {
+  const now = Math.floor(Date.now() / 1000); // current time in seconds
+  const diffSeconds = now - secondsSinceEpoch;
+
+  if (diffSeconds < 60) {
+    return `${diffSeconds}s ago`;
+  } else if (diffSeconds < 3600) {
+    const minutes = Math.floor(diffSeconds / 60);
+    return `${minutes}m ago`;
+  } else if (diffSeconds < 86400) {
+    const hours = Math.floor(diffSeconds / 3600);
+    return `${hours}h ago`;
+  } else {
+    const days = Math.floor(diffSeconds / 86400);
+    return `${days}d ago`;
+  }
+}

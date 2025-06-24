@@ -13,10 +13,10 @@ import { RadarNavigationBar } from '@/navigation/RadarNavigationBar';
 import { FiltersDrawer } from '@/pages/drawers/FiltersDrawer';
 import { FiltersDrawerProvider } from '@/contexts/FiltersDrawerContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ProfileRecord } from '@/types/profile';
+import { mockRadarProfiles } from '@/mock/radar';
 
 import anonUserImage from '@/assets/anon-user-front.png';
-import { mockRadarProfiles } from '@/mock/radar';
-import { ProfileRecord } from '@/types/profile';
 
 // Helper function to format distance from meters to readable string
 const formatDistance = (distanceMeters: number): string => {

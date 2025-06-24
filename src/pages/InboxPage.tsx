@@ -7,34 +7,28 @@ import { ContentFeed } from '@/components/ContentFeed';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { MessageCountBadge } from '@/components/MessageCountBadge';
 import { InboxNavigationBar } from '@/navigation/InboxNavigationBar';
-
-import anonUserImage from '@/assets/anon-user-back.png';
+import { Conversation } from '@/types/chat';
+import { formatTimeAgo } from '@/utils/generator';
 import { mockInboxConversations } from '@/mock/inbox';
 
+import anonUserImage from '@/assets/anon-user-front.png';
+
 interface ConversationItemProps {
-  id: number;
-  username: string;
-  lastMessage: string;
-  lastTime: string;
-  unreadCount: number;
-  lastSeen: number;
-  avatarUrl?: string;
+  conversation: Conversation;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
-  id,
-  username,
-  lastMessage,
-  lastTime,
-  unreadCount,
-  lastSeen,
-  avatarUrl
+  conversation
 }) => {
   const navigate = useNavigate();
+  const { profile, lastMessage, lastTime, unreadCount } = conversation;
+  const { profileId, profileInfo, profileImagesUrls } = profile;
 
   const handleClick = () => {
-    navigate(`/chat/${id}`);
+    navigate(`/chat/${profileId}`);
   };
+
+  const avatarUrl = profileImagesUrls.length > 0 ? profileImagesUrls[0] : undefined;
 
   return (
     <div
@@ -48,13 +42,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             {avatarUrl ? (
               <img
                 src={avatarUrl}
-                alt={username}
+                alt={profileInfo.nickName}
                 className="w-full h-full object-cover"
               />
             ) : (
               <img
                 src={anonUserImage}
-                alt={username}
+                alt={profileInfo.nickName}
                 className="w-full h-full object-cover opacity-60"
               />
             )}
@@ -66,9 +60,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <div className="font-semibold text-foreground truncate">
-                {username}
+                {profileInfo.nickName}
               </div>
-              <LastSeenBadge lastSeen={lastSeen} hideIfNotOnline={true} />
+              <LastSeenBadge lastSeen={profileInfo.lastSeen} hideIfNotOnline={true} />
             </div>
             <MessageCountBadge count={unreadCount} />
           </div>
@@ -77,7 +71,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
               {lastMessage}
             </div>
             <div className="text-xs text-muted-foreground flex-shrink-0 ml-2">
-              {lastTime}
+              {formatTimeAgo(lastTime)}
             </div>
           </div>
         </div>
@@ -95,14 +89,8 @@ export const InboxPage: React.FC = () => {
         <ContentFeed>
           {conversations.map((conversation) => (
             <ConversationItem
-              key={conversation.id}
-              id={conversation.id}
-              username={conversation.username}
-              lastMessage={conversation.lastMessage}
-              lastTime={conversation.lastTime}
-              lastSeen={conversation.lastSeen}
-              unreadCount={conversation.unreadCount}
-              avatarUrl={conversation.avatarUrl}
+              key={conversation.profile.profileId}
+              conversation={conversation}
             />
           ))}
         </ContentFeed>

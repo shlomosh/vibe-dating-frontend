@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { CheckIcon, X, ChevronDown, XIcon, WandSparkles, RotateCcw } from "lucide-react";
+import { CheckIcon, X, ChevronDown, WandSparkles, RotateCcw } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -138,6 +138,7 @@ export const MultiSelect = React.forwardRef<
             asChild = false,
             showSearch = true,
             showSelectAll = true,
+            disabled = false,
             className,
             optionsClassName,
             ...props
@@ -205,7 +206,7 @@ export const MultiSelect = React.forwardRef<
         return (
             <Popover
                 open={isPopoverOpen}
-                onOpenChange={setIsPopoverOpen}
+                onOpenChange={disabled ? undefined : setIsPopoverOpen}
                 modal={modalPopover}
             >
                 <PopoverTrigger className="w-full">
@@ -217,6 +218,7 @@ export const MultiSelect = React.forwardRef<
                             "flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit [&_svg]:pointer-events-auto",
                             className
                         )}
+                        disabled={disabled}
                     >
                         {selectedValues.length > 0 ? (
                             <div className="flex justify-between items-center w-full">
@@ -237,13 +239,17 @@ export const MultiSelect = React.forwardRef<
                                                     <IconComponent className="h-4 w-4 mr-2" />
                                                 )}
                                                 {option?.label}
-                                                <X
+                                                <Button
+                                                    variant="ghost"
                                                     className="ml-2 h-4 w-4 cursor-pointer"
                                                     onClick={(event) => {
                                                         event.stopPropagation();
                                                         toggleOption(value);
                                                     }}
-                                                />
+                                                    disabled={disabled}
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </Button>
                                             </Badge>
                                         );
                                     })}
@@ -257,24 +263,32 @@ export const MultiSelect = React.forwardRef<
                                             style={{ animationDuration: `${animation}s` }}
                                         >
                                             {`+ ${selectedValues.length - maxCount} more`}
-                                            <X
+                                            <Button
+                                                variant="ghost"
                                                 className="ml-2 h-4 w-4 cursor-pointer"
                                                 onClick={(event) => {
                                                     event.stopPropagation();
                                                     clearExtraOptions();
                                                 }}
-                                            />
+                                                disabled={disabled}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
                                         </Badge>
                                     )}
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <XIcon
+                                    <Button
+                                        variant="ghost"
                                         className="h-4 mx-2 cursor-pointer text-muted-foreground"
                                         onClick={(event) => {
                                             event.stopPropagation();
                                             handleClear();
                                         }}
-                                    />
+                                        disabled={disabled}
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </Button>
                                     <Separator
                                         orientation="vertical"
                                         className="flex min-h-6 h-full"
@@ -381,13 +395,18 @@ export const MultiSelect = React.forwardRef<
                     </Command>
                 </PopoverContent>
                 {animation > 0 && selectedValues.length > 0 && (
-                    <WandSparkles
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         className={cn(
-                            "cursor-pointer my-2 text-foreground bg-background w-3 h-3",
-                            isAnimating ? "" : "text-muted-foreground"
+                            "my-2 w-3 h-3",
+                            isAnimating ? "text-foreground" : "text-muted-foreground"
                         )}
                         onClick={() => setIsAnimating(!isAnimating)}
-                    />
+                        disabled={disabled}
+                    >
+                        <WandSparkles className="w-3 h-3" />
+                    </Button>
                 )}
             </Popover>
         );
