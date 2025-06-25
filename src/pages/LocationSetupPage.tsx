@@ -15,23 +15,7 @@ import { Select, SelectGroup, SelectContent, SelectValue, SelectTrigger, SelectL
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocation } from '@/contexts/LocationContext';
 import { Location } from '@/types/location';
-
-// Function to generate random offset within radius (in kilometers)
-const getRandomOffset = (radiusKm: number): { lat: number; lng: number } => {
-  // Convert radius from km to degrees (approximate)
-  const radiusDegrees = radiusKm / 111.32;
-
-  // Generate random angle
-  const angle = Math.random() * 2 * Math.PI;
-
-  // Generate random distance within radius
-  const distance = Math.sqrt(Math.random()) * radiusDegrees;
-
-  return {
-    lat: distance * Math.cos(angle),
-    lng: distance * Math.sin(angle)
-  };
-};
+import { getRandomOffset } from '@/utils/location';
 
 export const LocationSetupPage: FC = () => {
   const navigate = useNavigate();
@@ -112,7 +96,7 @@ export const LocationSetupPage: FC = () => {
   }, [savedLocation]);
 
   const handlePrevPageClick = () => {
-    navigate('/profile');
+    navigate('/profile', { state: { from: '/location' } });
   }
 
   const handleNextPageClick = async () => {

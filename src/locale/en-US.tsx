@@ -36,6 +36,7 @@ export const globalDict = {
   processing: (<>Processing...</>),
 
   // general text
+  me: (<>Me</>),
   loading: (<>Loading...</>),
 
   // terms and conditions
@@ -45,6 +46,7 @@ export const globalDict = {
 
   // profile
   selectProfile: (<>Select Profile</>),
+  myProfile: (<>My Profile</>),
   yourProfile: (<>Profile</>),
   deleteProfile: (<>Delete Profile</>),
   deleteProfileAreYouSureQ: (profileId: string) => (<>{`Delete '${profileId}' profile? This action cannot be undone.`}</>),

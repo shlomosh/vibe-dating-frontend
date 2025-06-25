@@ -26,7 +26,8 @@ export const RadarNavigationBar: React.FC = () => {
         break;
       case 'Board':
         break;
-      case 'Profile':
+      case 'Me':
+        navigate('/profile', { state: { from: '/radar' } });
         break;
       default:
         console.log(`Navigation to ${label} not implemented yet`);
@@ -43,37 +44,37 @@ export const RadarNavigationBar: React.FC = () => {
       icon: RadarIcon,
       label: globalDict.radar,
       isActive: isActive('/radar'),
-      onClick: () => handleNavigationClick("Radar")
+      onClick: () => handleNavigationClick('Radar')
     },
     {
       icon: SlidersHorizontalIcon,
       label: globalDict.filters,
       isActive: false,
-      onClick: () => handleNavigationClick("Filters")
+      onClick: () => handleNavigationClick('Filters')
     },
     {
       icon: HeartIcon,
       label: globalDict.likes,
       isActive: false,
-      onClick: () => handleNavigationClick("Likes")
+      onClick: () => handleNavigationClick('Likes')
     },
     {
       icon: InboxIcon,
       label: globalDict.inbox,
       isActive: isActive('/inbox'),
-      onClick: () => handleNavigationClick("Inbox")
+      onClick: () => handleNavigationClick('Inbox')
     },
     {
       icon: ZapIcon,
       label: globalDict.board,
       isActive: false,
-      onClick: () => handleNavigationClick("Feed")
+      onClick: () => handleNavigationClick('Feed')
     },
     {
       icon: UserIcon,
-      label: globalDict.profile,
+      label: globalDict.me,
       isActive: false,
-      onClick: () => handleNavigationClick("Profile")
+      onClick: () => handleNavigationClick('Me')
     }
   ];
 

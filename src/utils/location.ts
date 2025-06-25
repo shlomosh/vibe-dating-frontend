@@ -61,3 +61,24 @@ export function isWithinRadius(centerLocation: Location, targetLocation: Locatio
   const distance = calculateDistanceBetweenLocations(centerLocation, targetLocation);
   return distance <= radiusKm;
 }
+
+/**
+ * Generates a random offset within a specified radius (in kilometers)
+ * @param radiusKm - The radius in kilometers within which to generate the offset
+ * @returns Object containing latitude and longitude offsets in degrees
+ */
+export const getRandomOffset = (radiusKm: number): { lat: number; lng: number } => {
+  // Convert radius from km to degrees (approximate)
+  const radiusDegrees = radiusKm / 111.32;
+
+  // Generate random angle
+  const angle = Math.random() * 2 * Math.PI;
+
+  // Generate random distance within radius
+  const distance = Math.sqrt(Math.random()) * radiusDegrees;
+
+  return {
+    lat: distance * Math.cos(angle),
+    lng: distance * Math.sin(angle)
+  };
+};

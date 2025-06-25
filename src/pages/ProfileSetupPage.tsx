@@ -1,16 +1,15 @@
 import type { FC, ReactNode } from 'react';
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation as useRouterLocation } from 'react-router-dom';
 
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { PlusIcon, TrashIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, LocateFixedIcon } from 'lucide-react';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
 import { ContentFeed } from '@/components/ContentFeed';
-import { ContentNavigation } from '@/components/ContentNavigation';
 import { TextEditor } from '@/components/TextEditor';
 import { ImageEditor } from '@/components/ImageEditor';
 import { Button } from '@/components/ui/button';
@@ -20,9 +19,13 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose, DialogTrigger } from "@/components/ui/dialog"
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useLocation } from '@/contexts/LocationContext';
 import { ProfileId, MyProfileInfo, defaultMyProfileInfo } from '@/types/profile';
 import { generateRandomId } from '@/utils/generator';
 import { cn } from '@/lib/utils';
+import { getRandomOffset } from '@/utils/location';
+import { ProfileNavigationBar } from '../navigation/ProfileNavigationBar';
+import { Location } from '@/types/location';
 
 import { mockProfileImageUrls } from '@/mock/profile';
 
@@ -313,16 +316,15 @@ const DeleteProfileDialog: FC<{
 };
 
 export const ProfileSetupPage: FC = () => {
-  const navigate = useNavigate();
   const { profileDB, setProfileDB, isLoading } = useProfile();
-  const { translations: { globalDict, profileDict }, direction } = useLanguage();
+  const { translations: { globalDict, profileDict } } = useLanguage();
+  const routerLocation = useRouterLocation();
+  const isEditMode = ['/radar', '/inbox'].includes(routerLocation.state?.from);
 
   const [profileId, setProfileId] = useState<string | undefined>();
   const [profileIdList, setProfileIdList] = useState<Array<string>>([]);
   const [profileInfo, setProfileInfo] = useState<MyProfileInfo>(defaultMyProfileInfo);
-
-  const PrevArrowIcon = direction === 'rtl' ? ArrowRightIcon : ArrowLeftIcon;
-  const NextArrowIcon = direction === 'rtl' ? ArrowLeftIcon : ArrowRightIcon;
+  const { location, setLocation } = useLocation();
 
   useEffect(() => {
     if (profileDB) {
@@ -363,14 +365,6 @@ export const ProfileSetupPage: FC = () => {
     setProfileInfo(newProfileDB.db[value]);
   };
 
-  const handlePrevPageClick = () => {
-    navigate('/');
-  }
-
-  const handleNextPageClick = () => {
-    navigate('/location');
-  }
-
   const handleDeleteProfile = async () => {
     if (!profileDB || !profileId) return;
 
@@ -390,23 +384,40 @@ export const ProfileSetupPage: FC = () => {
     await setProfileDB(newProfileDB);
   }
 
+  const handleUpdateLocation = async () => {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by your browser');
+      return;
+    }
+
+    // add sleep so user can see the button is pressed
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const offset = getRandomOffset(location?.randomizationRadius || 0);
+
+        const newLocation: Location = {
+          ...location,
+          mode: 'automatic',
+          latitude: latitude + offset.lat,
+          longitude: longitude + offset.lng,
+          address: undefined
+        };
+
+        setLocation(newLocation);
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+      }
+    );
+  };
+
   const profileOptions = profileIdList.reduce((obj, id) => {
     obj[id] = profileDB?.db[id]?.profileName || id;
     return obj;
   }, {} as Record<string, string>);
-
-  const navigationItems = [
-    {
-      icon: PrevArrowIcon,
-      label: globalDict.back,
-      onClick: handlePrevPageClick
-    },
-    {
-      icon: NextArrowIcon,
-      label: globalDict.next,
-      onClick: handleNextPageClick
-    }
-  ];
 
   if (isLoading) {
     return (
@@ -429,9 +440,10 @@ export const ProfileSetupPage: FC = () => {
               <div className="flex items-end">
                 <div className="grow">
                   <ProfileSelect
+                    disabled={isEditMode}
                     className="font-bold"
                     selectCfg={{
-                      label: globalDict.selectProfile,
+                      label: isEditMode ? globalDict.myProfile : globalDict.selectProfile,
                       options: profileOptions
                     }}
                     enableClearOption={false}
@@ -439,27 +451,49 @@ export const ProfileSetupPage: FC = () => {
                     onValueChange={(value) => handleActiveProfileChange(value)}
                   />
                 </div>
-                <div>
-                  <CreateProfileDialog onSubmit={handleCreateProfile} />
-                </div>
-                <div>
-                  <DeleteProfileDialog
-                    profileName={profileInfo?.profileName}
-                    onSubmit={handleDeleteProfile}
-                  />
-                </div>
+                {!isEditMode && (<>
+                  <div>
+                    <CreateProfileDialog onSubmit={handleCreateProfile} />
+                  </div>
+                  <div>
+                    <DeleteProfileDialog
+                      profileName={profileInfo?.profileName}
+                      onSubmit={handleDeleteProfile}
+                    />
+                  </div>
+                </>)}
               </div>
             </div>
 
             <div className="col-span-2">
               <span className="ps-1">{profileDict.nickName.label}</span>
-              <Input
-                type="text"
-                className="text-sm"
-                placeholder={profileDict.nickName.label}
-                value={profileInfo?.nickName}
-                onChange={(e) => handleProfileChange('nickName', e.target.value)}
-              />
+              <div className="flex items-end gap-2">
+                <div className="grow">
+                  <Input
+                    type="text"
+                    className="text-sm"
+                    placeholder={profileDict.nickName.label}
+                    value={profileInfo?.nickName}
+                    onChange={(e) => handleProfileChange('nickName', e.target.value)}
+                  />
+                </div>
+                {isEditMode && (<div>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={(_event) => {
+                      const icon = document.getElementById('location-fixed-icon');
+                      if (icon) icon.classList.add('animate-spin');
+                      handleUpdateLocation().finally(() => {
+                        if (icon) icon.classList.remove('animate-spin');
+                      });
+                    }}
+                  >
+                    <LocateFixedIcon id="location-fixed-icon" className="w-4 h-4" />
+                    {globalDict.updateLocation}
+                  </Button>
+                </div>)}
+              </div>
             </div>
 
             <div className="col-span-2 px-10 py-5">
@@ -558,7 +592,7 @@ export const ProfileSetupPage: FC = () => {
             </div>
           </div>
         </ContentFeed>
-        <ContentNavigation items={navigationItems} />
+        <ProfileNavigationBar />
       </Content>
     </Page>
   );

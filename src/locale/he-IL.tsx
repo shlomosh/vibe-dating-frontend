@@ -34,6 +34,7 @@ export const globalDict = {
   processing: (<>מעבד...</>),
 
   // general text
+  me: (<>אני</>),
   loading: (<>טוען...</>),
 
   // terms and conditions
@@ -43,6 +44,7 @@ export const globalDict = {
 
   // profile
   selectProfile: (<>בחר פרופיל</>),
+  myProfile: (<>הפרופיל שלי</>),
   yourProfile: (<>פרופיל</>),
   deleteProfile: (<>מחק פרופיל</>),
   deleteProfileAreYouSureQ: (profileId: string) => (<>{`למחוק את הפרופיל '${profileId}'? לא ניתן לבטל פעולה זו.`}</>),
