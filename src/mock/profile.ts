@@ -1,5 +1,5 @@
 
-export const mockProfileImageUrls = (): string[] => {
+export const useMockProfileImageUrls = (): string[] => {
   const numImages = Math.floor(Math.random() * 5) + 1; // 1 to 5 images
   const urls: string[] = [];
 

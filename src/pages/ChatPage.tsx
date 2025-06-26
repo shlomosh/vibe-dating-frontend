@@ -9,8 +9,8 @@ import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Message } from '@/types/chat';
-import { generateRandomProfileNickNameSimple } from '@/utils/generator';
-import { mockChatMessages, mockChatReplies } from '@/mock/chat';
+import { generateRandomProfileNickName } from '@/utils/generator';
+import { useMockChatMessages, useMockChatReplies } from '@/mock/chat';
 
 import anonUserImage from '@/assets/anon-user-front.png';
 
@@ -166,14 +166,14 @@ export const ChatPage: React.FC = () => {
   // Mock user data
   const user = {
     id: profileId || '1',
-    username: generateRandomProfileNickNameSimple(parseInt(profileId || '1')),
+    username: generateRandomProfileNickName(parseInt(profileId || '1')),
     lastSeen: 0,
     avatarUrl: `https://picsum.photos/100/100?random=${profileId || '1'}`
   };
 
   // Mock initial messages
   useEffect(() => {
-    const messagesNew = mockChatMessages;
+    const messagesNew = useMockChatMessages();
     setMessages(messagesNew);
   }, [profileId]);
 
@@ -193,7 +193,7 @@ export const ChatPage: React.FC = () => {
 
     // Simulate reply after 1-3 seconds
     setTimeout(() => {
-      const randomReply = mockChatReplies[Math.floor(Math.random() * mockChatReplies.length)];
+      const randomReply = useMockChatReplies();
       const replyMessage: Message = {
         id: Date.now() + 1,
         text: randomReply,

@@ -6,7 +6,7 @@ import { LocalStorage as Storage } from '@/utils/local-storage';
 import { StorageKeys } from '@/config';
 
 import { ProfileDB, defaultMyProfileInfo } from '@/types/profile';
-import { generateRandomId, generateRandomProfileNickNameSimple } from '@/utils/generator';
+import { generateRandomId, generateRandomProfileNickName } from '@/utils/generator';
 
 
 interface ProfileContextType {
@@ -36,7 +36,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
                     db: {
                         [defaultProfileId]: {
                             ...defaultMyProfileInfo,
-                            nickName: generateRandomProfileNickNameSimple(tgInitData.user()?.id || -1)
+                            nickName: generateRandomProfileNickName(tgInitData.user()?.id || -1)
                         }
                     }
                 };

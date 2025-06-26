@@ -1,4 +1,4 @@
-import { generateRandomProfileNickNameSimple } from "@/utils/generator";
+import { generateRandomProfileNickName } from "@/utils/generator";
 import { Conversation } from "@/types/chat";
 
 // Helper function to get timestamp for X time ago
@@ -6,12 +6,12 @@ const getTimeAgo = (secondsAgo: number): number => {
   return Math.floor(Date.now() / 1000) - secondsAgo;
 };
 
-export const mockInboxConversations: Conversation[] = [
+export const useMockInboxConversations = (): Conversation[] => [
   {
     profile: {
       profileId: "1",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(1),
+        nickName: generateRandomProfileNickName(1),
         aboutMe: "Hey there! Looking for fun connections 😊",
         age: "25",
         position: "vers",
@@ -36,7 +36,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "2",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(2),
+        nickName: generateRandomProfileNickName(2),
         aboutMe: "Adventure seeker and fun lover",
         age: "28",
         position: "top",
@@ -61,7 +61,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "3",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(3),
+        nickName: generateRandomProfileNickName(3),
         aboutMe: "Looking for meaningful connections",
         age: "23",
         position: "bottom",
@@ -86,7 +86,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "4",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(4),
+        nickName: generateRandomProfileNickName(4),
         aboutMe: "Fun and outgoing personality",
         age: "30",
         position: "versTop",
@@ -111,7 +111,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "5",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(5),
+        nickName: generateRandomProfileNickName(5),
         aboutMe: "Passionate about life and connections",
         age: "27",
         position: "versBottom",
@@ -136,7 +136,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "6",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(6),
+        nickName: generateRandomProfileNickName(6),
         aboutMe: "Easy going and friendly",
         age: "26",
         position: "top",
@@ -161,7 +161,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "7",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(7),
+        nickName: generateRandomProfileNickName(7),
         aboutMe: "Looking for fun and adventure",
         age: "24",
         position: "bottom",
@@ -186,7 +186,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "8",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(8),
+        nickName: generateRandomProfileNickName(8),
         aboutMe: "Open minded and adventurous",
         age: "29",
         position: "vers",
@@ -211,7 +211,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "9",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(9),
+        nickName: generateRandomProfileNickName(9),
         aboutMe: "Friendly and approachable",
         age: "31",
         position: "top",
@@ -236,7 +236,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "10",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(10),
+        nickName: generateRandomProfileNickName(10),
         aboutMe: "Passionate about connections",
         age: "25",
         position: "bottom",
@@ -261,7 +261,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "11",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(11),
+        nickName: generateRandomProfileNickName(11),
         aboutMe: "Looking for meaningful relationships",
         age: "28",
         position: "versTop",
@@ -286,7 +286,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "12",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(12),
+        nickName: generateRandomProfileNickName(12),
         aboutMe: "Adventure seeker and fun lover",
         age: "26",
         position: "versBottom",
@@ -311,7 +311,7 @@ export const mockInboxConversations: Conversation[] = [
     profile: {
       profileId: "13",
       profileInfo: {
-        nickName: generateRandomProfileNickNameSimple(13),
+        nickName: generateRandomProfileNickName(13),
         aboutMe: "Easy going and friendly",
         age: "30",
         position: "top",

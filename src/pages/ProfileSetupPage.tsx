@@ -27,7 +27,7 @@ import { getRandomOffset } from '@/utils/location';
 import { ProfileNavigationBar } from '../navigation/ProfileNavigationBar';
 import { Location } from '@/types/location';
 
-import { mockProfileImageUrls } from '@/mock/profile';
+import { useMockProfileImageUrls } from '@/mock/profile';
 
 const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {
   const emptyValue = '--';
@@ -64,7 +64,7 @@ const ProfileAlbumCarousel = () => {
 
   useEffect(() => {
     const loadImages = async () => {
-      const imagesNew = mockProfileImageUrls();
+      const imagesNew = useMockProfileImageUrls();
       setImages(imagesNew);
     };
 

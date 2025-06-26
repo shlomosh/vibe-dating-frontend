@@ -9,7 +9,7 @@ import { MessageCountBadge } from '@/components/MessageCountBadge';
 import { InboxNavigationBar } from '@/navigation/InboxNavigationBar';
 import { Conversation } from '@/types/chat';
 import { formatTimeAgo } from '@/utils/generator';
-import { mockInboxConversations } from '@/mock/inbox';
+import { useMockInboxConversations } from '@/mock/inbox';
 
 import anonUserImage from '@/assets/anon-user-front.png';
 
@@ -81,7 +81,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 };
 
 export const InboxPage: React.FC = () => {
-  const conversations = mockInboxConversations;
+  const conversations = useMockInboxConversations();
 
   return (
     <Page>

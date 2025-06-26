@@ -1,6 +1,6 @@
 import { Message } from '@/types/chat';
 
-export const mockChatMessages: Message[] = [
+export const useMockChatMessages = (): Message[] => [
   {
     id: 1,
     text: "Hey! How are you doing? 😊",
@@ -33,11 +33,14 @@ export const mockChatMessages: Message[] = [
   }
 ];
 
-export const mockChatReplies = [
-  "That sounds great!",
-  "Thanks for the message!",
-  "I'll get back to you soon!",
-  "Interesting! Tell me more.",
-  "👍",
-  "Sure thing!"
-];
+export const useMockChatReplies = (): string => {
+  const mockChatReplies: string[] = [
+    "That sounds great!",
+    "Thanks for the message!",
+    "I'll get back to you soon!",
+    "Interesting! Tell me more.",
+    "👍",
+    "Sure thing!"
+  ];
+  return mockChatReplies[Math.floor(Math.random() * mockChatReplies.length)]
+};

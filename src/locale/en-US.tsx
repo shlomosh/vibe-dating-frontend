@@ -267,7 +267,7 @@ export const profileDict = {
       neighbourhood: '2 Km',
       city: '5 Km',
       metropolitan: '10 Km',
-      state: '20+ Km'
+      state: '+20 Km'
     }
   } satisfies {
     label: string,
