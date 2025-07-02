@@ -66,7 +66,7 @@ export const FiltersDrawer: React.FC = () => {
 
   return (
     <Drawer open={isOpen} onOpenChange={closeDrawer}>
-      <DrawerContent dir={direction} className="h-[70vh]">
+      <DrawerContent dir={direction} className="h-[70vh] text-foreground">
         <ContentFeed>
           <DrawerHeader className="mb-6">
             <DrawerTitle>{globalDict.filters}</DrawerTitle>
