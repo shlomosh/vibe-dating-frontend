@@ -98,12 +98,14 @@ export const globalDict = {
   latitude: (<>קו רוחב</>),
 
   // radar
+  feed: (<>פיד</>),
   radar: (<>ראדר</>),
   likes: (<>מועדפים</>),
   inbox: (<>הודעות</>),
   board: (<>לוח</>),
   profile: (<>פרופיל</>),
   filters: (<>סינון</>),
+  settings: (<>הגדרות</>),
   customizeYourRadarFeedPreferences: (<>התאמת סינון הראדר שלך.</>),
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { RadarIcon, SlidersHorizontalIcon, ZapIcon, UserIcon, HeartIcon, InboxIcon } from 'lucide-react';
+import { RadarIcon, SlidersHorizontalIcon, ZapIcon, UserIcon, EllipsisVerticalIcon, InboxIcon } from 'lucide-react';
 import { ContentNavigation } from '@/components/ContentNavigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -17,15 +17,15 @@ export const InboxNavigationBar: React.FC = () => {
       case 'Radar':
         navigate('/radar');
         break;
-      case 'Likes':
-        break;
       case 'Board':
         break;
-      case 'Me':
+      case 'Profile':
         navigate('/profile', { state: { from: '/inbox' } });
         break;
+      case 'Settings':
+        break;
       default:
-        console.log(`Navigation to ${label} not implemented yet`);
+      console.log(`Navigation to ${label} not implemented yet`);
     }
   };
 
@@ -37,7 +37,7 @@ export const InboxNavigationBar: React.FC = () => {
   const navigationItems = [
     {
       icon: RadarIcon,
-      label: globalDict.radar,
+      label: globalDict.feed,
       isActive: isActive('/radar'),
       onClick: () => handleNavigationClick('Radar')
     },
@@ -47,12 +47,6 @@ export const InboxNavigationBar: React.FC = () => {
       isActive: false,
       isDisabled: true,
       onClick: () => handleNavigationClick('Filters')
-    },
-    {
-      icon: HeartIcon,
-      label: globalDict.likes,
-      isActive: false,
-      onClick: () => handleNavigationClick('Likes')
     },
     {
       icon: InboxIcon,
@@ -68,9 +62,15 @@ export const InboxNavigationBar: React.FC = () => {
     },
     {
       icon: UserIcon,
-      label: globalDict.me,
+      label: globalDict.profile,
       isActive: false,
-      onClick: () => handleNavigationClick('Me')
+      onClick: () => handleNavigationClick('Profile')
+    },
+    {
+      icon: EllipsisVerticalIcon,
+      label: globalDict.settings,
+      isActive: false,
+      onClick: () => handleNavigationClick('Settings')
     }
   ];
 

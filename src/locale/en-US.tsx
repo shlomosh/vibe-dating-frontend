@@ -109,12 +109,14 @@ export const globalDict = {
   latitude: (<>Latitude</>),
 
   // radar
+  feed: (<>Feed</>),
   radar: (<>Radar</>),
   likes: (<>Likes</>),
   inbox: (<>Inbox</>),
   board: (<>Board</>),
   profile: (<>Profile</>),
   filters: (<>Filters</>),
+  settings: (<>Settings</>),
   customizeYourRadarFeedPreferences: (<>Customize your radar feed preferences.</>),
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { RadarIcon, ZapIcon, SlidersHorizontalIcon, UserIcon, HeartIcon, InboxIcon } from 'lucide-react';
+import { RadarIcon, ZapIcon, SlidersHorizontalIcon, UserIcon, EllipsisVerticalIcon, InboxIcon } from 'lucide-react';
 import { ContentNavigation } from '@/components/ContentNavigation';
 import { useFiltersDrawer } from '@/contexts/FiltersDrawerContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -22,15 +22,15 @@ export const RadarNavigationBar: React.FC = () => {
       case 'Filters':
         openDrawer();
         break;
-      case 'Likes':
-        break;
       case 'Board':
         break;
-      case 'Me':
+      case 'Profile':
         navigate('/profile', { state: { from: '/radar' } });
         break;
+      case 'Settings':
+        break;
       default:
-        console.log(`Navigation to ${label} not implemented yet`);
+      console.log(`Navigation to ${label} not implemented yet`);
     }
   };
 
@@ -42,7 +42,7 @@ export const RadarNavigationBar: React.FC = () => {
   const navigationItems = [
     {
       icon: RadarIcon,
-      label: globalDict.radar,
+      label: globalDict.feed,
       isActive: isActive('/radar'),
       onClick: () => handleNavigationClick('Radar')
     },
@@ -51,12 +51,6 @@ export const RadarNavigationBar: React.FC = () => {
       label: globalDict.filters,
       isActive: false,
       onClick: () => handleNavigationClick('Filters')
-    },
-    {
-      icon: HeartIcon,
-      label: globalDict.likes,
-      isActive: false,
-      onClick: () => handleNavigationClick('Likes')
     },
     {
       icon: InboxIcon,
@@ -72,9 +66,15 @@ export const RadarNavigationBar: React.FC = () => {
     },
     {
       icon: UserIcon,
-      label: globalDict.me,
+      label: globalDict.profile,
       isActive: false,
-      onClick: () => handleNavigationClick('Me')
+      onClick: () => handleNavigationClick('Profile')
+    },
+    {
+      icon: EllipsisVerticalIcon,
+      label: globalDict.settings,
+      isActive: false,
+      onClick: () => handleNavigationClick('Settings')
     }
   ];
 

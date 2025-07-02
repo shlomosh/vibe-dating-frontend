@@ -1,9 +1,9 @@
 {
-  "name": "vibe-dating",
+  "name": "vibe-dating-frontend",
   "private": true,
   "version": "1.0.1",
   "type": "module",
-  "homepage": "https://shlomosh.github.io/vibe-dating",
+  "homepage": "https://shlomosh.github.io/vibe-dating-frontend",
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",
