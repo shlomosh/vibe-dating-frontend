@@ -61,6 +61,7 @@ const ProfileAlbumCarousel = () => {
   const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { translations: { globalDict } } = useLanguage();
+  const [exif, setExif] = useState(undefined);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -93,9 +94,10 @@ const ProfileAlbumCarousel = () => {
     }
   };
 
-  const handleAddImage = (imageUrl: string) => {
-    console.log('handleAddImage', imageUrl);
-    setImages([...images, imageUrl]);
+  const handleAddImage = (croppedImage: string, exif: any) => {
+    console.log('handleAddImage', croppedImage, exif);
+    setExif(exif)
+    setImages([...images, croppedImage]);
   };
 
   const CarouselContent = () => {
@@ -103,6 +105,9 @@ const ProfileAlbumCarousel = () => {
 
     return (
       <div className="relative aspect-[3/4] w-full swiper-container">
+        <pre className="text-xs overflow-auto h-[200px] overflow-y-scroll">
+          {exif ? JSON.stringify(exif, null, 2) : 'No EXIF data'}
+        </pre>
         <Swiper
           modules={[Pagination]}
           grabCursor={true}

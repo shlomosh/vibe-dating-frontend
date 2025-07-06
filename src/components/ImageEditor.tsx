@@ -8,6 +8,7 @@ import { UploadIcon, RotateCcwIcon, CheckIcon, XIcon, ZoomInIcon, ZoomOutIcon, C
 import { useLanguage } from '@/contexts/LanguageContext'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react'
+import exifr from 'exifr'
 
 // Add Telegram WebApp type declaration
 declare global {
@@ -28,7 +29,7 @@ interface CropArea {
 }
 
 interface ImageEditorProps {
-    onImageSave: (croppedImage: string) => void
+    onImageSave: (croppedImage: string, exif: any) => void
     onClose?: () => void
     maxFileSize?: number // in MB
 }
@@ -36,7 +37,7 @@ interface ImageEditorProps {
 export const ImageEditor: FC<ImageEditorProps> = ({
     onImageSave,
     onClose,
-    maxFileSize = 5
+    maxFileSize = 10
 }) => {
     const [imageSrc, setImageSrc] = useState<string | null>(null)
     const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -46,6 +47,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
     const [error, setError] = useState<string | React.ReactNode | null>(null)
     const { translations: { globalDict } } = useLanguage();
     const { tgWebAppPlatform } = retrieveLaunchParams();
+    const [originalFile, setOriginalFile] = useState<File | null>(null)
 
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const cameraInputRef = useRef<HTMLInputElement>(null)
@@ -68,6 +70,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         }
 
         setError(null)
+        setOriginalFile(file)
         const reader = new FileReader()
         reader.addEventListener('load', () => {
             setImageSrc(reader.result as string)
@@ -93,12 +96,13 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         }
 
         setError(null)
+        setOriginalFile(file)
         const reader = new FileReader()
         reader.addEventListener('load', () => {
             setImageSrc(reader.result as string)
         })
         reader.readAsDataURL(file)
-        
+
         // Reset the input value so the same file can be selected again
         event.target.value = ''
     }, [maxFileSize])
@@ -171,7 +175,29 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         setIsProcessing(true)
         try {
             const croppedImage = await createCroppedImage()
-            onImageSave(croppedImage)
+                        let exif = null
+            if (originalFile) {
+                try {
+                    // Convert File to ArrayBuffer for exifr to properly read EXIF data
+                    const arrayBuffer = await originalFile.arrayBuffer()
+                    // Try to parse all available metadata
+                    exif = await exifr.parse(arrayBuffer, {
+                        tiff: true,
+                        xmp: true,
+                        icc: true,
+                        iptc: true,
+                        jfif: true,
+                        ihdr: true
+                    })
+                    // If no metadata found, try basic parsing
+                    if (!exif) {
+                        exif = await exifr.parse(arrayBuffer)
+                    }
+                } catch (ex) {
+                    exif = null
+                }
+            }
+            onImageSave(croppedImage, exif)
         } catch (error) {
             setError(globalDict.failedToProcessImage);
         } finally {
@@ -189,6 +215,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         setZoom(1)
         setCroppedAreaPixels(null)
         setError(null)
+        setOriginalFile(null)
     }
 
     // Zoom controls
@@ -243,10 +270,10 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                     {error && (
                         <Alert variant="destructive">
                             <AlertCircleIcon />
-                            <AlertTitle>{globalDict.errorUploadingImage}</AlertTitle>                            
+                            <AlertTitle>{globalDict.errorUploadingImage}</AlertTitle>
                             <AlertDescription>{error}</AlertDescription>
                         </Alert>
-                    )}            
+                    )}
                 </div>
             </div>
         )
