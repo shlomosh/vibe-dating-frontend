@@ -1,16 +1,12 @@
-import { createContext, useContext, useMemo, ReactNode } from 'react';
-import { initData as tgInitData } from '@telegram-apps/sdk-react';
-import { hashStringToId } from '@/utils/generator';
-
-interface UserData {
-    userId: string;
-    platform: string;
-    platformId: number;
-}
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { authService } from '@/api/auth';
 
 interface UserContextType {
-    userData: UserData | null;
+    userId: string | null;
     isLoading: boolean;
+    isAuthenticating: boolean;
+    authenticate: () => Promise<void>;
+    logout: () => void;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -20,39 +16,50 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-    const userData = useMemo<UserData | null>(() => {
-        try {
-            const tgUser = tgInitData.user();
-            
-            if (!tgUser?.id) {
-                return null;
+    const [userId, setUserId] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+    // Check if user is already authenticated on mount
+    useEffect(() => {
+        const checkAuthStatus = () => {
+            const authStatus = authService.getAuthStatus();
+            if (authStatus.isAuthenticated) {
+                setUserId(authStatus.userId);
+            } else {
+                setUserId(null);
             }
+            setIsLoading(false);
+        };
 
-            // Create userId by hashing platform:platformId to base64
-            const platform = 'tg';
-            const platformId = tgUser.id;
-            const platformIdString = `${platform}:${String(platformId)}`;
-            const userId = hashStringToId(platformIdString);
+        checkAuthStatus();
+    }, []);
 
-            return {
-                userId,
-                platform,
-                platformId,
-            };
+    const authenticate = async () => {
+        setIsAuthenticating(true);
+        try {
+            const authData = await authService.initialize();
+            setUserId(authData.userId);
         } catch (error) {
-            console.error('Error creating user data:', error);
-            return null;
+            console.error('Authentication failed:', error);
+            setUserId(null);
+            throw error;
+        } finally {
+            setIsAuthenticating(false);
         }
-    }, []);
+    };
 
-    const isLoading = useMemo(() => {
-        // Loading is false once we've attempted to get user data
-        return false;
-    }, []);
+    const logout = () => {
+        authService.logout();
+        setUserId(null);
+    };
 
     const value = {
-        userData,
-        isLoading
+        userId,
+        isLoading,
+        isAuthenticating,
+        authenticate,
+        logout
     };
 
     return (

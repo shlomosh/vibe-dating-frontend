@@ -1,11 +1,14 @@
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
 import { Link } from '@/components/Link/Link';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useUser } from '@/contexts/UserContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 import peachImage from '@/assets/peach.png';
 
@@ -24,9 +27,20 @@ const styles = `
 export const SplashPage: FC = () => {
   const navigate = useNavigate();
   const { translations: { globalDict } } = useLanguage();
+  const { isAuthenticating, authenticate } = useUser();
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleNextClick = () => {
-    navigate('/profile', { state: { from: '/' } });
+  const handleNextClick = async () => {
+    try {
+      await authenticate();
+      // Authentication successful, navigate to profile setup
+      navigate('/profile', { state: { from: '/' } });
+    } catch (error) {
+      console.error('Authentication failed:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Authentication failed');
+      setShowErrorDialog(true);
+    }
   }
 
   return (
@@ -55,12 +69,33 @@ export const SplashPage: FC = () => {
               className="min-w-[15em]"
               onClick={handleNextClick}
               variant="default"
+              disabled={isAuthenticating}
             >
-              {globalDict.acceptTermsAndLogin}
+              {isAuthenticating ? 'Validating...' : globalDict.acceptTermsAndLogin}
             </Button>
           </div>
         </div>
       </Content>
+
+      {/* Error Dialog */}
+      <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Login Error</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-red-600">{errorMessage}</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Please try again or contact support if the problem persists.
+            </p>
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={() => setShowErrorDialog(false)}>
+              OK
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Page>
   );
 }
