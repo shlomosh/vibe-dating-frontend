@@ -6,7 +6,7 @@
  */
 
 // Configuration
-const VITE_API_BASE_URL = 'https://zfvfe34x2c.execute-api.il-central-1.amazonaws.com/dev';
+const VITE_API_BASE_URL = 'https://api.vibe-dating.io';
 
 /**
  * Authentication Service Class
