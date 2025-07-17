@@ -1,4 +1,4 @@
-import { ProfileRecord } from './profile';
+import { PeerProfileRecord } from './profile';
 
 export interface Message {
   id: number;
@@ -8,7 +8,7 @@ export interface Message {
 }
 
 export interface Conversation {
-  profile: ProfileRecord; // profile-record
+  profile: PeerProfileRecord; // peer-profile-record with lastSeen
   lastMessage: string; // last message (as string)
   lastTime: number; // last time (as unix timestamp)
   unreadCount: number; // number of unread messages

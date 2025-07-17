@@ -1,4 +1,7 @@
+import { LocalStorage as Storage } from '@/utils/local-storage';
+//import { CloudStorage as Storage} from '@/utils/cloud-storage';
 import { StorageKeys } from '@/config';
+
 import { initData, initDataRaw } from '@telegram-apps/sdk-react';
 
 // Configuration
@@ -7,8 +10,7 @@ const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 export interface AuthData {
   token: string;
   userId: string;
-  platform: string;
-  platformId: string;
+  profileIds: string[];
 }
 
 export interface AuthError {
@@ -17,22 +19,47 @@ export interface AuthError {
 }
 
 export class AuthService {
-  private token: string | null = null;
-  private userId: string | null = null;
-  private isAuthenticated: boolean = false;
+  private authData: AuthData | null = null;
+  private initialized: boolean = false;
 
   constructor() {
-    // Load stored authentication data
-    this.token = localStorage.getItem(StorageKeys.UserAuthToken);
-    this.userId = localStorage.getItem(StorageKeys.UserId);
-    this.isAuthenticated = !!this.token && !!this.userId;
+    // Initialize with default values, will be populated in initialize()
+    this.authData = null;
   }
 
-    /**
+  /**
+   * Initialize the auth service by loading stored data
+   */
+  async initialize(): Promise<void> {
+    if (this.initialized) {
+      return;
+    }
+
+    try {
+      const storedAuthData = await Storage.getItem<AuthData>(StorageKeys.UserAuth);
+
+      if (storedAuthData?.token && storedAuthData?.userId) {
+        this.authData = storedAuthData;
+      } else {
+        this.authData = null;
+      }
+
+      this.initialized = true;
+    } catch (error) {
+      console.error('Failed to initialize auth service:', error);
+      this.authData = null;
+      this.initialized = true;
+    }
+  }
+
+  /**
    * Initialize Telegram WebApp and authenticate user
    */
-  async initialize(): Promise<AuthData> {
+  async initializeTelegram(): Promise<AuthData> {
     try {
+      // Ensure auth service is initialized
+      await this.initialize();
+
       // Get Telegram authentication data using the SDK
       const telegramInitData = initDataRaw();
       const telegramUser = initData.user();
@@ -84,12 +111,9 @@ export class AuthService {
       const authData: AuthData = await response.json();
 
       // Store authentication data
-      this.token = authData.token;
-      this.userId = authData.userId;
-      this.isAuthenticated = true;
+      this.authData = authData;
 
-      localStorage.setItem(StorageKeys.UserAuthToken, this.token);
-      localStorage.setItem(StorageKeys.UserId, this.userId);
+      Storage.setItem(StorageKeys.UserAuth, this.authData);
 
       return authData;
 
@@ -103,7 +127,10 @@ export class AuthService {
    * Make authenticated API request
    */
   async apiRequest(endpoint: string, options: RequestInit = {}): Promise<Response> {
-    if (!this.isAuthenticated) {
+    // Ensure auth service is initialized
+    await this.initialize();
+
+    if (!this.authData?.userId) {
       throw new Error('User not authenticated');
     }
 
@@ -111,7 +138,7 @@ export class AuthService {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.token}`,
+        'Authorization': `Bearer ${this.authData.token}`,
         ...options.headers,
       },
     };
@@ -120,48 +147,45 @@ export class AuthService {
 
     // Handle token expiration
     if (response.status === 401) {
-      this.logout();
+      await this.logout();
       throw new Error('Authentication expired. Please re-authenticate.');
     }
 
     return response;
   }
 
-  /**
-   * Logout user
-   */
-  logout(): void {
-    this.token = null;
-    this.userId = null;
-    this.isAuthenticated = false;
-
-    localStorage.removeItem(StorageKeys.UserAuthToken);
-    localStorage.removeItem(StorageKeys.UserId);
+  async logout(): Promise<void> {
+    this.authData = null;
+    await Storage.deleteItem(StorageKeys.UserAuth);
   }
 
-  /**
-   * Check if user is authenticated
-   */
-  getAuthStatus(): { isAuthenticated: boolean; userId: string | null; hasToken: boolean } {
+  async getAuthentication(): Promise<{
+    token: string | null;
+    userId: string | null;
+    profileIds: string[];
+  }> {
+    await this.initialize();
+
     return {
-      isAuthenticated: this.isAuthenticated,
-      userId: this.userId,
-      hasToken: !!this.token
+      token: this.authData?.token || null,
+      userId: this.authData?.userId || null,
+      profileIds: this.authData?.profileIds || [],
     };
   }
 
-  /**
-   * Get current token
-   */
-  getToken(): string | null {
-    return this.token;
+  async getToken(): Promise<string | null> {
+    await this.initialize();
+    return this.authData?.token || null;
   }
 
-  /**
-   * Get current user ID
-   */
-  getUserId(): string | null {
-    return this.userId;
+  async getUserId(): Promise<string | null> {
+    await this.initialize();
+    return this.authData?.userId || null;
+  }
+
+  async getProfileIds(): Promise<string[]> {
+    await this.initialize();
+    return this.authData?.profileIds || [];
   }
 }
 

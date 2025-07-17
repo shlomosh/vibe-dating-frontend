@@ -14,7 +14,8 @@ import { RadarNavigationBar } from '@/navigation/RadarNavigationBar';
 import { FiltersDrawer } from '@/pages/drawers/FiltersDrawer';
 import { FiltersDrawerProvider } from '@/contexts/FiltersDrawerContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ProfileRecord } from '@/types/profile';
+import { PeerProfileRecord } from '@/types/profile';
+
 import { useMockRadarProfiles } from '@/mock/radar';
 
 import anonUserImage from '@/assets/anon-user-front.png';
@@ -33,7 +34,7 @@ const formatDistance = (distanceMeters: number): string => {
 };
 
 interface UserProfileProps {
-  profile: ProfileRecord;
+  profile: PeerProfileRecord;
 }
 
 const UserProfileInfo: React.FC<UserProfileProps> = ({ profile }) => {
@@ -51,7 +52,7 @@ const UserProfileInfo: React.FC<UserProfileProps> = ({ profile }) => {
     preventionPractices,
     hosting,
     travelDistance
-  } = profile.profileInfo;
+  } = profile;
 
   return (
     <div className="w-full h-full p-4 rounded-lg bg-foreground/8 backdrop-blur-sm overflow-y-auto">
@@ -145,8 +146,7 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
     }
   };
 
-  const { profileInfo, profileImagesUrls } = profile;
-  const { nickName, age, position, hosting, distance, lastSeen } = profileInfo;
+  const { nickName, age, position, hosting, distance, lastSeen, profileImages } = profile;
 
   const profileSummary = (
     <div className="flex gap-1 text-muted-foreground">
@@ -170,7 +170,7 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
     <div className="w-full mb-4 bg-background overflow-hidden">
 
       {/* Image */}
-      {profileImagesUrls.length > 0 ? (
+      {profileImages.length > 0 ? (
         <div className="relative aspect-[3/4] w-full swiper-container">
           <Swiper
             modules={[Pagination]}
@@ -183,10 +183,10 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
             className="w-full h-full rounded-lg"
             onClick={handleSwiperClick}
           >
-            {profileImagesUrls.map((url, index) => (
+            {profileImages.map((image, index) => (
               <SwiperSlide key={index}>
                <img
-                  src={url}
+                  src={image.imageUrl}
                   alt={nickName}
                   className="w-full h-full object-cover"
                 />
@@ -246,8 +246,8 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
 };
 
 export const RadarPage: React.FC = () => {
-  // Get mock radar profiles and sort by distance
-  const radarProfiles = useMockRadarProfiles(10).sort((a, b) => a.profileInfo.distance - b.profileInfo.distance);
+  const locale = useLanguage();
+  const radarProfiles = useMockRadarProfiles(locale, 10).sort((a, b) => a.distance - b.distance);
 
   return (
     <FiltersDrawerProvider>

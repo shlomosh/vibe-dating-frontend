@@ -1,3 +1,5 @@
+import { generateRandomProfileNickName } from "@/utils/generator";
+
 export type AgeType = string;
 
 export const PositionTypeOptions = [
@@ -117,9 +119,19 @@ export const ChatStatusTypeOptions = [
 
 export type ChatStatusType = typeof ChatStatusTypeOptions[number];
 
-export interface ProfileInfo {
-  nickName: string;
-  aboutMe: string;
+export interface ProfileImage {
+  imageId: string;
+  imageUrl: string;
+  imageThumbnailUrl: string;
+  imageAttributes: Record<string, string>;
+}
+
+export type ProfileId = string;
+
+export interface ProfileRecord {
+  profileId: ProfileId | null;
+  nickName: string | undefined;
+  aboutMe: string | undefined;
   age: AgeType | undefined;
   position: PositionType | undefined;
   body: BodyType | undefined;
@@ -130,42 +142,38 @@ export interface ProfileInfo {
   preventionPractices: PreventionPracticesType | undefined;
   hosting: HostingType | undefined;
   travelDistance: TravelDistanceType | undefined;
+  profileImages: ProfileImage[];
 };
 
-export interface MyProfileInfo extends ProfileInfo {
-  profileName: string;
+export interface SelfProfileRecord extends ProfileRecord {
+  profileName: string | undefined;
 };
 
-export interface OtherProfileInfo extends ProfileInfo {
+export interface PeerProfileRecord extends ProfileRecord {
   distance: number;
   lastSeen: number;
 };
 
-export type ProfileId = string;
-
 export interface ProfileDB {
-  id: ProfileId | undefined;
-  db: Record<ProfileId, MyProfileInfo>;
+  activeProfileId: ProfileId;
+  profileRecords: Record<ProfileId, SelfProfileRecord>;
+  freeProfileIds: ProfileId[];
 };
 
-export const defaultMyProfileInfo: MyProfileInfo = {
-  profileName: 'My Profile',
-  nickName: '',
-  aboutMe: '',
-  age: undefined,
-  position: undefined,
-  body: undefined,
-  eggplantSize: undefined,
-  peachShape: undefined,
-  healthPractices: undefined,
-  hivStatus: undefined,
-  preventionPractices: undefined,
-  hosting: undefined,
-  travelDistance: undefined,
-};
-
-export interface ProfileRecord {
-  profileId: string;
-  profileInfo: OtherProfileInfo;
-  profileImagesUrls: string[];
-}
+export const createProfileRecord = (locale: any, profileId: ProfileId, record: Partial<SelfProfileRecord> = {}): SelfProfileRecord => ({
+  profileId: profileId,
+  profileName: record?.profileName || locale.toString(locale.translations.globalDict.myProfile),
+  nickName: record?.nickName || generateRandomProfileNickName(locale, profileId),
+  aboutMe: record?.aboutMe,
+  age: record?.age,
+  position: record?.position,
+  body: record?.body,
+  eggplantSize: record?.eggplantSize,
+  peachShape: record?.peachShape,
+  healthPractices: record?.healthPractices,
+  hivStatus: record?.hivStatus,
+  preventionPractices: record?.preventionPractices,
+  hosting: record?.hosting,
+  travelDistance: record?.travelDistance,
+  profileImages: record?.profileImages || [],
+});

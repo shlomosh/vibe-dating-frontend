@@ -1,12 +1,21 @@
-import { useLanguage } from '@/contexts/LanguageContext';
 import { v5 as uuidv5 } from 'uuid';
 
-export const generateRandomProfileNickName = (seed: number = -1): string => {
-  const { translations: { nameGenerator }, direction } = useLanguage();
+export const base64ToSeed = (base64: string): number => {
+  let seed = 0;
 
-  if (seed < 0) {
-    seed = Math.floor(Math.random() * 1000000);
+  for (let i = 0; i < base64.length; i++) {
+    seed = ((seed << 5) - seed) + base64.charCodeAt(i);
+    seed = seed & seed; // convert to 32-bit integer
   }
+
+  return Math.abs(seed); // Ensure seed is positive
+};
+
+export const generateRandomProfileNickName = (locale: any, profileId: string | null = null): string => {
+  const { translations: { nameGenerator }, direction } = locale;
+
+  const seed = (profileId) ? base64ToSeed(profileId) : Math.floor(Math.random() * 1000000);
+
   const randomAnimal = nameGenerator.animals[(seed * 199) % nameGenerator.animals.length];
   const randomAdjective = nameGenerator.adjectives[(seed * 463) % nameGenerator.adjectives.length];
 
@@ -27,7 +36,7 @@ export const hashStringToId = (str: string, len: number = 8): string => {
   return uuidToBase64(uuidv5(str, 'f205b16e-4eac-11f0-a692-00155dcd3c6a')).slice(0, len);
 };
 
-export const generateRandomId = (len: number = 16): string => {
+export const generateRandomId = (len: number = 8): string => {
   return uuidToBase64(crypto.randomUUID()).slice(0, len)
 };
 

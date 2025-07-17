@@ -1,4 +1,4 @@
-import { ProfileRecord, PositionTypeOptions, BodyTypeOptions, EggplantSizeTypeOptions, PeachShapeTypeOptions, HealthPracticesTypeOptions, HivStatusTypeOptions, PreventionPracticesTypeOptions, HostingTypeOptions, TravelDistanceTypeOptions } from "../types/profile";
+import { PeerProfileRecord, PositionTypeOptions, BodyTypeOptions, EggplantSizeTypeOptions, PeachShapeTypeOptions, HealthPracticesTypeOptions, HivStatusTypeOptions, PreventionPracticesTypeOptions, HostingTypeOptions, TravelDistanceTypeOptions } from "../types/profile";
 import { generateRandomProfileNickName } from "../utils/generator";
 import { useMockProfileImageUrls } from "./profile";
 
@@ -23,29 +23,35 @@ const sampleAboutMe = [
   'Professional by day, wild by night. Let\'s make some memories together.'
 ];
 
-export const useMockRadarProfiles = (count: number = 10): ProfileRecord[] => {
-  const profiles: ProfileRecord[] = [];
+export const useMockRadarProfiles = (locale: any, count: number = 10): PeerProfileRecord[] => {
+  const profiles: PeerProfileRecord[] = [];
 
   for (let i = 0; i < count; i++) {
-    const profile: ProfileRecord = {
+    const mockImages = useMockProfileImageUrls();
+    const profileImages = mockImages.map((url, index) => ({
+      imageId: `img_${generateBase64Id(8)}_${index}`,
+      imageUrl: url,
+      imageThumbnailUrl: url,
+      imageAttributes: {}
+    }));
+
+    const profile: PeerProfileRecord = {
       profileId: generateBase64Id(),
-      profileInfo: {
-        nickName: generateRandomProfileNickName(100 + i),
-        aboutMe: getRandomItem(sampleAboutMe),
-        age: (Math.floor(Math.random() * 30) + 18).toString(), // 18-47
-        position: getRandomItem(PositionTypeOptions),
-        body: getRandomItem(BodyTypeOptions),
-        eggplantSize: getRandomItem(EggplantSizeTypeOptions),
-        peachShape: getRandomItem(PeachShapeTypeOptions),
-        healthPractices: getRandomItem(HealthPracticesTypeOptions),
-        hivStatus: getRandomItem(HivStatusTypeOptions),
-        preventionPractices: getRandomItem(PreventionPracticesTypeOptions),
-        hosting: getRandomItem(HostingTypeOptions),
-        travelDistance: getRandomItem(TravelDistanceTypeOptions),
-        distance: Math.floor(Math.random() * 50000) + 100, // 100-50000 meters (100m to 50km)
-        lastSeen: Date.now() - Math.floor(Math.random() * 86400000), // Within last 24 hours
-      },
-      profileImagesUrls: useMockProfileImageUrls(),
+      nickName: generateRandomProfileNickName(locale),
+      aboutMe: getRandomItem(sampleAboutMe),
+      age: (Math.floor(Math.random() * 30) + 18).toString(), // 18-47
+      position: getRandomItem(PositionTypeOptions),
+      body: getRandomItem(BodyTypeOptions),
+      eggplantSize: getRandomItem(EggplantSizeTypeOptions),
+      peachShape: getRandomItem(PeachShapeTypeOptions),
+      healthPractices: getRandomItem(HealthPracticesTypeOptions),
+      hivStatus: getRandomItem(HivStatusTypeOptions),
+      preventionPractices: getRandomItem(PreventionPracticesTypeOptions),
+      hosting: getRandomItem(HostingTypeOptions),
+      travelDistance: getRandomItem(TravelDistanceTypeOptions),
+      profileImages: profileImages,
+      distance: Math.floor(Math.random() * 50000) + 100, // 100-50000 meters (100m to 50km)
+      lastSeen: Date.now() - Math.floor(Math.random() * 86400000), // Within last 24 hours
     };
 
     profiles.push(profile);

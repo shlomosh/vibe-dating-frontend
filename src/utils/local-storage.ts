@@ -7,7 +7,10 @@ export class LocalStorage {
   static async getItem<T>(key: string): Promise<T | null> {
     try {
       const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
+      if (item === null || item === 'undefined') {
+        return null;
+      }
+      return JSON.parse(item);
     } catch (error) {
       console.error(`Error getting item ${key} from localStorage:`, error);
       return null;

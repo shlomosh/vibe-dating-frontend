@@ -60,17 +60,11 @@ if (import.meta.env.DEV) {
         // user=%7B%22id%22%3A279058397%2C%22first_name%22%3A%22Vladislav%22%2C%22last_name%22...
         // ```
         // But in case you don't really need a valid init data, use this one:
-        ['tgWebAppData', new URLSearchParams([
-          ['auth_date', (new Date().getTime() / 1000 | 0).toString()],
-          ['hash', 'some-hash'],
-          ['signature', 'some-signature'],
-          ['user', JSON.stringify({ id: 1, first_name: 'Vladislav', language_code: 'en' })],
-        ]).toString()],
+        ['tgWebAppData', "user=%7B%22id%22%3A485233267%2C%22first_name%22%3A%22Shlomo%22%2C%22last_name%22%3A%22Shachar%22%2C%22username%22%3A%22XomoGo%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2Fhz_lBwqKghtC8Whuyd_JUoVykTP1XG2D_HPURCnfEKc.svg%22%7D&chat_instance=2514264085585022705&chat_type=sender&auth_date=1752764641&signature=5o5jj_DXhCclyNdwcVPAaDZ-_fwJMrva1gSz1ivdFWYx9xqfZi9Pq5HDCsSDDW_UcqviI8x_g_3fwZecEkpSBw&hash=3e2ec70c877e2e81894b1923e88d3f51e34b0341703ac2c11c8a5b10493105e0" ],
         ['tgWebAppVersion', '8.4'],
         ['tgWebAppPlatform', 'tdesktop'],
       ]),
     });
-
     console.info(
       '⚠️ As long as the current environment was not considered as the Telegram-based one, it was mocked. Take a note, that you should not do it in production and current behavior is only specific to the development process. Environment mocking is also applied only in development mode. So, after building the application, you will not see this behavior and related warning, leading to crashing the application outside Telegram.',
     );

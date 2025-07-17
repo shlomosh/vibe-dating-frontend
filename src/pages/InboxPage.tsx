@@ -7,8 +7,12 @@ import { ContentFeed } from '@/components/ContentFeed';
 import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { MessageCountBadge } from '@/components/MessageCountBadge';
 import { InboxNavigationBar } from '@/navigation/InboxNavigationBar';
+
+import { useLanguage } from '@/contexts/LanguageContext';
+
 import { Conversation } from '@/types/chat';
 import { formatTimeAgo } from '@/utils/generator';
+
 import { useMockInboxConversations } from '@/mock/inbox';
 
 import anonUserImage from '@/assets/anon-user-front.png';
@@ -22,13 +26,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 }) => {
   const navigate = useNavigate();
   const { profile, lastMessage, lastTime, unreadCount } = conversation;
-  const { profileId, profileInfo, profileImagesUrls } = profile;
+  const { profileId, nickName, profileImages, lastSeen } = profile;
 
   const handleClick = () => {
     navigate(`/chat/${profileId}`);
   };
 
-  const avatarUrl = profileImagesUrls.length > 0 ? profileImagesUrls[0] : undefined;
+  const avatarUrl = profileImages.length > 0 ? profileImages[0].imageUrl : undefined;
 
   return (
     <div
@@ -42,13 +46,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
             {avatarUrl ? (
               <img
                 src={avatarUrl}
-                alt={profileInfo.nickName}
+                alt={nickName}
                 className="w-full h-full object-cover"
               />
             ) : (
               <img
                 src={anonUserImage}
-                alt={profileInfo.nickName}
+                alt={nickName}
                 className="w-full h-full object-cover opacity-60"
               />
             )}
@@ -60,9 +64,9 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <div className="font-semibold text-foreground truncate">
-                {profileInfo.nickName}
+                {nickName}
               </div>
-              <LastSeenBadge lastSeen={profileInfo.lastSeen} hideIfNotOnline={true} />
+              <LastSeenBadge lastSeen={lastSeen} hideIfNotOnline={true} />
             </div>
             <MessageCountBadge count={unreadCount} />
           </div>
@@ -81,7 +85,8 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 };
 
 export const InboxPage: React.FC = () => {
-  const conversations = useMockInboxConversations();
+  const locale = useLanguage();
+  const conversations = useMockInboxConversations(locale);
 
   return (
     <Page>
