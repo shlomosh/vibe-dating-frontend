@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import ReactDOMServer from 'react-dom/server';
+
 import { initData as tgInitData } from '@telegram-apps/sdk-react';
 
 import * as enUS from '../locale/en-US';
@@ -62,6 +64,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLanguage,
         translations: languageConfig[language].translations,
         direction: languageConfig[language].direction,
+        toString: (element: any) => {
+            return ReactDOMServer.renderToStaticMarkup(element);
+        }
     };
 
     return (

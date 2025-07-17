@@ -14,7 +14,10 @@ export class CloudStorage {
 
     try {
       const item = await cloudStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
+      if (item === null || item === 'undefined') {
+        return null;
+      }
+      return JSON.parse(item);
     } catch (error) {
       console.error(`Error getting item ${key} from cloudStorage:`, error);
       return null;

@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation as useRouterLocation } from 'react-router-dom';
 
 import { Pagination } from 'swiper/modules';
@@ -20,8 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocation } from '@/contexts/LocationContext';
-import { ProfileId, MyProfileInfo, defaultMyProfileInfo } from '@/types/profile';
-import { generateRandomId } from '@/utils/generator';
+import { ProfileId, SelfProfileRecord } from '@/types/profile';
 import { cn } from '@/lib/utils';
 import { getRandomOffset } from '@/utils/location';
 import { ProfileNavigationBar } from '../navigation/ProfileNavigationBar';
@@ -53,7 +51,7 @@ const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any 
       </Select>
     </div>
   )
-}
+};
 
 const ProfileAlbumCarousel = () => {
   const [images, setImages] = useState<string[]>([]);
@@ -210,15 +208,16 @@ const ProfileAlbumCarousel = () => {
 
 const CreateProfileDialog: FC<{
   onClose?: () => void,
-  onSubmit?: (newProfileId: string) => void
-}> = ({ onClose, onSubmit }) => {
+  onSubmit?: (newProfileId: string) => void,
+  disabled?: boolean
+}> = ({ onClose, onSubmit, disabled = false }) => {
   const [newProfileName, setNewProfileName] = useState<string>('');
   const { translations: { globalDict } } = useLanguage();
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="outline" size="icon">
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon" disabled={disabled}>
           <PlusIcon className="w-4 h-4" />
         </Button>
       </DialogTrigger>
@@ -233,7 +232,7 @@ const CreateProfileDialog: FC<{
           <Input
             className="w-full"
             type="text"
-            placeholder="Enter new profile name (visible only to you)"
+            placeholder=""
             value={newProfileName}
             onChange={(e) => setNewProfileName(e.target.value)}
           />
@@ -278,7 +277,7 @@ const DeleteProfileDialog: FC<{
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <TrashIcon className="w-4 h-4" />
         </Button>
@@ -321,108 +320,95 @@ const DeleteProfileDialog: FC<{
 };
 
 export const ProfileSetupPage: FC = () => {
-  const { profileDB, setProfileDB, isLoading } = useProfile();
+  const { profileDB, isLoading, delProfileRecord, addProfileRecord, updateProfileRecord, setActiveProfileId } = useProfile();
   const { translations: { globalDict, profileDict } } = useLanguage();
   const routerLocation = useRouterLocation();
   const isEditMode = ['/radar', '/inbox'].includes(routerLocation.state?.from);
 
-  const [profileId, setProfileId] = useState<string | undefined>();
-  const [profileIdList, setProfileIdList] = useState<Array<string>>([]);
-  const [profileInfo, setProfileInfo] = useState<MyProfileInfo>(defaultMyProfileInfo);
+  const profileId = profileDB?.activeProfileId;
+  const profileIdList = useMemo(() =>
+    profileDB ? Object.keys(profileDB.profileRecords).filter(id => !!profileDB.profileRecords[id].profileName) : [],
+    [profileDB]
+  );
+  const profileInfo = profileDB?.profileRecords[profileDB?.activeProfileId];
   const { location, setLocation } = useLocation();
 
-  useEffect(() => {
-    if (profileDB) {
-      const activeProfileId = profileDB.id || Object.keys(profileDB.db)[0];
-      if (activeProfileId) {
-        setProfileId(activeProfileId);
-        setProfileIdList(Object.keys(profileDB.db));
-        setProfileInfo(profileDB.db[activeProfileId]);
+
+  const handleProfileChange = useCallback((field: keyof SelfProfileRecord, value: string | undefined) => {
+    if (profileInfo) {
+      let record = { ...profileInfo };
+      if (field === 'hosting' && value === 'hostOnly') {
+        record = {
+          ...profileInfo,
+          [field]: value || '',
+          travelDistance: 'none'
+        };
+      } else {
+        record = {
+          ...profileInfo,
+          [field]: value || ''
+        };
       }
+      updateProfileRecord(record);
     }
-  }, [profileDB]);
+  }, [profileInfo, updateProfileRecord]);
 
-  const handleProfileChange = (field: keyof MyProfileInfo, value: string | undefined) => {
-    if (!profileDB || !profileId) return;
+  const handleActiveProfileChange = useCallback((value: ProfileId) => {
+    setActiveProfileId(value);
+  }, [setActiveProfileId]);
 
-    const newProfileDB = { ...profileDB };
-    if (field === 'hosting' && value === 'hostOnly') {
-      newProfileDB.db[profileId] = {
-        ...profileInfo,
-        [field]: value || '',
-        travelDistance: 'none'
-      };
-    } else {
-      newProfileDB.db[profileId] = {
-        ...profileInfo,
-        [field]: value || ''
-      };
+  const handleDeleteProfile = useCallback(async () => {
+    if (profileInfo) {
+      await delProfileRecord(profileInfo);
     }
-    setProfileDB(newProfileDB);
-    setProfileInfo(newProfileDB.db[profileId]);
-  };
+  }, [profileInfo, delProfileRecord]);
 
-  const handleActiveProfileChange = (value: ProfileId) => {
-    if (!profileDB) return;
-    const newProfileDB = { ...profileDB, id: value };
-    setProfileDB(newProfileDB);
-    setProfileId(value);
-    setProfileInfo(newProfileDB.db[value]);
-  };
+  const handleCreateProfile = useCallback(async (newProfileName: string) => {
+    if (profileInfo) {
+      await addProfileRecord({...profileInfo, profileName: newProfileName});
+    }
+  }, [profileInfo, addProfileRecord]);
 
-  const handleDeleteProfile = async () => {
-    if (!profileDB || !profileId) return;
-
-    const newProfileDB = { ...profileDB };
-    delete newProfileDB.db[profileId];
-    newProfileDB.id = Object.keys(newProfileDB.db)[0];
-    await setProfileDB(newProfileDB);
-  }
-
-  const handleCreateProfile = async (newProfileName: string) => {
-    if (!profileDB) return;
-
-    const newProfileId = generateRandomId();
-    const newProfileDB = { ...profileDB };
-    newProfileDB.db[newProfileId] = { ...profileInfo, profileName: newProfileName };
-    newProfileDB.id = newProfileId;
-    await setProfileDB(newProfileDB);
-  }
-
-  const handleUpdateLocation = async () => {
+  const handleUpdateLocation = useCallback(async () => {
     if (!navigator.geolocation) {
       console.error('Geolocation is not supported by your browser');
       return;
     }
 
-    // add sleep so user can see the button is pressed
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const offset = getRandomOffset(location?.randomizationRadius || 0);
+    return new Promise<void>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const offset = getRandomOffset(location?.randomizationRadius || 0);
 
-        const newLocation: Location = {
-          ...location,
-          mode: 'automatic',
-          latitude: latitude + offset.lat,
-          longitude: longitude + offset.lng,
-          address: undefined
-        };
+          const newLocation: Location = {
+            ...location,
+            mode: 'automatic',
+            latitude: latitude + offset.lat,
+            longitude: longitude + offset.lng,
+            address: undefined
+          };
 
-        setLocation(newLocation);
-      },
-      (error) => {
-        console.error('Error getting location:', error);
-      }
-    );
-  };
+          setLocation(newLocation);
+          resolve();
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          reject(error);
+        }
+      );
+    });
+  }, [location, setLocation]);
 
-  const profileOptions = profileIdList.reduce((obj, id) => {
-    obj[id] = profileDB?.db[id]?.profileName || id;
-    return obj;
-  }, {} as Record<string, string>);
+  const profileOptions = useMemo(() =>
+    profileIdList.reduce((obj, id) => {
+      obj[id] = profileDB?.profileRecords[id]?.profileName || id;
+      return obj;
+    }, {} as Record<string, string>),
+    [profileIdList, profileDB]
+  );
 
   if (isLoading) {
     return (
@@ -458,7 +444,10 @@ export const ProfileSetupPage: FC = () => {
                 </div>
                 {!isEditMode && (<>
                   <div>
-                    <CreateProfileDialog onSubmit={handleCreateProfile} />
+                    <CreateProfileDialog
+                      onSubmit={handleCreateProfile}
+                      disabled={!profileDB?.freeProfileIds.length}
+                    />
                   </div>
                   <div>
                     <DeleteProfileDialog

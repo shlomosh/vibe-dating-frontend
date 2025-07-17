@@ -3,10 +3,11 @@ import { authService } from '@/api/auth';
 
 interface UserContextType {
     userId: string | null;
+    profileIds: string[];
     isLoading: boolean;
     isAuthenticating: boolean;
     authenticate: () => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -17,19 +18,29 @@ interface UserProviderProps {
 
 export function UserProvider({ children }: UserProviderProps) {
     const [userId, setUserId] = useState<string | null>(null);
+    const [profileIds, setProfileIds] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticating, setIsAuthenticating] = useState(false);
 
     // Check if user is already authenticated on mount
     useEffect(() => {
-        const checkAuthStatus = () => {
-            const authStatus = authService.getAuthStatus();
-            if (authStatus.isAuthenticated) {
-                setUserId(authStatus.userId);
-            } else {
+        const checkAuthStatus = async () => {
+            try {
+                const authStatus = await authService.getAuthentication();
+                if (!!authStatus.userId) {
+                    setUserId(authStatus.userId);
+                    setProfileIds(authStatus.profileIds);
+                } else {
+                    setUserId(null);
+                    setProfileIds([]);
+                }
+            } catch (error) {
+                console.error('Failed to check auth status:', error);
                 setUserId(null);
+                setProfileIds([]);
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         };
 
         checkAuthStatus();
@@ -38,24 +49,32 @@ export function UserProvider({ children }: UserProviderProps) {
     const authenticate = async () => {
         setIsAuthenticating(true);
         try {
-            const authData = await authService.initialize();
+            const authData = await authService.initializeTelegram();
             setUserId(authData.userId);
+            setProfileIds(authData.profileIds);
         } catch (error) {
             console.error('Authentication failed:', error);
             setUserId(null);
+            setProfileIds([]);
             throw error;
         } finally {
             setIsAuthenticating(false);
         }
     };
 
-    const logout = () => {
-        authService.logout();
-        setUserId(null);
+    const logout = async () => {
+        try {
+            await authService.logout();
+            setUserId(null);
+            setProfileIds([]);
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
     };
 
     const value = {
         userId,
+        profileIds,
         isLoading,
         isAuthenticating,
         authenticate,

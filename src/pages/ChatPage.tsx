@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SendIcon, PaperclipIcon, ArrowLeftIcon } from 'lucide-react';
 import { useSignal, viewportSafeAreaInsets } from '@telegram-apps/sdk-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 import { Page } from '@/components/Page';
 import { Content } from '@/components/Content';
@@ -162,11 +163,12 @@ export const ChatPage: React.FC = () => {
   const { profileId } = useParams<{ profileId: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const locale = useLanguage();
 
   // Mock user data
   const user = {
     id: profileId || '1',
-    username: generateRandomProfileNickName(parseInt(profileId || '1')),
+    username: generateRandomProfileNickName(locale, profileId),
     lastSeen: 0,
     avatarUrl: `https://picsum.photos/100/100?random=${profileId || '1'}`
   };

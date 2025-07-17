@@ -24,31 +24,56 @@ fi
 
 echo "Fixing CORS configuration for API Gateway (API_ID: $API_ID, RESOURCE_ID: $RESOURCE_ID)..."
 
-# Check if method response already exists
-METHOD_RESPONSE=$(AWS_PROFILE=vibe-dev aws apigateway get-method-response \
+# Delete existing POST method response if it exists
+AWS_PROFILE=vibe-dev aws apigateway delete-method-response \
   --rest-api-id $API_ID \
   --resource-id $RESOURCE_ID \
   --http-method POST \
   --status-code 200 \
-  --region $AWS_REGION 2>/dev/null)
+  --region $AWS_REGION 2>/dev/null || true
 
-if [ $? -eq 0 ]; then
-    echo "Method response already exists, skipping PUT method-response..."
-else
-    # Update CORS configuration directly instead of modifying path
-    AWS_PROFILE=vibe-dev aws apigateway put-method-response \
-      --rest-api-id $API_ID \
-      --resource-id $RESOURCE_ID \
-      --http-method POST \
-      --status-code 200 \
-      --response-parameters "{\"method.response.header.Access-Control-Allow-Origin\":true}" \
-      --region $AWS_REGION
+# Update POST method response to include CORS headers
+AWS_PROFILE=vibe-dev aws apigateway put-method-response \
+  --rest-api-id $API_ID \
+  --resource-id $RESOURCE_ID \
+  --http-method POST \
+  --status-code 200 \
+  --response-parameters "{\"method.response.header.Access-Control-Allow-Origin\":true,\"method.response.header.Access-Control-Allow-Methods\":true,\"method.response.header.Access-Control-Allow-Headers\":true}" \
+  --region $AWS_REGION
 
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to update resource configuration"
-        exit 1
-    fi
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to update POST method response"
+    exit 1
 fi
+
+# Delete existing POST integration response if it exists
+AWS_PROFILE=vibe-dev aws apigateway delete-integration-response \
+  --rest-api-id $API_ID \
+  --resource-id $RESOURCE_ID \
+  --http-method POST \
+  --status-code 200 \
+  --region $AWS_REGION 2>/dev/null || true
+
+# Update POST integration response to include CORS headers
+AWS_PROFILE=vibe-dev aws apigateway put-integration-response \
+  --rest-api-id $API_ID \
+  --resource-id $RESOURCE_ID \
+  --http-method POST \
+  --status-code 200 \
+  --response-parameters "{\"method.response.header.Access-Control-Allow-Origin\":\"'*'\",\"method.response.header.Access-Control-Allow-Methods\":\"'POST,OPTIONS'\",\"method.response.header.Access-Control-Allow-Headers\":\"'Content-Type,X-Amz-Date,Authorization,X-Api-Key'\"}" \
+  --region $AWS_REGION
+
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to update POST integration response"
+    exit 1
+fi
+
+# Delete existing OPTIONS method if it exists
+AWS_PROFILE=vibe-dev aws apigateway delete-method \
+  --rest-api-id $API_ID \
+  --resource-id $RESOURCE_ID \
+  --http-method OPTIONS \
+  --region $AWS_REGION 2>/dev/null || true
 
 # Enable CORS by adding OPTIONS method
 AWS_PROFILE=vibe-dev aws apigateway put-method \
@@ -93,6 +118,7 @@ AWS_PROFILE=vibe-dev aws apigateway create-deployment \
 
 if [ $? -eq 0 ]; then
     echo "CORS configuration updated and deployed successfully!"
+    echo "API Gateway URL: https://$API_ID.execute-api.$AWS_REGION.amazonaws.com/$STAGE"
 else
     echo "Error: Failed to deploy API changes"
     exit 1

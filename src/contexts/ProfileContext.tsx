@@ -1,17 +1,21 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { initData as tgInitData } from '@telegram-apps/sdk-react';
 
 import { LocalStorage as Storage } from '@/utils/local-storage';
 //import { CloudStorage as Storage} from '@/utils/cloud-storage';
 import { StorageKeys } from '@/config';
 
-import { ProfileDB, defaultMyProfileInfo } from '@/types/profile';
-import { generateRandomId, generateRandomProfileNickName } from '@/utils/generator';
+import { useUser } from '@/contexts/UserContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+import { ProfileDB, ProfileId, SelfProfileRecord, createProfileRecord } from '@/types/profile';
 
 
 interface ProfileContextType {
     profileDB: ProfileDB | null;
-    setProfileDB: (profileDB: ProfileDB) => Promise<void>;
+    delProfileRecord: (record: SelfProfileRecord) => Promise<void>;
+    addProfileRecord: (record: SelfProfileRecord) => Promise<void>;
+    updateProfileRecord: (record: SelfProfileRecord) => Promise<void>;
+    setActiveProfileId: (profileId: ProfileId) => Promise<void>;
     isLoading: boolean;
 }
 
@@ -22,51 +26,160 @@ interface ProfileProviderProps {
 }
 
 export function ProfileProvider({ children }: ProfileProviderProps) {
-    const [profileDB, setProfileDBState] = useState<ProfileDB | null>(null);
+    const [profileDB, setProfileDB] = useState<ProfileDB | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { profileIds } = useUser();
+    const locale = useLanguage();
 
     const loadProfileDB = async () => {
-        try {
-            let db = await Storage.getItem<ProfileDB>(StorageKeys.Profiles);
+      if (!profileIds || profileIds.length === 0) return;
 
-            if (!db) {
-                const defaultProfileId = generateRandomId();
-                db = {
-                    id: defaultProfileId,
-                    db: {
-                        [defaultProfileId]: {
-                            ...defaultMyProfileInfo,
-                            nickName: generateRandomProfileNickName(tgInitData.user()?.id || -1)
-                        }
-                    }
-                };
-                await Storage.setItem(StorageKeys.Profiles, db);
-            }
+      let activeProfileId: ProfileId | null = null;
+      let profilesRecords: Record<ProfileId, SelfProfileRecord> = {};
 
-            setProfileDBState(db);
-        } catch (error) {
-            console.error('Error loading profile DB:', error);
-        } finally {
-            setIsLoading(false);
+      try {
+        activeProfileId = await Storage.getItem(StorageKeys.Profiles + '/activeProfileId');
+        profilesRecords = {};
+        for (const profileId of profileIds) {
+          const record = await Storage.getItem<SelfProfileRecord>(StorageKeys.Profiles + `/profileRecords/${profileId}`);
+          if (record !== null && record.profileId && profileIds.includes(record.profileId)) {
+            profilesRecords[profileId] = record;
+          }
         }
-    };
+
+        if (!activeProfileId || !profilesRecords[activeProfileId]) {
+            activeProfileId = profileIds[0];
+            profilesRecords[activeProfileId] = createProfileRecord(locale, activeProfileId);
+            Storage.setItem(StorageKeys.Profiles + '/activeProfileId', activeProfileId);
+            Storage.setItem(StorageKeys.Profiles + `/profileRecords/${activeProfileId}`, profilesRecords[activeProfileId]);
+        }
+      } catch (error) {
+        activeProfileId = profileIds[0];
+        profilesRecords[activeProfileId] = createProfileRecord(locale, activeProfileId);
+
+        console.error('Error loading profile DB:', error);
+      }
+
+      const profileDB = {
+        activeProfileId: activeProfileId,
+        profileRecords: profilesRecords,
+        freeProfileIds: profileIds.filter(id => !profilesRecords[id])
+      };
+
+      setProfileDB(profileDB);
+      setIsLoading(false);
+    }
+
+    const saveProfileDB = (profileDB: ProfileDB) => {
+      if (!profileDB) return;
+
+      try {
+        Storage.setItem(StorageKeys.Profiles + '/activeProfileId', profileDB.activeProfileId);
+        for (const profileId in profileDB.profileRecords) {
+          Storage.setItem(StorageKeys.Profiles + `/profileRecords/${profileId}`, profileDB.profileRecords[profileId]);
+        }
+      } catch (error) {
+        console.error('Error saving profile DB:', error);
+      }
+    }
 
     useEffect(() => {
-        loadProfileDB();
-    }, []);
+      loadProfileDB();
+    }, [profileIds]);
 
-    const setProfileDB = async (newProfileDB: ProfileDB) => {
-        try {
-            await Storage.setItem(StorageKeys.Profiles, newProfileDB);
-            setProfileDBState(newProfileDB);
-        } catch (error) {
-            console.error('Error saving profile DB:', error);
+    const delProfileRecord = async (record: SelfProfileRecord) => {
+      const profileId = record.profileId;
+      if (profileId && profileDB) {
+        const newProfileRecords = { ...profileDB.profileRecords };
+        delete newProfileRecords[profileId];
+
+        const newFreeProfileIds = [...profileDB.freeProfileIds, profileId];
+
+        // Determine new active profile
+        let newActiveProfileId;
+        const remainingProfileIds = Object.keys(newProfileRecords);
+
+        if (remainingProfileIds.length > 0) {
+          // Switch to first remaining profile
+          newActiveProfileId = remainingProfileIds[0];
+        } else {
+          // No profiles left, create a new empty profile
+          newActiveProfileId = newFreeProfileIds[0];
+          const newEmptyProfile = createProfileRecord(locale, newActiveProfileId);
+          newProfileRecords[newActiveProfileId] = newEmptyProfile;
+          newFreeProfileIds.splice(0, 1);
         }
-    };
+
+        const updatedProfileDB = {
+          ...profileDB,
+          profileRecords: newProfileRecords,
+          freeProfileIds: newFreeProfileIds,
+          activeProfileId: newActiveProfileId
+        };
+
+        Storage.deleteItem(StorageKeys.Profiles + `/profileRecords/${profileId}`);
+        saveProfileDB(updatedProfileDB);
+        setProfileDB(updatedProfileDB);
+      }
+    }
+
+    const addProfileRecord = async (record: SelfProfileRecord) => {
+      const profileId = profileDB?.freeProfileIds[0] || null;
+      if (profileId && profileDB) {
+        const newProfileRecord = createProfileRecord(locale, profileId, record);
+        const newFreeProfileIds = profileDB.freeProfileIds.filter(id => id !== profileId);
+
+        const updatedProfileDB = {
+          ...profileDB,
+          profileRecords: {
+            ...profileDB.profileRecords,
+            [profileId]: newProfileRecord
+          },
+          freeProfileIds: newFreeProfileIds,
+          activeProfileId: profileId
+        };
+
+        saveProfileDB(updatedProfileDB);
+        setProfileDB(updatedProfileDB);
+      }
+    }
+
+    const updateProfileRecord = async (record: SelfProfileRecord) => {
+      const profileId = record.profileId;
+      if (profileId && profileDB) {
+        const updatedRecord = createProfileRecord(locale, profileId, record);
+
+        const updatedProfileDB = {
+          ...profileDB,
+          profileRecords: {
+            ...profileDB.profileRecords,
+            [profileId]: updatedRecord
+          }
+        };
+
+        saveProfileDB(updatedProfileDB);
+        setProfileDB(updatedProfileDB);
+      }
+    }
+
+    const setActiveProfileId = async (profileId: ProfileId) => {
+      if (profileId && profileDB) {
+        const updatedProfileDB = {
+          ...profileDB,
+          activeProfileId: profileId
+        };
+
+        saveProfileDB(updatedProfileDB);
+        setProfileDB(updatedProfileDB);
+      }
+    }
 
     const value = {
         profileDB,
-        setProfileDB,
+        delProfileRecord,
+        addProfileRecord,
+        updateProfileRecord,
+        setActiveProfileId,
         isLoading
     };
 
