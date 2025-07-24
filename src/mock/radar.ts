@@ -1,4 +1,4 @@
-import { PeerProfileRecord, PositionTypeOptions, BodyTypeOptions, EggplantSizeTypeOptions, PeachShapeTypeOptions, HealthPracticesTypeOptions, HivStatusTypeOptions, PreventionPracticesTypeOptions, HostingTypeOptions, TravelDistanceTypeOptions } from "../types/profile";
+import { PeerProfileRecord, SexualPositionTypeOptions, BodyTypeOptions, EggplantSizeTypeOptions, PeachShapeTypeOptions, HealthPracticesTypeOptions, HivStatusTypeOptions, PreventionPracticesTypeOptions, HostingTypeOptions, TravelDistanceTypeOptions } from "../types/profile";
 import { generateRandomProfileNickName } from "../utils/generator";
 import { useMockProfileImageUrls } from "./profile";
 
@@ -40,8 +40,8 @@ export const useMockRadarProfiles = (locale: any, count: number = 10): PeerProfi
       nickName: generateRandomProfileNickName(locale),
       aboutMe: getRandomItem(sampleAboutMe),
       age: (Math.floor(Math.random() * 30) + 18).toString(), // 18-47
-      position: getRandomItem(PositionTypeOptions),
-      body: getRandomItem(BodyTypeOptions),
+      sexualPosition: getRandomItem(SexualPositionTypeOptions),
+      bodyType: getRandomItem(BodyTypeOptions),
       eggplantSize: getRandomItem(EggplantSizeTypeOptions),
       peachShape: getRandomItem(PeachShapeTypeOptions),
       healthPractices: getRandomItem(HealthPracticesTypeOptions),

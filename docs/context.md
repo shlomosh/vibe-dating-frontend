@@ -557,8 +557,8 @@ Each profile contains extensive dating-specific attributes:
 - `age`: User's age
 
 **Physical & Preference Attributes:**
-- `position`: Sexual position preference (bottom, versBottom, vers, versTop, top, side, blower, blowie)
-- `body`: Body type (petite, slim, average, fit, muscular, stocky, chubby, large)
+- `sexualPosition`: Sexual position preference (bottom, versBottom, vers, versTop, top, side, blower, blowie)
+- `bodyType`: Body type (petite, slim, average, fit, muscular, stocky, chubby, large)
 - `eggplantSize`: Physical attribute (small, average, large, extraLarge, gigantic)
 - `peachShape`: Physical attribute (small, average, bubble, solid, large)
 - `sexuality`: Sexual orientation (gay, bisexual, curious, trans, fluid)

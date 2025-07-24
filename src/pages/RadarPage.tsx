@@ -43,8 +43,8 @@ const UserProfileInfo: React.FC<UserProfileProps> = ({ profile }) => {
     nickName,
     aboutMe,
     age,
-    position,
-    body,
+    sexualPosition,
+    bodyType,
     eggplantSize,
     peachShape,
     healthPractices,
@@ -63,8 +63,8 @@ const UserProfileInfo: React.FC<UserProfileProps> = ({ profile }) => {
         </div>
         <div className="flex justify-center items-center gap-2">
           <span>{age}</span>
-          <span className="text-muted-foreground">{position && '|'}</span>
-          <span>{position && profileDict.position.options[position]}</span>
+          <span className="text-muted-foreground">{sexualPosition && '|'}</span>
+          <span>{sexualPosition && profileDict.sexualPosition.options[sexualPosition]}</span>
           <span className="text-muted-foreground">{hosting && '|'}</span>
           <span>{hosting && profileDict.hosting.options[hosting]} {travelDistance && `(${profileDict.travelDistance.options[travelDistance]})`}</span>
         </div>
@@ -78,10 +78,10 @@ const UserProfileInfo: React.FC<UserProfileProps> = ({ profile }) => {
         )}
 
         {/* Body Type */}
-        {body && (
+        {bodyType && (
           <div className="flex justify-between items-center">
-            <span className="w-full text-muted-foreground">{profileDict.body.label}:</span>
-            <span className="w-full">{profileDict.body.options[body]}</span>
+            <span className="w-full text-muted-foreground">{profileDict.bodyType.label}:</span>
+            <span className="w-full">{profileDict.bodyType.options[bodyType]}</span>
           </div>
         )}
 
@@ -146,15 +146,15 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
     }
   };
 
-  const { nickName, age, position, hosting, distance, lastSeen, profileImages } = profile;
+  const { nickName, age, sexualPosition, hosting, distance, lastSeen, profileImages } = profile;
 
   const profileSummary = (
     <div className="flex gap-1 text-muted-foreground">
       {age && <span>{age}</span>}
-      {position && (
+      {sexualPosition && (
         <>
           <span>|</span>
-          <span>{profileDict.position.options[position]}</span>
+          <span>{profileDict.sexualPosition.options[sexualPosition]}</span>
         </>
       )}
       {hosting && (

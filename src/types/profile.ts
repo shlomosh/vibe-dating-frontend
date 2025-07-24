@@ -2,7 +2,7 @@ import { generateRandomProfileNickName } from "@/utils/generator";
 
 export type AgeType = string;
 
-export const PositionTypeOptions = [
+export const SexualPositionTypeOptions = [
   'bottom',
   'versBottom',
   'vers',
@@ -13,7 +13,7 @@ export const PositionTypeOptions = [
   'blowie'
 ] as const;
 
-export type PositionType = typeof PositionTypeOptions[number];
+export type SexualPositionType = typeof SexualPositionTypeOptions[number];
 
 export const BodyTypeOptions = [
   'petite',
@@ -133,8 +133,8 @@ export interface ProfileRecord {
   nickName: string | undefined;
   aboutMe: string | undefined;
   age: AgeType | undefined;
-  position: PositionType | undefined;
-  body: BodyType | undefined;
+  sexualPosition: SexualPositionType | undefined;
+  bodyType: BodyType | undefined;
   eggplantSize: EggplantSizeType | undefined;
   peachShape: PeachShapeType | undefined;
   healthPractices: HealthPracticesType | undefined;
@@ -166,8 +166,8 @@ export const createProfileRecord = (locale: any, profileId: ProfileId, record: P
   nickName: record?.nickName || generateRandomProfileNickName(locale, profileId),
   aboutMe: record?.aboutMe,
   age: record?.age,
-  position: record?.position,
-  body: record?.body,
+  sexualPosition: record?.sexualPosition,
+  bodyType: record?.bodyType,
   eggplantSize: record?.eggplantSize,
   peachShape: record?.peachShape,
   healthPractices: record?.healthPractices,

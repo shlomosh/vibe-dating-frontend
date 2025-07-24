@@ -1,7 +1,7 @@
 import {
   AgeType,
   TravelDistanceType,
-  PositionType,
+  SexualPositionType,
   BodyType,
   SexualityType,
   HostingType,
@@ -261,7 +261,7 @@ export const profileDict = {
   distance: {
     label: 'מרחק',
   },
-  position: {
+  sexualPosition: {
     label: 'פוזיציה',
     options: {
       bottom: 'פס',
@@ -275,9 +275,9 @@ export const profileDict = {
     }
   } satisfies {
     label: string,
-    options: Record<PositionType, string>
+    options: Record<SexualPositionType, string>
   },
-  body: {
+  bodyType: {
     label: 'סוג גוף',
     options: {
       petite: 'קטן',
