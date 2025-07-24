@@ -5,7 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFiltersDrawer } from '@/contexts/FiltersDrawerContext';
-import { BodyTypeOptions, HostingTypeOptions, PositionTypeOptions, SexualityTypeOptions } from '@/types/profile';
+import { BodyTypeOptions, HostingTypeOptions, SexualPositionTypeOptions, SexualityTypeOptions } from '@/types/profile';
 import { ContentNavigation } from '../../components/ContentNavigation';
 import { XIcon, CheckIcon } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -25,8 +25,8 @@ export const FiltersDrawer: React.FC = () => {
       ageValuesRange: [18, 60],
       travelDistanceIsEnabled: false,
       travelDistanceValuesRange: [1, 50],
-      positionIsEnabled: false,
-      positionValuesList: [],
+      sexualPositionIsEnabled: false,
+      sexualPositionValuesList: [],
       bodyTypeIsEnabled: false,
       bodyTypeValuesList: [],
       sexualityIsEnabled: false,
@@ -44,13 +44,13 @@ export const FiltersDrawer: React.FC = () => {
   };
 
   // Convert options to MultiSelect format
-  const positionOptions = PositionTypeOptions.map(value => ({
-    label: profileDict.position.options[value],
+  const sexualPositionOptions = SexualPositionTypeOptions.map(value => ({
+    label: profileDict.sexualPosition.options[value],
     value
   }));
 
   const bodyTypeOptions = BodyTypeOptions.map(value => ({
-    label: profileDict.body.options[value],
+    label: profileDict.bodyType.options[value],
     value
   }));
 
@@ -107,21 +107,21 @@ export const FiltersDrawer: React.FC = () => {
             <div>
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="position-filter"
-                  checked={filters.positionIsEnabled || false}
-                  onCheckedChange={(checked: boolean | 'indeterminate') => handleFilterChange('positionIsEnabled', checked)}
+                  id="sexualPosition-filter"
+                  checked={filters.sexualPositionIsEnabled || false}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => handleFilterChange('sexualPositionIsEnabled', checked)}
                 />
-                <Label htmlFor="position-filter" className="text-sm font-medium">
-                  {profileDict.position.label}
+                <Label htmlFor="sexualPosition-filter" className="text-sm font-medium">
+                  {profileDict.sexualPosition.label}
                 </Label>
               </div>
             </div>
             <div>
               <MultiSelect
-                disabled={!filters.positionIsEnabled}
-                options={positionOptions}
-                value={filters.positionValuesList || []}
-                onValueChange={(value) => handleFilterChange('positionValuesList', value)}
+                disabled={!filters.sexualPositionIsEnabled}
+                options={sexualPositionOptions}
+                value={filters.sexualPositionValuesList || []}
+                onValueChange={(value) => handleFilterChange('sexualPositionValuesList', value)}
                 placeholder=""
                 maxCount={5}
                 showSearch={false}
@@ -190,7 +190,7 @@ export const FiltersDrawer: React.FC = () => {
                   onCheckedChange={(checked: boolean | 'indeterminate') => handleFilterChange('bodyTypeIsEnabled', checked)}
                 />
                 <Label htmlFor="body-type-filter" className="text-sm font-medium">
-                  {profileDict.body.label}
+                  {profileDict.bodyType.label}
                 </Label>
               </div>
             </div>

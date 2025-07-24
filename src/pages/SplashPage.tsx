@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Loader2Icon } from 'lucide-react';
 
 import { Page } from '@/components/Page.tsx';
 import { Content } from '@/components/Content';
@@ -71,7 +72,13 @@ export const SplashPage: FC = () => {
               variant="default"
               disabled={isAuthenticating}
             >
-              {isAuthenticating ? 'Validating...' : globalDict.acceptTermsAndLogin}
+              {isAuthenticating ? (
+                <div className="flex items-center gap-2">
+                  <Loader2Icon className="h-4 w-4 animate-spin" />
+                </div>
+              ) : (
+                globalDict.acceptTermsAndLogin
+              )}
             </Button>
           </div>
         </div>

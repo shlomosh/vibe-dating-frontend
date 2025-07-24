@@ -1,0 +1,843 @@
+From 43418b471845ef2b2766b16861d5b4b0232026d4 Mon Sep 17 00:00:00 2001
+From: Shlomo Shachar <shlomo.shachar@binatix-labs.com>
+Date: Fri, 18 Jul 2025 13:53:37 +0300
+Subject: [PATCH] Change src/components/ui/... to resolve exception on console.
+
+---
+ src/components/ui/badge.tsx       | 16 +++----
+ src/components/ui/button.tsx      | 21 ++++-----
+ src/components/ui/checkbox.tsx    | 12 +++--
+ src/components/ui/collapsible.tsx | 23 +++++----
+ src/components/ui/command.tsx     | 24 ++++++----
+ src/components/ui/dialog.tsx      | 78 +++++++++++++++++--------------
+ src/components/ui/drawer.tsx      | 49 ++++++++++---------
+ src/components/ui/input.tsx       |  9 +++-
+ src/components/ui/label.tsx       | 12 +++--
+ src/components/ui/popover.tsx     | 26 ++++++-----
+ src/components/ui/radio-group.tsx | 12 +++--
+ src/components/ui/select.tsx      | 18 +++----
+ src/components/ui/sheet.tsx       | 54 +++++++++++----------
+ src/components/ui/slider.tsx      | 16 +++----
+ src/components/ui/textarea.tsx    |  9 +++-
+ 15 files changed, 214 insertions(+), 165 deletions(-)
+
+diff --git a/src/components/ui/badge.tsx b/src/components/ui/badge.tsx
+index 0205413..6b56770 100644
+--- a/src/components/ui/badge.tsx
++++ b/src/components/ui/badge.tsx
+@@ -25,22 +25,22 @@ const badgeVariants = cva(
+   }
+ )
+ 
+-function Badge({
+-  className,
+-  variant,
+-  asChild = false,
+-  ...props
+-}: React.ComponentProps<"span"> &
+-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
++const Badge = React.forwardRef<
++  HTMLSpanElement,
++  React.ComponentProps<"span"> &
++    VariantProps<typeof badgeVariants> & { asChild?: boolean }
++>(({ className, variant, asChild = false, ...props }, ref) => {
+   const Comp = asChild ? Slot : "span"
+ 
+   return (
+     <Comp
+       data-slot="badge"
+       className={cn(badgeVariants({ variant }), className)}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++Badge.displayName = "Badge"
+ 
+ export { Badge, badgeVariants }
+diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx
+index a2df8dc..d4bf579 100644
+--- a/src/components/ui/button.tsx
++++ b/src/components/ui/button.tsx
+@@ -35,25 +35,24 @@ const buttonVariants = cva(
+   }
+ )
+ 
+-function Button({
+-  className,
+-  variant,
+-  size,
+-  asChild = false,
+-  ...props
+-}: React.ComponentProps<"button"> &
+-  VariantProps<typeof buttonVariants> & {
+-    asChild?: boolean
+-  }) {
++const Button = React.forwardRef<
++  HTMLButtonElement,
++  React.ComponentProps<"button"> &
++    VariantProps<typeof buttonVariants> & {
++      asChild?: boolean
++    }
++>(({ className, variant, size, asChild = false, ...props }, ref) => {
+   const Comp = asChild ? Slot : "button"
+ 
+   return (
+     <Comp
+       data-slot="button"
+       className={cn(buttonVariants({ variant, size, className }))}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++Button.displayName = "Button"
+ 
+ export { Button, buttonVariants }
+diff --git a/src/components/ui/checkbox.tsx b/src/components/ui/checkbox.tsx
+index defeb01..ee73cdd 100644
+--- a/src/components/ui/checkbox.tsx
++++ b/src/components/ui/checkbox.tsx
+@@ -4,10 +4,10 @@ import { CheckIcon } from "lucide-react"
+ 
+ import { cn } from "@/lib/utils"
+ 
+-function Checkbox({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
++const Checkbox = React.forwardRef<
++  React.ElementRef<typeof CheckboxPrimitive.Root>,
++  React.ComponentProps<typeof CheckboxPrimitive.Root>
++>(({ className, ...props }, ref) => {
+   return (
+     <CheckboxPrimitive.Root
+       data-slot="checkbox"
+@@ -15,6 +15,7 @@ function Checkbox({
+         "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+         className
+       )}
++      ref={ref}
+       {...props}
+     >
+       <CheckboxPrimitive.Indicator
+@@ -25,6 +26,7 @@ function Checkbox({
+       </CheckboxPrimitive.Indicator>
+     </CheckboxPrimitive.Root>
+   )
+-}
++})
++Checkbox.displayName = "Checkbox"
+ 
+ export { Checkbox }
+diff --git a/src/components/ui/collapsible.tsx b/src/components/ui/collapsible.tsx
+index 77f86be..0f8394e 100644
+--- a/src/components/ui/collapsible.tsx
++++ b/src/components/ui/collapsible.tsx
+@@ -1,3 +1,4 @@
++import * as React from "react"
+ import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
+ 
+ function Collapsible({
+@@ -6,26 +7,32 @@ function Collapsible({
+   return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />
+ }
+ 
+-function CollapsibleTrigger({
+-  ...props
+-}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>) {
++const CollapsibleTrigger = React.forwardRef<
++  React.ElementRef<typeof CollapsiblePrimitive.CollapsibleTrigger>,
++  React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>
++>(({ ...props }, ref) => {
+   return (
+     <CollapsiblePrimitive.CollapsibleTrigger
+       data-slot="collapsible-trigger"
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++CollapsibleTrigger.displayName = "CollapsibleTrigger"
+ 
+-function CollapsibleContent({
+-  ...props
+-}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>) {
++const CollapsibleContent = React.forwardRef<
++  React.ElementRef<typeof CollapsiblePrimitive.CollapsibleContent>,
++  React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>
++>(({ ...props }, ref) => {
+   return (
+     <CollapsiblePrimitive.CollapsibleContent
+       data-slot="collapsible-content"
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++CollapsibleContent.displayName = "CollapsibleContent"
+ 
+ export { Collapsible, CollapsibleTrigger, CollapsibleContent }
+diff --git a/src/components/ui/command.tsx b/src/components/ui/command.tsx
+index e5bd56b..f6dac71 100644
+--- a/src/components/ui/command.tsx
++++ b/src/components/ui/command.tsx
+@@ -58,10 +58,10 @@ function CommandDialog({
+   )
+ }
+ 
+-function CommandInput({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
++const CommandInput = React.forwardRef<
++  React.ElementRef<typeof CommandPrimitive.Input>,
++  React.ComponentProps<typeof CommandPrimitive.Input>
++>(({ className, ...props }, ref) => {
+   return (
+     <div
+       data-slot="command-input-wrapper"
+@@ -74,11 +74,13 @@ function CommandInput({
+           "placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+           className
+         )}
++        ref={ref}
+         {...props}
+       />
+     </div>
+   )
+-}
++})
++CommandInput.displayName = "CommandInput"
+ 
+ function CommandList({
+   className,
+@@ -137,10 +139,10 @@ function CommandSeparator({
+   )
+ }
+ 
+-function CommandItem({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof CommandPrimitive.Item>) {
++const CommandItem = React.forwardRef<
++  React.ElementRef<typeof CommandPrimitive.Item>,
++  React.ComponentProps<typeof CommandPrimitive.Item>
++>(({ className, ...props }, ref) => {
+   return (
+     <CommandPrimitive.Item
+       data-slot="command-item"
+@@ -148,10 +150,12 @@ function CommandItem({
+         "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+         className
+       )}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++CommandItem.displayName = "CommandItem"
+ 
+ function CommandShortcut({
+   className,
+diff --git a/src/components/ui/dialog.tsx b/src/components/ui/dialog.tsx
+index d9ccec9..7c310fd 100644
+--- a/src/components/ui/dialog.tsx
++++ b/src/components/ui/dialog.tsx
+@@ -12,11 +12,13 @@ function Dialog({
+   return <DialogPrimitive.Root data-slot="dialog" {...props} />
+ }
+ 
+-function DialogTrigger({
+-  ...props
+-}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
+-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+-}
++const DialogTrigger = React.forwardRef<
++  React.ElementRef<typeof DialogPrimitive.Trigger>,
++  React.ComponentProps<typeof DialogPrimitive.Trigger>
++>(({ ...props }, ref) => {
++  return <DialogPrimitive.Trigger data-slot="dialog-trigger" ref={ref} {...props} />
++})
++DialogTrigger.displayName = "DialogTrigger"
+ 
+ function DialogPortal({
+   ...props
+@@ -24,16 +26,18 @@ function DialogPortal({
+   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+ }
+ 
+-function DialogClose({
+-  ...props
+-}: React.ComponentProps<typeof DialogPrimitive.Close>) {
+-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+-}
++const DialogClose = React.forwardRef<
++  React.ElementRef<typeof DialogPrimitive.Close>,
++  React.ComponentProps<typeof DialogPrimitive.Close>
++>(({ ...props }, ref) => {
++  return <DialogPrimitive.Close data-slot="dialog-close" ref={ref} {...props} />
++})
++DialogClose.displayName = "DialogClose"
+ 
+-function DialogOverlay({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
++const DialogOverlay = React.forwardRef<
++  React.ElementRef<typeof DialogPrimitive.Overlay>,
++  React.ComponentProps<typeof DialogPrimitive.Overlay>
++>(({ className, ...props }, ref) => {
+   return (
+     <DialogPrimitive.Overlay
+       data-slot="dialog-overlay"
+@@ -41,19 +45,19 @@ function DialogOverlay({
+         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+         className
+       )}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++DialogOverlay.displayName = "DialogOverlay"
+ 
+-function DialogContent({
+-  className,
+-  children,
+-  showCloseButton = true,
+-  ...props
+-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
+-  showCloseButton?: boolean
+-}) {
++const DialogContent = React.forwardRef<
++  React.ElementRef<typeof DialogPrimitive.Content>,
++  React.ComponentProps<typeof DialogPrimitive.Content> & {
++    showCloseButton?: boolean
++  }
++>(({ className, children, showCloseButton = true, ...props }, ref) => {
+   return (
+     <DialogPortal data-slot="dialog-portal">
+       <DialogOverlay />
+@@ -63,6 +67,7 @@ function DialogContent({
+           "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+           className
+         )}
++        ref={ref}
+         {...props}
+       >
+         {children}
+@@ -78,7 +83,8 @@ function DialogContent({
+       </DialogPrimitive.Content>
+     </DialogPortal>
+   )
+-}
++})
++DialogContent.displayName = "DialogContent"
+ 
+ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+   return (
+@@ -103,31 +109,35 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
+   )
+ }
+ 
+-function DialogTitle({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof DialogPrimitive.Title>) {
++const DialogTitle = React.forwardRef<
++  React.ElementRef<typeof DialogPrimitive.Title>,
++  React.ComponentProps<typeof DialogPrimitive.Title>
++>(({ className, ...props }, ref) => {
+   return (
+     <DialogPrimitive.Title
+       data-slot="dialog-title"
+       className={cn("text-lg leading-none font-semibold", className)}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++DialogTitle.displayName = "DialogTitle"
+ 
+-function DialogDescription({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
++const DialogDescription = React.forwardRef<
++  React.ElementRef<typeof DialogPrimitive.Description>,
++  React.ComponentProps<typeof DialogPrimitive.Description>
++>(({ className, ...props }, ref) => {
+   return (
+     <DialogPrimitive.Description
+       data-slot="dialog-description"
+       className={cn("text-muted-foreground text-sm", className)}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++DialogDescription.displayName = "DialogDescription"
+ 
+ export {
+   Dialog,
+diff --git a/src/components/ui/drawer.tsx b/src/components/ui/drawer.tsx
+index 869955f..f605cce 100644
+--- a/src/components/ui/drawer.tsx
++++ b/src/components/ui/drawer.tsx
+@@ -9,11 +9,13 @@ function Drawer({
+   return <DrawerPrimitive.Root data-slot="drawer" {...props} />
+ }
+ 
+-function DrawerTrigger({
+-  ...props
+-}: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
+-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
+-}
++const DrawerTrigger = React.forwardRef<
++  React.ElementRef<typeof DrawerPrimitive.Trigger>,
++  React.ComponentProps<typeof DrawerPrimitive.Trigger>
++>(({ ...props }, ref) => {
++  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" ref={ref} {...props} />
++})
++DrawerTrigger.displayName = "DrawerTrigger"
+ 
+ function DrawerPortal({
+   ...props
+@@ -21,16 +23,18 @@ function DrawerPortal({
+   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
+ }
+ 
+-function DrawerClose({
+-  ...props
+-}: React.ComponentProps<typeof DrawerPrimitive.Close>) {
+-  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
+-}
++const DrawerClose = React.forwardRef<
++  React.ElementRef<typeof DrawerPrimitive.Close>,
++  React.ComponentProps<typeof DrawerPrimitive.Close>
++>(({ ...props }, ref) => {
++  return <DrawerPrimitive.Close data-slot="drawer-close" ref={ref} {...props} />
++})
++DrawerClose.displayName = "DrawerClose"
+ 
+-function DrawerOverlay({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
++const DrawerOverlay = React.forwardRef<
++  React.ElementRef<typeof DrawerPrimitive.Overlay>,
++  React.ComponentProps<typeof DrawerPrimitive.Overlay>
++>(({ className, ...props }, ref) => {
+   return (
+     <DrawerPrimitive.Overlay
+       data-slot="drawer-overlay"
+@@ -38,16 +42,17 @@ function DrawerOverlay({
+         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+         className
+       )}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++DrawerOverlay.displayName = "DrawerOverlay"
+ 
+-function DrawerContent({
+-  className,
+-  children,
+-  ...props
+-}: React.ComponentProps<typeof DrawerPrimitive.Content>) {
++const DrawerContent = React.forwardRef<
++  React.ElementRef<typeof DrawerPrimitive.Content>,
++  React.ComponentProps<typeof DrawerPrimitive.Content>
++>(({ className, children, ...props }, ref) => {
+   return (
+     <DrawerPortal data-slot="drawer-portal">
+       <DrawerOverlay />
+@@ -61,6 +66,7 @@ function DrawerContent({
+           "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=left]:sm:max-w-sm",
+           className
+         )}
++        ref={ref}
+         {...props}
+       >
+         <div className="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+@@ -68,7 +74,8 @@ function DrawerContent({
+       </DrawerPrimitive.Content>
+     </DrawerPortal>
+   )
+-}
++})
++DrawerContent.displayName = "DrawerContent"
+ 
+ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
+   return (
+diff --git a/src/components/ui/input.tsx b/src/components/ui/input.tsx
+index 03295ca..8f1748e 100644
+--- a/src/components/ui/input.tsx
++++ b/src/components/ui/input.tsx
+@@ -2,7 +2,10 @@ import * as React from "react"
+ 
+ import { cn } from "@/lib/utils"
+ 
+-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
++const Input = React.forwardRef<
++  HTMLInputElement,
++  React.ComponentProps<"input">
++>(({ className, type, ...props }, ref) => {
+   return (
+     <input
+       type={type}
+@@ -13,9 +16,11 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+         className
+       )}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++Input.displayName = "Input"
+ 
+ export { Input }
+diff --git a/src/components/ui/label.tsx b/src/components/ui/label.tsx
+index ef7133a..1de9ad2 100644
+--- a/src/components/ui/label.tsx
++++ b/src/components/ui/label.tsx
+@@ -3,10 +3,10 @@ import * as LabelPrimitive from "@radix-ui/react-label"
+ 
+ import { cn } from "@/lib/utils"
+ 
+-function Label({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
++const Label = React.forwardRef<
++  React.ElementRef<typeof LabelPrimitive.Root>,
++  React.ComponentProps<typeof LabelPrimitive.Root>
++>(({ className, ...props }, ref) => {
+   return (
+     <LabelPrimitive.Root
+       data-slot="label"
+@@ -14,9 +14,11 @@ function Label({
+         "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+         className
+       )}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++Label.displayName = "Label"
+ 
+ export { Label }
+diff --git a/src/components/ui/popover.tsx b/src/components/ui/popover.tsx
+index 6d51b6c..8e46933 100644
+--- a/src/components/ui/popover.tsx
++++ b/src/components/ui/popover.tsx
+@@ -9,18 +9,18 @@ function Popover({
+   return <PopoverPrimitive.Root data-slot="popover" {...props} />
+ }
+ 
+-function PopoverTrigger({
+-  ...props
+-}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+-}
++const PopoverTrigger = React.forwardRef<
++  React.ElementRef<typeof PopoverPrimitive.Trigger>,
++  React.ComponentProps<typeof PopoverPrimitive.Trigger>
++>(({ ...props }, ref) => {
++  return <PopoverPrimitive.Trigger data-slot="popover-trigger" ref={ref} {...props} />
++})
++PopoverTrigger.displayName = "PopoverTrigger"
+ 
+-function PopoverContent({
+-  className,
+-  align = "center",
+-  sideOffset = 4,
+-  ...props
+-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
++const PopoverContent = React.forwardRef<
++  React.ElementRef<typeof PopoverPrimitive.Content>,
++  React.ComponentProps<typeof PopoverPrimitive.Content>
++>(({ className, align = "center", sideOffset = 4, ...props }, ref) => {
+   return (
+     <PopoverPrimitive.Portal>
+       <PopoverPrimitive.Content
+@@ -31,11 +31,13 @@ function PopoverContent({
+           "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-md border p-4 shadow-md outline-hidden",
+           className
+         )}
++        ref={ref}
+         {...props}
+       />
+     </PopoverPrimitive.Portal>
+   )
+-}
++})
++PopoverContent.displayName = "PopoverContent"
+ 
+ function PopoverAnchor({
+   ...props
+diff --git a/src/components/ui/radio-group.tsx b/src/components/ui/radio-group.tsx
+index dc682eb..fdcf63a 100644
+--- a/src/components/ui/radio-group.tsx
++++ b/src/components/ui/radio-group.tsx
+@@ -17,10 +17,10 @@ function RadioGroup({
+   )
+ }
+ 
+-function RadioGroupItem({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
++const RadioGroupItem = React.forwardRef<
++  React.ElementRef<typeof RadioGroupPrimitive.Item>,
++  React.ComponentProps<typeof RadioGroupPrimitive.Item>
++>(({ className, ...props }, ref) => {
+   return (
+     <RadioGroupPrimitive.Item
+       data-slot="radio-group-item"
+@@ -28,6 +28,7 @@ function RadioGroupItem({
+         "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+         className
+       )}
++      ref={ref}
+       {...props}
+     >
+       <RadioGroupPrimitive.Indicator
+@@ -38,6 +39,7 @@ function RadioGroupItem({
+       </RadioGroupPrimitive.Indicator>
+     </RadioGroupPrimitive.Item>
+   )
+-}
++})
++RadioGroupItem.displayName = "RadioGroupItem"
+ 
+ export { RadioGroup, RadioGroupItem }
+diff --git a/src/components/ui/select.tsx b/src/components/ui/select.tsx
+index 6a702e4..5cab907 100644
+--- a/src/components/ui/select.tsx
++++ b/src/components/ui/select.tsx
+@@ -22,14 +22,12 @@ function SelectValue({
+   return <SelectPrimitive.Value data-slot="select-value" {...props} />
+ }
+ 
+-function SelectTrigger({
+-  className,
+-  size = "default",
+-  children,
+-  ...props
+-}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
+-  size?: "sm" | "default"
+-}) {
++const SelectTrigger = React.forwardRef<
++  React.ElementRef<typeof SelectPrimitive.Trigger>,
++  React.ComponentProps<typeof SelectPrimitive.Trigger> & {
++    size?: "sm" | "default"
++  }
++>(({ className, size = "default", children, ...props }, ref) => {
+   return (
+     <SelectPrimitive.Trigger
+       data-slot="select-trigger"
+@@ -39,6 +37,7 @@ function SelectTrigger({
+         "rtl:flex-row-reverse",
+         className
+       )}
++      ref={ref}
+       {...props}
+     >
+       {children}
+@@ -47,7 +46,8 @@ function SelectTrigger({
+       </SelectPrimitive.Icon>
+     </SelectPrimitive.Trigger>
+   )
+-}
++})
++SelectTrigger.displayName = "SelectTrigger"
+ 
+ function SelectContent({
+   className,
+diff --git a/src/components/ui/sheet.tsx b/src/components/ui/sheet.tsx
+index 6906f5b..738c66b 100644
+--- a/src/components/ui/sheet.tsx
++++ b/src/components/ui/sheet.tsx
+@@ -8,17 +8,21 @@ function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
+   return <SheetPrimitive.Root data-slot="sheet" {...props} />
+ }
+ 
+-function SheetTrigger({
+-  ...props
+-}: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
+-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+-}
++const SheetTrigger = React.forwardRef<
++  React.ElementRef<typeof SheetPrimitive.Trigger>,
++  React.ComponentProps<typeof SheetPrimitive.Trigger>
++>(({ ...props }, ref) => {
++  return <SheetPrimitive.Trigger data-slot="sheet-trigger" ref={ref} {...props} />
++})
++SheetTrigger.displayName = "SheetTrigger"
+ 
+-function SheetClose({
+-  ...props
+-}: React.ComponentProps<typeof SheetPrimitive.Close>) {
+-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+-}
++const SheetClose = React.forwardRef<
++  React.ElementRef<typeof SheetPrimitive.Close>,
++  React.ComponentProps<typeof SheetPrimitive.Close>
++>(({ ...props }, ref) => {
++  return <SheetPrimitive.Close data-slot="sheet-close" ref={ref} {...props} />
++})
++SheetClose.displayName = "SheetClose"
+ 
+ function SheetPortal({
+   ...props
+@@ -26,10 +30,10 @@ function SheetPortal({
+   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
+ }
+ 
+-function SheetOverlay({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof SheetPrimitive.Overlay>) {
++const SheetOverlay = React.forwardRef<
++  React.ElementRef<typeof SheetPrimitive.Overlay>,
++  React.ComponentProps<typeof SheetPrimitive.Overlay>
++>(({ className, ...props }, ref) => {
+   return (
+     <SheetPrimitive.Overlay
+       data-slot="sheet-overlay"
+@@ -37,19 +41,19 @@ function SheetOverlay({
+         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+         className
+       )}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++SheetOverlay.displayName = "SheetOverlay"
+ 
+-function SheetContent({
+-  className,
+-  children,
+-  side = "right",
+-  ...props
+-}: React.ComponentProps<typeof SheetPrimitive.Content> & {
+-  side?: "top" | "right" | "bottom" | "left"
+-}) {
++const SheetContent = React.forwardRef<
++  React.ElementRef<typeof SheetPrimitive.Content>,
++  React.ComponentProps<typeof SheetPrimitive.Content> & {
++    side?: "top" | "right" | "bottom" | "left"
++  }
++>(({ className, children, side = "right", ...props }, ref) => {
+   return (
+     <SheetPortal>
+       <SheetOverlay />
+@@ -67,6 +71,7 @@ function SheetContent({
+             "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t",
+           className
+         )}
++        ref={ref}
+         {...props}
+       >
+         {children}
+@@ -77,7 +82,8 @@ function SheetContent({
+       </SheetPrimitive.Content>
+     </SheetPortal>
+   )
+-}
++})
++SheetContent.displayName = "SheetContent"
+ 
+ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
+   return (
+diff --git a/src/components/ui/slider.tsx b/src/components/ui/slider.tsx
+index 1bb40c6..e058781 100644
+--- a/src/components/ui/slider.tsx
++++ b/src/components/ui/slider.tsx
+@@ -3,14 +3,10 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
+ 
+ import { cn } from "@/lib/utils"
+ 
+-function Slider({
+-  className,
+-  defaultValue,
+-  value,
+-  min = 0,
+-  max = 100,
+-  ...props
+-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
++const Slider = React.forwardRef<
++  React.ElementRef<typeof SliderPrimitive.Root>,
++  React.ComponentProps<typeof SliderPrimitive.Root>
++>(({ className, defaultValue, value, min = 0, max = 100, ...props }, ref) => {
+   const _values = React.useMemo(
+     () =>
+       Array.isArray(value)
+@@ -32,6 +28,7 @@ function Slider({
+         "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
+         className
+       )}
++      ref={ref}
+       {...props}
+     >
+       <SliderPrimitive.Track
+@@ -56,6 +53,7 @@ function Slider({
+       ))}
+     </SliderPrimitive.Root>
+   )
+-}
++})
++Slider.displayName = "Slider"
+ 
+ export { Slider }
+diff --git a/src/components/ui/textarea.tsx b/src/components/ui/textarea.tsx
+index 7f21b5e..10c9083 100644
+--- a/src/components/ui/textarea.tsx
++++ b/src/components/ui/textarea.tsx
+@@ -2,7 +2,10 @@ import * as React from "react"
+ 
+ import { cn } from "@/lib/utils"
+ 
+-function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
++const Textarea = React.forwardRef<
++  HTMLTextAreaElement,
++  React.ComponentProps<"textarea">
++>(({ className, ...props }, ref) => {
+   return (
+     <textarea
+       data-slot="textarea"
+@@ -10,9 +13,11 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+         "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+         className
+       )}
++      ref={ref}
+       {...props}
+     />
+   )
+-}
++})
++Textarea.displayName = "Textarea"
+ 
+ export { Textarea }
+-- 
+2.45.2.windows.1
+

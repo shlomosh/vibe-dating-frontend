@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { BodyTypeOptions, HostingTypeOptions, PositionTypeOptions, SexualityTypeOptions } from '@/types/profile';
+import { BodyTypeOptions, HostingTypeOptions, SexualPositionTypeOptions, SexualityTypeOptions } from '@/types/profile';
 import { LocalStorage as Storage } from '@/utils/local-storage';
 import { StorageKeys } from '@/config';
 
@@ -8,8 +8,8 @@ interface Filters {
   ageValuesRange: [number, number];
   travelDistanceIsEnabled: boolean;
   travelDistanceValuesRange: [number, number];
-  positionIsEnabled: boolean;
-  positionValuesList: string[];
+  sexualPositionIsEnabled: boolean;
+  sexualPositionValuesList: string[];
   bodyTypeIsEnabled: boolean;
   bodyTypeValuesList: string[];
   sexualityIsEnabled: boolean;
@@ -47,8 +47,8 @@ const defaultFilters: Filters = {
   ageValuesRange: [18, 60],
   travelDistanceIsEnabled: false,
   travelDistanceValuesRange: [1, 50],
-  positionIsEnabled: false,
-  positionValuesList: [...PositionTypeOptions],
+  sexualPositionIsEnabled: false,
+  sexualPositionValuesList: [...SexualPositionTypeOptions],
   bodyTypeIsEnabled: false,
   bodyTypeValuesList: [...BodyTypeOptions],
   sexualityIsEnabled: false,

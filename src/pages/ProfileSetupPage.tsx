@@ -504,9 +504,9 @@ export const ProfileSetupPage: FC = () => {
 
             <div>
               <ProfileSelect
-                selectCfg={profileDict.position}
-                value={profileInfo?.position}
-                onValueChange={(value) => handleProfileChange('position', value)}
+                selectCfg={profileDict.sexualPosition}
+                value={profileInfo?.sexualPosition}
+                onValueChange={(value) => handleProfileChange('sexualPosition', value)}
               />
             </div>
 
@@ -539,9 +539,9 @@ export const ProfileSetupPage: FC = () => {
 
             <div>
               <ProfileSelect
-                selectCfg={profileDict.body}
-                value={profileInfo?.body}
-                onValueChange={(value) => handleProfileChange('body', value)}
+                selectCfg={profileDict.bodyType}
+                value={profileInfo?.bodyType}
+                onValueChange={(value) => handleProfileChange('bodyType', value)}
               />
             </div>
 

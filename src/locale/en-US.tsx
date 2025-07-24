@@ -3,7 +3,7 @@ import { LocateFixedIcon } from 'lucide-react';
 import {
   AgeType,
   TravelDistanceType,
-  PositionType,
+  SexualPositionType,
   BodyType,
   SexualityType,
   HostingType,
@@ -278,7 +278,7 @@ export const profileDict = {
   distance: {
     label: 'Distance',
   },
-  position: {
+  sexualPosition: {
     label: 'Position',
     options: {
       bottom: 'Bottom',
@@ -292,9 +292,9 @@ export const profileDict = {
     }
   } satisfies {
     label: string,
-    options: Record<PositionType, string>
+    options: Record<SexualPositionType, string>
   },
-  body: {
+  bodyType: {
     label: 'Body Type',
     options: {
       petite: 'Petite',
