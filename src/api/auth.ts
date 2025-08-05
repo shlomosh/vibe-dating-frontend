@@ -18,7 +18,7 @@ export interface AuthError {
   code?: string;
 }
 
-export class AuthService {
+export class AuthApi {
   private authData: AuthData | null = null;
   private initialized: boolean = false;
 
@@ -190,4 +190,4 @@ export class AuthService {
 }
 
 // Create singleton instance
-export const authService = new AuthService();
+export const authApi = new AuthApi();

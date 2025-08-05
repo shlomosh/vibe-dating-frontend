@@ -28,7 +28,7 @@ export const uuidToBase64 = (uuid: string): string => {
   const bytes = new Uint8Array(hex.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || []);
 
   // Convert to Base64
-  const base64 = btoa(String.fromCharCode(...bytes));
+  const base64 = btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   return base64;
 }
 

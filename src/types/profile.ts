@@ -1,4 +1,4 @@
-import { generateRandomProfileNickName } from "@/utils/generator";
+import { generateRandomProfileNickName, base64ToSeed } from "@/utils/generator";
 
 export type AgeType = string;
 
@@ -119,14 +119,8 @@ export const ChatStatusTypeOptions = [
 
 export type ChatStatusType = typeof ChatStatusTypeOptions[number];
 
-export interface ProfileImage {
-  imageId: string;
-  imageUrl: string;
-  imageThumbnailUrl: string;
-  imageAttributes: Record<string, string>;
-}
-
 export type ProfileId = string;
+export type ImageId = string;
 
 export interface ProfileRecord {
   profileId: ProfileId | null;
@@ -142,17 +136,38 @@ export interface ProfileRecord {
   preventionPractices: PreventionPracticesType | undefined;
   hosting: HostingType | undefined;
   travelDistance: TravelDistanceType | undefined;
-  profileImages: ProfileImage[];
+  imageIds: ImageId[];
 };
+
+export type ImageAttributes = Record<string, string>;
+
+export interface ImageRecord {
+  imageId: ImageId;
+  url: string;
+  urlThumbnail: string;
+  attributes: ImageAttributes;
+}
 
 export interface SelfProfileRecord extends ProfileRecord {
   profileName: string | undefined;
+  imageRecords: ImageRecord[];
 };
+
+export const upcastSelfProfileRecord = (record: SelfProfileRecord): ProfileRecord => {
+  const { profileName, imageRecords, ...profileRecord } = record;
+  return profileRecord;
+}
 
 export interface PeerProfileRecord extends ProfileRecord {
   distance: number;
   lastSeen: number;
+  imageRecords: ImageRecord[];
 };
+
+export const upcastPeerProfileRecord = (record: PeerProfileRecord): ProfileRecord => {
+  const { distance, lastSeen, imageRecords, ...profileRecord } = record;
+  return profileRecord;
+}
 
 export interface ProfileDB {
   activeProfileId: ProfileId;
@@ -160,7 +175,21 @@ export interface ProfileDB {
   freeProfileIds: ProfileId[];
 };
 
-export const createProfileRecord = (locale: any, profileId: ProfileId, record: Partial<SelfProfileRecord> = {}): SelfProfileRecord => ({
+export const getImageRecord = (imageId: ImageId, isMock: boolean = false): ImageRecord => (
+  (isMock) ? {
+    imageId,
+    url: `https://picsum.dev//static/${base64ToSeed(imageId)}/300/400`,
+    urlThumbnail: `https://picsum.dev//static/${base64ToSeed(imageId)}/90/120`,
+    attributes: {}
+  } : {
+    imageId,
+    url: `https://media.vibe-dating.io/original/${imageId}.jpg`,
+    urlThumbnail: `https://media.vibe-dating.io/thumb/${imageId}.jpg`,
+    attributes: {}
+  }
+);
+
+export const createProfileRecord = (locale: any, profileId: ProfileId, record: Partial<SelfProfileRecord> = {}, isMock: boolean = false): SelfProfileRecord => ({
   profileId: profileId,
   profileName: record?.profileName || locale.toString(locale.translations.globalDict.myProfile),
   nickName: record?.nickName || generateRandomProfileNickName(locale, profileId),
@@ -175,5 +204,6 @@ export const createProfileRecord = (locale: any, profileId: ProfileId, record: P
   preventionPractices: record?.preventionPractices,
   hosting: record?.hosting,
   travelDistance: record?.travelDistance,
-  profileImages: record?.profileImages || [],
+  imageIds: record?.imageIds || [],
+  imageRecords: (record?.imageIds || []).map((imageId) => getImageRecord(imageId, isMock))
 });

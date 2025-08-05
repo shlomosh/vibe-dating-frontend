@@ -19,13 +19,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocation } from '@/contexts/LocationContext';
-import { ProfileId, SelfProfileRecord } from '@/types/profile';
+import { getImageRecord, ProfileId, SelfProfileRecord } from '@/types/profile';
 import { cn } from '@/lib/utils';
 import { getRandomOffset } from '@/utils/location';
 import { ProfileNavigationBar } from '../navigation/ProfileNavigationBar';
 import { Location } from '@/types/location';
 
-import { useMockProfileImageUrls } from '@/mock/profile';
+import { useMockProfileImageIds } from '@/mock/profile';
 
 const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {
   const emptyValue = '--';
@@ -63,7 +63,7 @@ const ProfileAlbumCarousel = () => {
 
   useEffect(() => {
     const loadImages = async () => {
-      const imagesNew = useMockProfileImageUrls();
+      const imagesNew = useMockProfileImageIds().map((imageId) => getImageRecord(imageId, true).url);
       setImages(imagesNew);
     };
 

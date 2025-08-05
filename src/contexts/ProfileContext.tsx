@@ -7,7 +7,8 @@ import { StorageKeys } from '@/config';
 import { useUser } from '@/contexts/UserContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-import { ProfileDB, ProfileId, SelfProfileRecord, createProfileRecord } from '@/types/profile';
+import { ProfileDB, ProfileId, SelfProfileRecord, createProfileRecord, upcastSelfProfileRecord } from '@/types/profile';
+import { profileApi } from '@/api/profiles';
 
 
 interface ProfileContextType {
@@ -117,9 +118,17 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
           activeProfileId: newActiveProfileId
         };
 
+        // Delete from local storage
         Storage.deleteItem(StorageKeys.Profiles + `/profileRecords/${profileId}`);
         saveProfileDB(updatedProfileDB);
         setProfileDB(updatedProfileDB);
+
+        // Delete from backend
+        try {
+          await profileApi.deleteProfile(profileId);
+        } catch (error) {
+          console.error(`Failed to delete profile ${profileId}:`, error);
+        }
       }
     }
 
@@ -139,8 +148,16 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
           activeProfileId: profileId
         };
 
+        // Save to local storage
         saveProfileDB(updatedProfileDB);
         setProfileDB(updatedProfileDB);
+
+        // Create in backend
+        try {
+          await profileApi.upsertProfile(profileId, upcastSelfProfileRecord(newProfileRecord));
+        } catch (error) {
+          console.error(`Failed to create profile ${profileId} in backend:`, error);
+        }
       }
     }
 
@@ -157,8 +174,16 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
           }
         };
 
+        // Save to local storage
         saveProfileDB(updatedProfileDB);
         setProfileDB(updatedProfileDB);
+
+        // Update in backend
+        try {
+          await profileApi.upsertProfile(profileId, upcastSelfProfileRecord(updatedRecord));
+        } catch (error) {
+          console.error(`Failed to update profile ${profileId} in backend:`, error);
+        }
       }
     }
 

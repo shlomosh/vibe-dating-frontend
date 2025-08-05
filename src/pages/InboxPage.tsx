@@ -26,13 +26,13 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
 }) => {
   const navigate = useNavigate();
   const { profile, lastMessage, lastTime, unreadCount } = conversation;
-  const { profileId, nickName, profileImages, lastSeen } = profile;
+  const { profileId, nickName, imageRecords, lastSeen } = profile;
 
   const handleClick = () => {
     navigate(`/chat/${profileId}`);
   };
 
-  const avatarUrl = profileImages.length > 0 ? profileImages[0].imageUrl : undefined;
+  const avatarUrl = imageRecords.length > 0 ? imageRecords[0].url : undefined;
 
   return (
     <div

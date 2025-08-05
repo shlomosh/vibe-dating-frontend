@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { authService } from '@/api/auth';
+import { authApi } from '@/api/auth';
 
 interface UserContextType {
     userId: string | null;
@@ -26,7 +26,7 @@ export function UserProvider({ children }: UserProviderProps) {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const authStatus = await authService.getAuthentication();
+                const authStatus = await authApi.getAuthentication();
                 if (!!authStatus.userId) {
                     setUserId(authStatus.userId);
                     setProfileIds(authStatus.profileIds);
@@ -49,7 +49,7 @@ export function UserProvider({ children }: UserProviderProps) {
     const authenticate = async () => {
         setIsAuthenticating(true);
         try {
-            const authData = await authService.initializeTelegram();
+            const authData = await authApi.initializeTelegram();
             setUserId(authData.userId);
             setProfileIds(authData.profileIds);
         } catch (error) {
@@ -64,7 +64,7 @@ export function UserProvider({ children }: UserProviderProps) {
 
     const logout = async () => {
         try {
-            await authService.logout();
+            await authApi.logout();
             setUserId(null);
             setProfileIds([]);
         } catch (error) {

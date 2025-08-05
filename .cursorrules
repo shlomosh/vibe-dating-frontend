@@ -1,10 +1,10 @@
 # Project Context Rule
 
-description: Include project-wide context from docs/context.md  
+description: Include project-wide context from docs/architecture.md  
 globs:  
-  - docs/context.md  
+  - docs/architecture.md  
 alwaysApply: true
 
 ---
 
-@docs/context.md
+@docs/architecture.md

@@ -1,10 +1,28 @@
 import { generateRandomProfileNickName } from "@/utils/generator";
+import { getImageRecord } from "@/types/profile";
 import { Conversation } from "@/types/chat";
 
 // Helper function to get timestamp for X time ago
 const getTimeAgo = (secondsAgo: number): number => {
   return Math.floor(Date.now() / 1000) - secondsAgo;
 };
+
+const mockImageIds = [
+  [ "D8f2A9Lk",  "Vy7XgE-P",  "aT_R4mJ0" ],
+  [ "RfQm32rZ" ],
+  [ "uc9HgWnN","0ZzD_2Pk", "MoIqABtX" ],
+  [ "t6EzsMbM", "WmPFji6o", "Hrv8gRNV" ],
+  [ "bU3XnScQ", "jYxOae0L", "XW4uWTx9" ],
+  [ ],
+  [ "NSmRwC-p", "qQeA3XvI" ],
+  [ "Lf27Wm_T", "rJokP9Ae", "GTy84xZ-" ],
+  [ "cwHJ1vMn", "UimZtXy9", "dBoL8Cq3", "fyQWe_nN" ],
+  [ "O_0xpU8v", "azJ2kXFt" ],
+  [ "MnR6_ojZ", "XeCgVbw-" ],
+  [ "bTq8d9N4", "WzA1f_Hu" ],
+  [ "P7nZVxgr", "Jlh28OeK", "QXz4A1t_" ],
+  [ "A2Y4537t", "bX345aZ8" ],
+];
 
 export const useMockInboxConversations = (locale: any): Conversation[] => [
   {
@@ -22,12 +40,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prep",
       hosting: "hostAndTravel",
       travelDistance: "city",
-      profileImages: [{
-        imageId: "img_1_0",
-        imageUrl: "https://picsum.photos/100/100?random=1",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=1",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[0],
+      imageRecords: mockImageIds[0].map((imageId) => getImageRecord(imageId, true)),
       distance: 2.5,
       lastSeen: 0
     },
@@ -50,12 +64,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prep",
       hosting: "hostOnly",
       travelDistance: "neighbourhood",
-      profileImages: [{
-        imageId: "img_2_0",
-        imageUrl: "https://picsum.photos/100/100?random=2",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=2",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[1],
+      imageRecords: mockImageIds[1].map((imageId) => getImageRecord(imageId, true)),
       distance: 1.2,
       lastSeen: 5
     },
@@ -78,7 +88,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "none",
       hosting: "travelOnly",
       travelDistance: "metropolitan",
-      profileImages: [],
+      imageIds: mockImageIds[2],
+      imageRecords: mockImageIds[2].map((imageId) => getImageRecord(imageId, true)),
       distance: 8.7,
       lastSeen: 15
     },
@@ -101,12 +112,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prepAndDoxypep",
       hosting: "hostAndTravel",
       travelDistance: "city",
-      profileImages: [{
-        imageId: "img_4_0",
-        imageUrl: "https://picsum.photos/100/100?random=4",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=4",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[3],
+      imageRecords: mockImageIds[3].map((imageId) => getImageRecord(imageId, true)),
       distance: 4.1,
       lastSeen: 45
     },
@@ -129,12 +136,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prep",
       hosting: "hostOnly",
       travelDistance: "block",
-      profileImages: [{
-        imageId: "img_5_0",
-        imageUrl: "https://picsum.photos/100/100?random=5",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=5",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[4],
+      imageRecords: mockImageIds[4].map((imageId) => getImageRecord(imageId, true)),
       distance: 0.8,
       lastSeen: 90
     },
@@ -157,12 +160,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "none",
       hosting: "travelOnly",
       travelDistance: "state",
-      profileImages: [{
-        imageId: "img_6_0",
-        imageUrl: "https://picsum.photos/100/100?random=6",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=6",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[5],
+      imageRecords: mockImageIds[5].map((imageId) => getImageRecord(imageId, true)),
       distance: 25.3,
       lastSeen: 120
     },
@@ -185,12 +184,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prep",
       hosting: "hostAndTravel",
       travelDistance: "city",
-      profileImages: [{
-        imageId: "img_7_0",
-        imageUrl: "https://picsum.photos/100/100?random=7",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=7",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[6],
+      imageRecords: mockImageIds[6].map((imageId) => getImageRecord(imageId, true)),
       distance: 6.2,
       lastSeen: 180
     },
@@ -213,12 +208,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prepAndDoxypep",
       hosting: "hostOnly",
       travelDistance: "neighbourhood",
-      profileImages: [{
-        imageId: "img_8_0",
-        imageUrl: "https://picsum.photos/100/100?random=8",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=8",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[7],
+      imageRecords: mockImageIds[7].map((imageId) => getImageRecord(imageId, true)),
       distance: 1.5,
       lastSeen: 1440
     },
@@ -241,12 +232,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prep",
       hosting: "travelOnly",
       travelDistance: "metropolitan",
-      profileImages: [{
-        imageId: "img_9_0",
-        imageUrl: "https://picsum.photos/100/100?random=9",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=9",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[8],
+      imageRecords: mockImageIds[8].map((imageId) => getImageRecord(imageId, true)),
       distance: 12.8,
       lastSeen: 2880
     },
@@ -269,12 +256,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "none",
       hosting: "hostAndTravel",
       travelDistance: "city",
-      profileImages: [{
-        imageId: "img_10_0",
-        imageUrl: "https://picsum.photos/100/100?random=10",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=10",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[9],
+      imageRecords: mockImageIds[9].map((imageId) => getImageRecord(imageId, true)),
       distance: 3.7,
       lastSeen: 4320
     },
@@ -297,7 +280,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prep",
       hosting: "hostOnly",
       travelDistance: "block",
-      profileImages: [],
+      imageIds: mockImageIds[10],
+      imageRecords: mockImageIds[10].map((imageId) => getImageRecord(imageId, true)),
       distance: 0.9,
       lastSeen: 1440
     },
@@ -320,12 +304,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prepAndDoxypep",
       hosting: "travelOnly",
       travelDistance: "state",
-      profileImages: [{
-        imageId: "img_12_0",
-        imageUrl: "https://picsum.photos/100/100?random=12",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=12",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[11],
+      imageRecords: mockImageIds[11].map((imageId) => getImageRecord(imageId, true)),
       distance: 18.4,
       lastSeen: 2880
     },
@@ -348,12 +328,8 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
       preventionPractices: "prep",
       hosting: "hostAndTravel",
       travelDistance: "city",
-      profileImages: [{
-        imageId: "img_13_0",
-        imageUrl: "https://picsum.photos/100/100?random=13",
-        imageThumbnailUrl: "https://picsum.photos/100/100?random=13",
-        imageAttributes: {}
-      }],
+      imageIds: mockImageIds[12],
+      imageRecords: mockImageIds[12].map((imageId) => getImageRecord(imageId, true)),
       distance: 5.6,
       lastSeen: 4320
     },
@@ -362,3 +338,4 @@ export const useMockInboxConversations = (locale: any): Conversation[] => [
     unreadCount: 1
   }
 ];
+

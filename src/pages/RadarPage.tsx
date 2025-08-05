@@ -146,7 +146,7 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
     }
   };
 
-  const { nickName, age, sexualPosition, hosting, distance, lastSeen, profileImages } = profile;
+  const { nickName, age, sexualPosition, hosting, distance, lastSeen, imageRecords } = profile;
 
   const profileSummary = (
     <div className="flex gap-1 text-muted-foreground">
@@ -170,7 +170,7 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
     <div className="w-full mb-4 bg-background overflow-hidden">
 
       {/* Image */}
-      {profileImages.length > 0 ? (
+      {imageRecords.length > 0 ? (
         <div className="relative aspect-[3/4] w-full swiper-container">
           <Swiper
             modules={[Pagination]}
@@ -183,10 +183,10 @@ const UserProfileCard: React.FC<UserProfileProps> = ({ profile }) => {
             className="w-full h-full rounded-lg"
             onClick={handleSwiperClick}
           >
-            {profileImages.map((image, index) => (
+            {imageRecords.map((image, index) => (
               <SwiperSlide key={index}>
                <img
-                  src={image.imageUrl}
+                  src={image.url}
                   alt={nickName}
                   className="w-full h-full object-cover"
                 />
@@ -260,8 +260,8 @@ export const RadarPage: React.FC = () => {
                 profile={profile}
               />
             ))}
+            <RadarNavigationBar />
           </ContentFeed>
-          <RadarNavigationBar />
         </Content>
         <FiltersDrawer />
       </Page>

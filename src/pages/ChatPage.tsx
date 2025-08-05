@@ -10,7 +10,7 @@ import { LastSeenBadge } from '@/components/LastSeenBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Message } from '@/types/chat';
-import { generateRandomProfileNickName } from '@/utils/generator';
+import { base64ToSeed, generateRandomProfileNickName } from '@/utils/generator';
 import { useMockChatMessages, useMockChatReplies } from '@/mock/chat';
 
 import anonUserImage from '@/assets/anon-user-front.png';
@@ -170,7 +170,7 @@ export const ChatPage: React.FC = () => {
     id: profileId || '1',
     username: generateRandomProfileNickName(locale, profileId),
     lastSeen: 0,
-    avatarUrl: `https://picsum.photos/100/100?random=${profileId || '1'}`
+    avatarUrl: `https://picsum.dev//static/${base64ToSeed(profileId || '000000')}/90/120`
   };
 
   // Mock initial messages
