@@ -4,7 +4,11 @@ import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from 'lucide-react';
 import { ContentNavigation } from "@/components/ContentNavigation";
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export const ProfileNavigationBar: React.FC = () => {
+interface ProfileNavigationBarProps {
+  onValidate?: () => boolean;
+}
+
+export const ProfileNavigationBar: React.FC<ProfileNavigationBarProps> = ({ onValidate = undefined }) => {
   const navigate = useRouterNavigate();
   const location = useRouterLocation();
   const { translations: { globalDict }, direction } = useLanguage();
@@ -24,6 +28,7 @@ export const ProfileNavigationBar: React.FC = () => {
         {
           icon: NextArrowIcon,
           label: globalDict.next,
+          onValidate: onValidate,
           onClick: () => navigate('/location')
         }
       ];
@@ -37,6 +42,7 @@ export const ProfileNavigationBar: React.FC = () => {
         {
           icon: NextArrowIcon,
           label: globalDict.next,
+          onValidate: onValidate,
           onClick: () => navigate('/radar')
         }
       ];

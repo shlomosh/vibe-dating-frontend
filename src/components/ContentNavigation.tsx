@@ -10,6 +10,7 @@ interface NavigationItem {
     isActive?: boolean;
     isDisabled?: boolean;
     onClick?: () => void;
+    onValidate?: () => boolean;
 }
 
 interface ContentNavigationProps {
@@ -28,7 +29,11 @@ export const ContentNavigationBar: React.FC<ContentNavigationProps> = ({ items }
                             "flex flex-col items-center gap-1",
                             item.isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer group"
                         )}
-                        onClick={item.isDisabled ? undefined : item.onClick}
+                        onClick={item.isDisabled ? undefined : () => {
+                          if (!item?.onValidate || (item?.onValidate && item.onValidate())) {
+                              item.onClick?.();
+                          }
+                        }}
                     >
                         <div className={cn(
                             "rounded-full transition-all duration-200",

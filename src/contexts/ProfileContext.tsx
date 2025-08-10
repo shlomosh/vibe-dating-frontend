@@ -15,7 +15,7 @@ interface ProfileContextType {
     profileDB: ProfileDB | null;
     delProfileRecord: (record: SelfProfileRecord) => Promise<void>;
     addProfileRecord: (record: SelfProfileRecord) => Promise<void>;
-    updateProfileRecord: (record: SelfProfileRecord) => Promise<void>;
+    updateProfileRecord: (record: SelfProfileRecord, updateRemote: boolean) => Promise<void>;
     setActiveProfileId: (profileId: ProfileId) => Promise<void>;
     isLoading: boolean;
 }
@@ -128,6 +128,7 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
           await profileApi.deleteProfile(profileId);
         } catch (error) {
           console.error(`Failed to delete profile ${profileId}:`, error);
+          throw error;
         }
       }
     }
@@ -156,12 +157,13 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
         try {
           await profileApi.upsertProfile(profileId, upcastSelfProfileRecord(newProfileRecord));
         } catch (error) {
-          console.error(`Failed to create profile ${profileId} in backend:`, error);
+          console.error(`Failed to create profile ${profileId} on remote:`, error);
+          throw error;
         }
       }
     }
 
-    const updateProfileRecord = async (record: SelfProfileRecord) => {
+    const updateProfileRecord = async (record: SelfProfileRecord, updateRemote: boolean = true) => {
       const profileId = record.profileId;
       if (profileId && profileDB) {
         const updatedRecord = createProfileRecord(locale, profileId, record);
@@ -173,16 +175,19 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
             [profileId]: updatedRecord
           }
         };
+        console.log('updatedProfileDB', record, updateRemote);
 
         // Save to local storage
         saveProfileDB(updatedProfileDB);
         setProfileDB(updatedProfileDB);
 
-        // Update in backend
-        try {
-          await profileApi.upsertProfile(profileId, upcastSelfProfileRecord(updatedRecord));
-        } catch (error) {
-          console.error(`Failed to update profile ${profileId} in backend:`, error);
+        if (updateRemote) {
+          try {
+            await profileApi.upsertProfile(profileId, upcastSelfProfileRecord(updatedRecord));
+          } catch (error) {
+            console.error(`Failed to update profile ${profileId} on remote:`, error);
+            throw error;
+          }
         }
       }
     }

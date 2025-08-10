@@ -9,6 +9,23 @@ export interface ProfileResponse {
 
 export class ProfileApi {
   /**
+   * Get a profile by ID
+   * @returns ProfileRecord if found, null if not found
+   */
+  async getProfile(profileId: string): Promise<ProfileRecord | null> {
+    const response = await authApi.apiRequest(`/profile/${profileId}`, {
+      method: 'GET'
+    });
+
+    if (response.status === 404 || !response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.profile || null;
+  }
+
+  /**
    * Create or update a profile (upsert operation)
    */
   async upsertProfile(profileId: string, profileData: ProfileRecord): Promise<ProfileResponse> {

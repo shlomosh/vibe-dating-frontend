@@ -53,7 +53,7 @@ const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any 
   )
 };
 
-const ProfileAlbumCarousel = () => {
+const ProfileAlbumCarousel = React.memo(() => {
   const [images, setImages] = useState<string[]>([]);
   const [isAlbumDialogOpen, setIsAlbumDialogOpen] = useState(false);
   const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
@@ -163,7 +163,7 @@ const ProfileAlbumCarousel = () => {
       </div>
       <Dialog open={isAlbumDialogOpen} onOpenChange={setIsAlbumDialogOpen}>
         <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
-          <div className="w-[85vw] -[3/4]">
+          <div className="w-[85vw] aspect-[3/4]">
             <CarouselContent />
             <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
               <div className="flex gap-2">
@@ -204,7 +204,7 @@ const ProfileAlbumCarousel = () => {
       </Dialog>
     </>
   );
-}
+});
 
 const CreateProfileDialog: FC<{
   onClose?: () => void,
@@ -349,9 +349,20 @@ export const ProfileSetupPage: FC = () => {
           [field]: value || ''
         };
       }
-      updateProfileRecord(record);
+      updateProfileRecord(record, false);
     }
   }, [profileInfo, updateProfileRecord]);
+
+  const handleProfileValidation = () => {
+    if (profileInfo) {
+      try {
+        updateProfileRecord(profileInfo, true);
+      } catch (error) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   const handleActiveProfileChange = useCallback((value: ProfileId) => {
     setActiveProfileId(value);
@@ -467,7 +478,7 @@ export const ProfileSetupPage: FC = () => {
                     type="text"
                     className="text-sm"
                     placeholder={profileDict.nickName.label}
-                    value={profileInfo?.nickName}
+                    value={profileInfo?.nickName || ''}
                     onChange={(e) => handleProfileChange('nickName', e.target.value)}
                   />
                 </div>
@@ -586,7 +597,7 @@ export const ProfileSetupPage: FC = () => {
             </div>
           </div>
         </ContentFeed>
-        <ProfileNavigationBar />
+        <ProfileNavigationBar onValidate={handleProfileValidation}/>
       </Content>
     </Page>
   );

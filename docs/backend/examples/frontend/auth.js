@@ -163,129 +163,6 @@ class AuthApiClient {
         const response = await this.auth.apiRequest('/users/me');
         return response.json();
     }
-
-    /**
-     * Get a specific profile by ID
-     */
-    async getProfile(profileId) {
-        const response = await this.auth.apiRequest(`/profile/${profileId}`);
-        return response.json();
-    }
-
-    /**
-     * Create or update a profile
-     */
-    async upsertProfile(profileId, profileData) {
-        const response = await this.auth.apiRequest(`/profile/${profileId}`, {
-            method: 'PUT',
-            body: JSON.stringify(profileData)
-        });
-        return response.json();
-    }
-
-    /**
-     * Delete profile
-     */
-    async deleteProfile(profileId) {
-        const response = await this.auth.apiRequest(`/profile/${profileId}`, {
-            method: 'DELETE'
-        });
-        return response.json();
-    }
-
-    /**
-     * Upload media to profile
-     */
-    async uploadProfileMedia(profileId, mediaFile) {
-        const formData = new FormData();
-        formData.append('media', mediaFile);
-
-        const response = await this.auth.apiRequest(`/profile/${profileId}/media`, {
-            method: 'POST',
-            headers: {
-                // Remove Content-Type to let browser set it with boundary
-            },
-            body: formData
-        });
-        return response.json();
-    }
-
-    /**
-     * Update profile location
-     */
-    async updateLocation(profileId, location) {
-        const response = await this.auth.apiRequest(`/profile/${profileId}/location`, {
-            method: 'PUT',
-            body: JSON.stringify(location)
-        });
-        return response.json();
-    }
-
-    /**
-     * Discover nearby profiles
-     */
-    async discoverProfiles(location, radius = 10) {
-        const params = new URLSearchParams({
-            latitude: location.latitude,
-            longitude: location.longitude,
-            radius: radius
-        });
-
-        const response = await this.auth.apiRequest(`/discover?${params}`);
-        return response.json();
-    }
-}
-
-/**
- * Usage Example
- */
-async function initializeVibeApp() {
-    try {
-        // Initialize authentication service
-        const authApi = new AuthApi();
-
-        // Initialize Telegram authentication
-        const authResult = await authApi.initialize();
-        console.log('Authentication successful:', authResult);
-
-        // Create API client
-        const apiClient = new AuthApiClient(authApi);
-
-        // Example: Get a specific profile
-        const profileId = 'example_profile_id';
-        const profile = await apiClient.getProfile(profileId);
-        console.log('Profile:', profile);
-
-        // Example: Create or update a profile
-        const newProfile = await apiClient.upsertProfile(profileId, {
-            name: 'My Dating Profile',
-            age: 25,
-            bio: 'Looking for meaningful connections',
-            interests: ['music', 'travel', 'sports'],
-            lookingFor: ['friendship', 'relationship']
-        });
-        console.log('Created/Updated profile:', newProfile);
-
-        // Example: Update location
-        const location = {
-            latitude: 40.7128,
-            longitude: -74.0060,
-            precision: 5
-        };
-        await apiClient.updateLocation(profileId, location);
-
-        // Example: Discover nearby profiles
-        const nearbyProfiles = await apiClient.discoverProfiles(location, 5);
-        console.log('Nearby profiles:', nearbyProfiles);
-
-    } catch (error) {
-        console.error('Failed to initialize Vibe app:', error);
-
-        // Show error to user
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.showAlert('Failed to initialize app: ' + error.message);
-        }
-    }
 }
 
 /**
@@ -329,7 +206,6 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         AuthApi,
         AuthApiClient,
-        initializeVibeApp,
         useVibeAuth
     };
 }

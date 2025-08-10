@@ -1,4 +1,4 @@
-import { generateRandomProfileNickName, base64ToSeed } from "@/utils/generator";
+import { generateRandomProfileNickName } from "@/utils/generator";
 
 export type AgeType = string;
 
@@ -178,8 +178,8 @@ export interface ProfileDB {
 export const getImageRecord = (imageId: ImageId, isMock: boolean = false): ImageRecord => (
   (isMock) ? {
     imageId,
-    url: `https://picsum.dev//static/${base64ToSeed(imageId)}/300/400`,
-    urlThumbnail: `https://picsum.dev//static/${base64ToSeed(imageId)}/90/120`,
+    url: `https://picsum.photos/seed/${imageId}/600/800`,
+    urlThumbnail: `https://picsum.photos/seed/${imageId}/60/80`,
     attributes: {}
   } : {
     imageId,
@@ -192,7 +192,7 @@ export const getImageRecord = (imageId: ImageId, isMock: boolean = false): Image
 export const createProfileRecord = (locale: any, profileId: ProfileId, record: Partial<SelfProfileRecord> = {}, isMock: boolean = false): SelfProfileRecord => ({
   profileId: profileId,
   profileName: record?.profileName || locale.toString(locale.translations.globalDict.myProfile),
-  nickName: record?.nickName || generateRandomProfileNickName(locale, profileId),
+  nickName: record?.nickName === undefined ? generateRandomProfileNickName(locale, profileId) : record.nickName,
   aboutMe: record?.aboutMe,
   age: record?.age,
   sexualPosition: record?.sexualPosition,
