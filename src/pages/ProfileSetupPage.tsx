@@ -63,7 +63,8 @@ const ProfileAlbumCarousel = React.memo(() => {
 
   useEffect(() => {
     const loadImages = async () => {
-      const imagesNew = useMockProfileImageIds().map((imageId) => getImageRecord(imageId, true).url);
+      const maxImages = 0; // disable mock images
+      const imagesNew = useMockProfileImageIds(maxImages).map((imageId) => getImageRecord(imageId, true).url);
       setImages(imagesNew);
     };
 
@@ -103,9 +104,11 @@ const ProfileAlbumCarousel = React.memo(() => {
 
     return (
       <div className="relative aspect-[3/4] w-full swiper-container">
+        <div className="hidden">
         <pre className="text-xs overflow-auto h-[200px] overflow-y-scroll">
           {exif ? JSON.stringify(exif, null, 2) : 'No EXIF data'}
-        </pre>
+          </pre>
+        </div>
         <Swiper
           modules={[Pagination]}
           grabCursor={true}
@@ -163,6 +166,10 @@ const ProfileAlbumCarousel = React.memo(() => {
       </div>
       <Dialog open={isAlbumDialogOpen} onOpenChange={setIsAlbumDialogOpen}>
         <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
+          <DialogHeader className="hidden">
+            <DialogTitle />
+            <DialogDescription />
+          </DialogHeader>
           <div className="w-[85vw] aspect-[3/4]">
             <CarouselContent />
             <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
@@ -194,6 +201,10 @@ const ProfileAlbumCarousel = React.memo(() => {
       </Dialog>
       <Dialog open={isImageEditorOpen} onOpenChange={setIsImageEditorOpen}>
         <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
+          <DialogHeader className="hidden">
+            <DialogTitle />
+            <DialogDescription />
+          </DialogHeader>
           <div className="w-[85vw] aspect-[3/4]">
             <ImageEditor
               onClose={() => setIsImageEditorOpen(false)}
@@ -224,9 +235,7 @@ const CreateProfileDialog: FC<{
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{globalDict.addProfile}</DialogTitle>
-          <DialogDescription>
-            {globalDict.enterNewProfileName}
-          </DialogDescription>
+          <DialogDescription>{globalDict.enterNewProfileName}</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <Input
@@ -285,9 +294,7 @@ const DeleteProfileDialog: FC<{
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{globalDict.deleteProfile}</DialogTitle>
-          <DialogDescription>
-            {globalDict.deleteProfileAreYouSureQ(profileName || 'Default Profile')}
-          </DialogDescription>
+          <DialogDescription>{globalDict.deleteProfileAreYouSureQ(profileName || 'Default Profile')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <div className="flex gap-2 justify-end">
@@ -353,6 +360,7 @@ export const ProfileSetupPage: FC = () => {
     }
   }, [profileInfo, updateProfileRecord]);
 
+
   const handleProfileValidation = () => {
     if (profileInfo) {
       try {
@@ -364,6 +372,7 @@ export const ProfileSetupPage: FC = () => {
     return true;
   };
 
+
   const handleActiveProfileChange = useCallback((value: ProfileId) => {
     setActiveProfileId(value);
   }, [setActiveProfileId]);
@@ -374,11 +383,13 @@ export const ProfileSetupPage: FC = () => {
     }
   }, [profileInfo, delProfileRecord]);
 
+
   const handleCreateProfile = useCallback(async (newProfileName: string) => {
     if (profileInfo) {
       await addProfileRecord({...profileInfo, profileName: newProfileName});
     }
   }, [profileInfo, addProfileRecord]);
+
 
   const handleUpdateLocation = useCallback(async () => {
     if (!navigator.geolocation) {
@@ -413,6 +424,7 @@ export const ProfileSetupPage: FC = () => {
     });
   }, [location, setLocation]);
 
+
   const profileOptions = useMemo(() =>
     profileIdList.reduce((obj, id) => {
       obj[id] = profileDB?.profileRecords[id]?.profileName || id;
@@ -421,19 +433,16 @@ export const ProfileSetupPage: FC = () => {
     [profileIdList, profileDB]
   );
 
-  if (isLoading) {
-    return (
-      <Page back={true}>
-        <Content>
-          <div className="flex items-center justify-center h-full">
-            <div>{globalDict.loading}</div>
-          </div>
-        </Content>
-      </Page>
-    );
-  }
 
-  return (
+  return (isLoading) ? (
+    <Page back={true}>
+      <Content>
+        <div className="flex items-center justify-center h-full">
+          <div>{globalDict.loading}</div>
+        </div>
+      </Content>
+    </Page>
+  ) : (
     <Page back={true}>
       <Content className="text-sm">
         <ContentFeed>
@@ -543,7 +552,7 @@ export const ProfileSetupPage: FC = () => {
               <TextEditor
                 className="text-sm"
                 placeholder={profileDict.aboutMe.label}
-                value={profileInfo?.aboutMe}
+                value={profileInfo?.aboutMe || ''}
                 onChange={(value) => handleProfileChange('aboutMe', value)}
               />
             </div>

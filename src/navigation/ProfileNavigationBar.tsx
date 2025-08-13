@@ -52,6 +52,7 @@ export const ProfileNavigationBar: React.FC<ProfileNavigationBarProps> = ({ onVa
         {
           icon: CheckIcon,
           label: globalDict.accept,
+          onValidate: onValidate,
           onClick: () => navigate(-1)
         }
       ];

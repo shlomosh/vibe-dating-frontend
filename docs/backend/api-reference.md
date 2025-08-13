@@ -169,7 +169,18 @@ Authorization: Bearer <jwt_token>
   "preventionPractices": "prep",
   "hosting": "hostAndTravel",
   "travelDistance": "city",
-  "imageIds": ["A2Y4537t", "bX345aZ8"],
+  "profileImages": [
+    {
+      "imageId": "image_id",
+      "imageUrl": "https://media.vibe-dating.io/original/image_id.jpg",
+      "imageThumbnailUrl": "https://media.vibe-dating.io/thumb/image_id.jpg",
+      "imageAttributes": {
+        "width": "1920",
+        "height": "1080",
+        "format": "jpeg"
+      }
+    }
+  ],
   "createdAt": "2024-01-01T00:00:00Z",
   "updatedAt": "2024-01-01T12:00:00Z"
 }
@@ -198,7 +209,18 @@ Authorization: Bearer <jwt_token>
   "preventionPractices": "prep",
   "hosting": "hostAndTravel",
   "travelDistance": "city",
-  "imageIds": ["A2Y4537t", "bX345aZ8"],
+  "profileImages": [
+    {
+      "imageId": "image_id",
+      "imageUrl": "https://media.vibe-dating.io/original/image_id.jpg",
+      "imageThumbnailUrl": "https://media.vibe-dating.io/thumb/image_id.jpg",
+      "imageAttributes": {
+        "width": "1920",
+        "height": "1080",
+        "format": "jpeg"
+      }
+    }
+  ]
 }
 ```
 
@@ -619,4 +641,4 @@ The infrastructure uses Route53 for DNS management:
 - **Hosted Zone**: `vibe-dating.io`
 - **A Records**: Point to API Gateway custom domain
 - **CNAME Records**: For SSL certificate validation
-- **Nameservers**: Route53 nameservers for the domain
+- **Nameservers**: Route53 nameservers for the domain 
