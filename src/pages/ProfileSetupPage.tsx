@@ -19,13 +19,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useProfile } from '@/contexts/ProfileContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useLocation } from '@/contexts/LocationContext';
-import { getImageRecord, ProfileId, SelfProfileRecord } from '@/types/profile';
+import { ProfileId, SelfProfileRecord } from '@/types/profile';
 import { cn } from '@/lib/utils';
 import { getRandomOffset } from '@/utils/location';
 import { ProfileNavigationBar } from '../navigation/ProfileNavigationBar';
 import { Location } from '@/types/location';
+import { mediaApi } from '@/api/media';
 
-import { useMockProfileImageIds } from '@/mock/profile';
 
 const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any }, className?: string, enableClearOption?: boolean, disabled?: boolean, value?: string, onValueChange?: (value: string) => void }> = ({ selectCfg, className = "", enableClearOption = true, disabled = false, value = '--', onValueChange }) => {
   const emptyValue = '--';
@@ -55,21 +55,37 @@ const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any 
 
 const ProfileAlbumCarousel = React.memo(() => {
   const [images, setImages] = useState<string[]>([]);
+  const [imageIds, setImageIds] = useState<string[]>([]); // Store backend media IDs
   const [isAlbumDialogOpen, setIsAlbumDialogOpen] = useState(false);
   const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { translations: { globalDict } } = useLanguage();
   const [exif, setExif] = useState(undefined);
+  const { profileDB } = useProfile();
 
+
+
+  // Load existing images from backend when profile changes
   useEffect(() => {
-    const loadImages = async () => {
-      const maxImages = 0; // disable mock images
-      const imagesNew = useMockProfileImageIds(maxImages).map((imageId) => getImageRecord(imageId, true).url);
-      setImages(imagesNew);
+    const loadBackendImages = async () => {
+      if (profileDB?.activeProfileId) {
+        try {
+          const existingMedia = await mediaApi.getProfileMedia(profileDB.activeProfileId);
+          const imageMedia = existingMedia.filter(media => media.mediaType === 'image');
+
+          setImages(imageMedia.map(media => media.url));
+          setImageIds(imageMedia.map(media => media.mediaId));
+        } catch (error) {
+          console.error('Failed to load existing images:', error);
+          // Keep existing images if loading fails
+        }
+      }
     };
 
-    loadImages();
-  }, []);
+    loadBackendImages();
+  }, [profileDB?.activeProfileId]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -81,22 +97,76 @@ const ProfileAlbumCarousel = React.memo(() => {
     }
   };
 
-  const handleDeleteImage = () => {
-    if (images.length > 0) {
-      const newImages = [...images];
-      newImages.splice(currentSlideIndex, 1);
-      setImages(newImages);
-      // Reset current slide index if we're at the end
-      if (currentSlideIndex >= newImages.length) {
-        setCurrentSlideIndex(Math.max(0, newImages.length - 1));
+  const handleDeleteImage = async () => {
+    if (images.length > 0 && imageIds.length > 0) {
+      const currentImageId = imageIds[currentSlideIndex];
+
+      try {
+        setIsDeleting(true);
+
+        // Delete from backend if we have a media ID
+        if (currentImageId && profileDB?.activeProfileId) {
+          await mediaApi.deleteMedia(profileDB.activeProfileId, currentImageId);
+        }
+
+        // Remove from local state
+        const newImages = [...images];
+        const newImageIds = [...imageIds];
+        newImages.splice(currentSlideIndex, 1);
+        newImageIds.splice(currentSlideIndex, 1);
+
+        setImages(newImages);
+        setImageIds(newImageIds);
+
+        // Reset current slide index if we're at the end
+        if (currentSlideIndex >= newImages.length) {
+          setCurrentSlideIndex(Math.max(0, newImages.length - 1));
+        }
+      } catch (error) {
+        console.error('Failed to delete image:', error);
+        // You might want to show an error message to the user here
+      } finally {
+        setIsDeleting(false);
       }
     }
   };
 
-  const handleAddImage = (croppedImage: string, exif: any) => {
+  const handleAddImage = async (croppedImage: string, exif: any) => {
     console.log('handleAddImage', croppedImage, exif);
-    setExif(exif)
-    setImages([...images, croppedImage]);
+    setExif(exif);
+
+    try {
+      setIsUploading(true);
+
+      // Convert base64 data URL to File object for upload
+      const base64Response = await fetch(croppedImage);
+      const blob = await base64Response.blob();
+      const file = new File([blob], 'profile-image.jpg', { type: 'image/jpeg' });
+
+      // Upload to backend if we have an active profile
+      if (profileDB?.activeProfileId) {
+        const uploadResult = await mediaApi.uploadMedia(profileDB.activeProfileId, file, { exif: exif });
+
+        // Add to local state with backend media ID
+        setImages([...images, croppedImage]);
+        setImageIds([...imageIds, uploadResult.mediaId]);
+
+        console.log('Image uploaded successfully:', uploadResult);
+      } else {
+        // Fallback to local state only if no active profile
+        setImages([...images, croppedImage]);
+        setImageIds([...imageIds, '']);
+        console.warn('No active profile ID, image saved locally only');
+      }
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      // You might want to show an error message to the user here
+      // For now, we'll still add the image locally so the user doesn't lose their work
+      setImages([...images, croppedImage]);
+      setImageIds([...imageIds, '']);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const CarouselContent = () => {
@@ -145,6 +215,12 @@ const ProfileAlbumCarousel = React.memo(() => {
                     </Badge>
                   </div>
                 )}
+                {/* Show loading overlay during operations */}
+                {(isUploading || isDeleting) && (
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-20">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  </div>
+                )}
               </div>
             </SwiperSlide>
           )) : (
@@ -165,34 +241,36 @@ const ProfileAlbumCarousel = React.memo(() => {
         <CarouselContent />
       </div>
       <Dialog open={isAlbumDialogOpen} onOpenChange={setIsAlbumDialogOpen}>
-        <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
+        <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%] w-[85vw]">
           <DialogHeader className="hidden">
             <DialogTitle />
             <DialogDescription />
           </DialogHeader>
-          <div className="w-[85vw] aspect-[3/4]">
+          <div className="w-full aspect-[3/4]">
             <CarouselContent />
             <div className="absolute top-[100%] pb-16 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
               <div className="flex gap-2">
                 <TrashIcon
                   className={
-                    `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${images.length == 0
+                    `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${images.length == 0 || isDeleting
                       ? "text-white/50 border-white/10 cursor-not-allowed"
                       : "text-white border-white/20 hover:border-white/50"
                     }`}
                   onClick={handleDeleteImage}
+                  style={{ cursor: images.length == 0 || isDeleting ? 'not-allowed' : 'pointer' }}
                 />
                 <PlusIcon
                   className={
-                    `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${images.length >= 5
+                    `w-10 h-10 rounded-[8px] p-2 border-2 bg-black/50 ${images.length >= 5 || isUploading
                       ? "text-white/50 border-white/10 cursor-not-allowed"
                       : "text-white border-white/20 hover:border-white/50"
                     }`}
                   onClick={() => {
-                    if (images.length < 5) {
+                    if (images.length < 5 && !isUploading) {
                       setIsImageEditorOpen(true);
                     }
                   }}
+                  style={{ cursor: images.length >= 5 || isUploading ? 'not-allowed' : 'pointer' }}
                 />
               </div>
             </div>
@@ -200,12 +278,12 @@ const ProfileAlbumCarousel = React.memo(() => {
         </DialogContent>
       </Dialog>
       <Dialog open={isImageEditorOpen} onOpenChange={setIsImageEditorOpen}>
-        <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%]">
+        <DialogContent className="w-auto h-auto p-0 border-2 border border-white rounded-[2%] w-[85vw]">
           <DialogHeader className="hidden">
             <DialogTitle />
             <DialogDescription />
           </DialogHeader>
-          <div className="w-[85vw] aspect-[3/4]">
+          <div className="w-full aspect-[3/4]">
             <ImageEditor
               onClose={() => setIsImageEditorOpen(false)}
               onImageSave={handleAddImage}

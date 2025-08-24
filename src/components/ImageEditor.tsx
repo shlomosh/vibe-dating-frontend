@@ -175,7 +175,7 @@ export const ImageEditor: FC<ImageEditorProps> = ({
         setIsProcessing(true)
         try {
             const croppedImage = await createCroppedImage()
-                        let exif = null
+            let exif = null
             if (originalFile) {
                 try {
                     // Convert File to ArrayBuffer for exifr to properly read EXIF data
@@ -197,6 +197,14 @@ export const ImageEditor: FC<ImageEditorProps> = ({
                     exif = null
                 }
             }
+
+            // Remove exif records where key is numeric string (custom fields) and value is "0" (no value)
+            if (exif) {
+              exif = Object.fromEntries(
+                Object.entries(exif).filter(([key, value]) => ((!(/^\d+$/.test(key))) || value != 0))
+              );
+            }
+
             onImageSave(croppedImage, exif)
         } catch (error) {
             setError(globalDict.failedToProcessImage);
