@@ -324,7 +324,7 @@ Authorization: Bearer <jwt_token>
 
 **Note**: Media management is currently in development. The endpoints below are planned but not yet implemented.
 
-#### POST /profiles/{profile_id}/media/request-upload
+#### POST /profile/{profile_id}/media/request-upload
 Request upload URL for media (planned).
 
 **Headers:**
@@ -364,7 +364,7 @@ Authorization: Bearer <jwt_token>
   "expiresAt": "2024-01-01T13:00:00Z"
 }
 
-#### POST /profiles/{profile_id}/media/{media_id}/complete
+#### POST /profile/{profile_id}/media/{media_id}/complete
 Complete media upload and trigger processing (planned).
 
 **Headers:**
@@ -376,8 +376,6 @@ Authorization: Bearer <jwt_token>
 ```json
 {
   "uploadSuccess": true,
-  "s3ETag": "\"d41d8cd98f00b204e9800998ecf8427e\"",
-  "actualSize": 2048576
 }
 ```
 
@@ -390,7 +388,7 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-#### GET /profiles/{profile_id}/media/{media_id}/status
+#### GET /profile/{profile_id}/media/{media_id}/status
 Get media processing status (planned).
 
 **Headers:**
@@ -411,7 +409,7 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-#### PUT /profiles/{profile_id}/media/order
+#### PUT /profile/{profile_id}/media/order
 Reorder profile media (planned).
 
 **Headers:**
@@ -426,7 +424,7 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-#### DELETE /profiles/{profile_id}/media/{media_id}
+#### DELETE /profile/{profile_id}/media/{media_id}
 Delete media file (planned).
 
 **Headers:**
@@ -641,4 +639,4 @@ The infrastructure uses Route53 for DNS management:
 - **Hosted Zone**: `vibe-dating.io`
 - **A Records**: Point to API Gateway custom domain
 - **CNAME Records**: For SSL certificate validation
-- **Nameservers**: Route53 nameservers for the domain 
+- **Nameservers**: Route53 nameservers for the domain

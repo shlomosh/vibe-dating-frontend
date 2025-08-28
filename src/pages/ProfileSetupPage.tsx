@@ -53,7 +53,7 @@ const ProfileSelect: FC<{ selectCfg: { label?: string | ReactNode, options: any 
   )
 };
 
-const ProfileAlbumCarousel = React.memo(() => {
+const ProfileAlbumCarousel = React.memo(({ onAlbumEdit }: { onAlbumEdit?: () => void }) => {
   const [images, setImages] = useState<string[]>([]);
   const [imageIds, setImageIds] = useState<string[]>([]); // Store backend media IDs
   const [isAlbumDialogOpen, setIsAlbumDialogOpen] = useState(false);
@@ -93,6 +93,9 @@ const ProfileAlbumCarousel = React.memo(() => {
     const clickPercentage = (clickY / rect.height) * 100;
 
     if (clickPercentage <= 75) {
+      if (onAlbumEdit) {
+        onAlbumEdit();
+      }
       setIsAlbumDialogOpen(true);
     }
   };
@@ -440,6 +443,7 @@ export const ProfileSetupPage: FC = () => {
 
 
   const handleProfileValidation = () => {
+    console.log('handleProfileValidation', profileInfo);
     if (profileInfo) {
       try {
         updateProfileRecord(profileInfo, true);
@@ -510,7 +514,6 @@ export const ProfileSetupPage: FC = () => {
     }, {} as Record<string, string>),
     [profileIdList, profileDB]
   );
-
 
   return (isLoading) ? (
     <Page back={true}>
@@ -589,7 +592,7 @@ export const ProfileSetupPage: FC = () => {
             </div>
 
             <div className="col-span-2 px-10 py-5">
-              <ProfileAlbumCarousel />
+              <ProfileAlbumCarousel onAlbumEdit={handleProfileValidation} />
             </div>
 
             <div>

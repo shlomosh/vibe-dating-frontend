@@ -19,14 +19,13 @@ interface RequestUploadResponse {
     'x-amz-security-token': string;
     'policy': string;
     'x-amz-signature': string;
+    [key: string]: string; // allow additional fields
   };
   expiresAt: string;
 }
 
 interface CompleteUploadRequest {
   uploadSuccess: boolean;
-  s3ETag: string;
-  actualSize: number;
 }
 
 interface CompleteUploadResponse {
@@ -71,9 +70,9 @@ export interface UploadMediaResponse {
   estimatedProcessingTime: number;
 }
 
-export interface GeneralResponse {
-  status: 'success' | 'error';
-  message: string;
+export interface S3UploadResponse {
+  status: number;
+  headers: Record<string, string>;
 }
 
 export class MediaApi {
@@ -97,40 +96,42 @@ export class MediaApi {
     return response.json();
   }
 
-  /**
+      /**
    * Upload file to S3 using presigned URL
    * @param uploadUrl - Presigned upload URL
    * @param file - File to upload
    * @param uploadHeaders - Upload headers from presigned URL response
    * @returns Upload success status
    */
-  private async _uploadMediaFile(uploadUrl: string, file: File, uploadHeaders: RequestUploadResponse['uploadHeaders']): Promise<GeneralResponse> {
-    try {
-      // Create FormData for S3 POST upload
-      const formData = new FormData();
+  private async _uploadMediaFile(uploadUrl: string, file: File, uploadHeaders: RequestUploadResponse['uploadHeaders']): Promise<S3UploadResponse> {
+    // S3 presigned POST URLs require FormData with specific field names
+    // The uploadHeaders contain the required fields from the S3 POST policy
+    const formData = new FormData();
 
-      // Add all required fields from presigned URL
-      Object.entries(uploadHeaders).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
+    // Add all required fields from the S3 POST policy
+    Object.entries(uploadHeaders).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
 
-      // Add file with the key from upload headers
-      formData.append('file', file);
+    // Add the file - S3 POST policies typically expect the file to be the last field
+    // The field name should match what's defined in the policy (usually 'file' or matches the key)
+    formData.append('file', file);
 
-      const response = await fetch(uploadUrl, {
-        method: 'POST',
-        body: formData
-      });
+    const response = await fetch(uploadUrl, {
+      method: 'POST',
+      body: formData
+    });
 
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
-      }
-
-      return { status: 'success', message: 'File uploaded successfully' };
-    } catch (error) {
-      console.error('Media file upload failed:', error);
-      throw error;
+    // S3 POST uploads return 204 (No Content) on success
+    if (response.status !== 204 && !response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Upload failed with status: ${response.status}: ${errorText}`);
     }
+
+    return {
+      status: response.status,
+      headers: Object.fromEntries(response.headers.entries()),
+    };
   }
 
   /**
@@ -175,22 +176,21 @@ export class MediaApi {
         mediaBlob: btoa(JSON.stringify(mediaBlob)),
       };
 
-      const uploadResponse = await this._requestUpload(profileId, uploadRequest);
+      // Request upload URL
+      const requestResponse = await this._requestUpload(profileId, uploadRequest);
 
       // Upload to S3 using POST method
-      await this._uploadMediaFile(uploadResponse.uploadUrl, mediaFile, uploadResponse.uploadHeaders);
+      await this._uploadMediaFile(requestResponse.uploadUrl, mediaFile, requestResponse.uploadHeaders);
 
       // Complete upload
       const completeRequest: CompleteUploadRequest = {
         uploadSuccess: true,
-        s3ETag: '', // S3 ETag would be available in production
-        actualSize: mediaFile.size
       };
 
-      const completeResponse = await this._completeUpload(profileId, uploadResponse.mediaId, completeRequest);
+      const completeResponse = await this._completeUpload(profileId, requestResponse.mediaId, completeRequest);
 
       return {
-        mediaId: uploadResponse.mediaId,
+        mediaId: requestResponse.mediaId,
         status: completeResponse.status,
         estimatedProcessingTime: completeResponse.estimatedProcessingTime,
       };

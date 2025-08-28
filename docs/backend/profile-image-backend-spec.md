@@ -23,7 +23,7 @@ This document specifies the backend implementation for profile image upload, pro
 
 ### 1. Request Upload URL
 
-**Endpoint**: `POST /profiles/{profile_id}/media/request-upload`
+**Endpoint**: `POST /profile/{profile_id}/media/request-upload`
 
 **Purpose**: Allocate media ID and provide presigned S3 upload URL
 
@@ -68,7 +68,7 @@ def request_upload_url(profile_id: str, request_data: dict) -> dict:
 
 ### 2. Complete Upload
 
-**Endpoint**: `POST /profiles/{profile_id}/media/{media_id}/complete`
+**Endpoint**: `POST /profile/{profile_id}/media/{media_id}/complete`
 
 **Purpose**: Finalize upload and trigger processing pipeline
 
@@ -76,8 +76,6 @@ def request_upload_url(profile_id: str, request_data: dict) -> dict:
 ```json
 {
   "uploadSuccess": true,
-  "s3ETag": "\"d41d8cd98f00b204e9800998ecf8427e\"",
-  "actualSize": 2048576
 }
 ```
 
@@ -92,7 +90,7 @@ def request_upload_url(profile_id: str, request_data: dict) -> dict:
 
 ### 3. Get Processing Status
 
-**Endpoint**: `GET /profiles/{profile_id}/media/{media_id}/status`
+**Endpoint**: `GET /profile/{profile_id}/media/{media_id}/status`
 
 **Response**:
 ```json
@@ -109,7 +107,7 @@ def request_upload_url(profile_id: str, request_data: dict) -> dict:
 
 ### 4. Delete Image
 
-**Endpoint**: `DELETE /profiles/{profile_id}/media/{media_id}`
+**Endpoint**: `DELETE /profile/{profile_id}/media/{media_id}`
 
 **Response**:
 ```json

@@ -200,8 +200,12 @@ export const ImageEditor: FC<ImageEditorProps> = ({
 
             // Remove exif records where key is numeric string (custom fields) and value is "0" (no value)
             if (exif) {
+              const exifExcludedKeys = ["59932", "Padding"];
               exif = Object.fromEntries(
-                Object.entries(exif).filter(([key, value]) => ((!(/^\d+$/.test(key))) || value != 0))
+                Object.entries(exif).filter(([key, value]) => (
+                  (!(/^\d+$/.test(key)) || value !== 0) && // Keep non-numeric keys or numeric keys with non-zero values
+                  !exifExcludedKeys.includes(key) // Drop specific keys
+                ))
               );
             }
 
